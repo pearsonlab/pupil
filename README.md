@@ -24,4 +24,62 @@ battery of tests desired by the user. Once Run it will prompt for
 user inputs and should be straightforward for use
 
 calibrate.m is the file run at the beginning, before testing to ensure
-that the tobii is calibrated to the new patient being tested
+that the tobii is calibrated to the new patient being tested IT IS IMPORTANT TO
+RUN THIS BEFORE EVERY NEW PATIENT. Also, it may be helpful to rerun after every
+trial of ParticipantTester.m just to account for any adjustments or movements in
+body position of the patient over the course of the testing session.
+
+check_status.m is a function that is called in multiple other script files. It is
+a function that takes information from the talk2tobii('GET_STATUS') command and 
+outputs it onto the matlab command window. This function lets us know if conditions for
+connectivity to the Tobii eyetracker are met or whether there is a problem with the
+connection.
+
+countdown.m is a short script that is called in before calibrate,
+or any tests display to the screen as implied by the name it creates
+a small countdown displayed on the tobii eyetracker to signal to us
+and to the patient that a test or calibration is about to begin.
+
+processlt.m is the current version of the processing script for the lighttest and darktest
+tests that we run. It isolates the different test trials and plots the pupilary response 
+data gathered by the tobii as well as my current attempts at nonlinear fits to those data plots
+this is a working file and not completely free of bugs, but is useful for very minimal analysis
+and checking that data collection is taking place successfully.
+
+pst.m is the pupillary sleep test. It is a way to guage baseline pupil diameter and it's fluctuations.
+It shows a dark screen and holds for a specified duration currently set to 30 seconds.
+
+revearsallearning.m and reversallearningfcn.m are a script and function file
+that together attempt to create a revearsal learning task for the patient. 
+The task is a simple keyboard response to a visual and auditory stimuli placed
+on the tobii eye tracker screen and played on the speakers. The test records pupil
+response to the stimuli as the test proceeds and will soon be able to save data on
+patient responses in relation to stimulus desired, stimulus displayed, and stimulus
+heard. This test is not yet fully functional but will be shortly.
+
+setup_audio.m is a short file that initializes the PsychPortAudio player and allows us
+to use the PsychPortAudio and it's low latency high accuracy player for sounds during
+testing. It is important to use the PsychPortAudio functions because their low latency
+is important when utilizing perfectly timed sound stimuli to test against pupil response
+timing becomes an important factor at these millisecond timescales and the built in matlab
+player doesn't have the finess needed and provided by PsychPortAudio.
+
+setup_geometry.m is another short file that relates to through the talk2tobii commands and
+sets up initial parameters about the Tobii screen size and resolution and it initializes a
+set of axis that we use when placing stimuli on the tobii screen. In cases when certain 
+images must be displayed at certain locations setup_geometry.m helps initialize and use the
+determined parameters for screen drawing.
+
+testerdarktest.m is a current and working version of darktest.m. In this test the patient is
+habituated to a bright white screen displayed on the tobii and pupil diameter is tracked as
+we darken the screen to completely black for a brief time period before returning to the pure
+white screen and rehabituating. The pupil resonse is tracked and recorded and can be observed
+using processlt.m although the fitting for this test is not yet complete.
+
+testerlighttest.m is the opposite of darktest. It is a functional version of lighttest.m. In this
+test we habituate the patient to darkness via a darkened room and a black screen and then at
+intervals we flash the screen with white and record the pupillary response.
+
+tstatus.m is a function similar to check_status.m but instead it prints to the command window
+the actual state of laptop to tobii connection. Run this file to check what exact state of connection
+tobii is in. Whether it is connecting, connnected, calibrating, etc.
