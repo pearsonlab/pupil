@@ -76,7 +76,7 @@ CALB = input('Do you need to calibrate for this patient? (Y/N):   ', 's');
 
 if strcmp(CALB,'N') == 1 || strcmp(CALB,'n') == 1
     display('Okay Moving on')
-elseif strcmp(RUNLT,'Y') ==1 || strcmp(RUNLT, 'y') ==1
+elseif strcmp(CALB,'Y') ==1 || strcmp(CALB, 'y') ==1
     display('Press any key to Calibrate')
     pause
     calibrate
