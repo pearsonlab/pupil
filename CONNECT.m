@@ -10,10 +10,10 @@ cd('~/t2t/lib/')
 
 % intialize command variables
  hostName = '169.254.7.52'; % psych retrieved by jmp 8-1-12
-%hostName = '169.254.7.31'; % fuqua
+%hostName = '169.254.7.31'; % fuqua 
 portName = '4455';
 
-[status,history] = talk2tobii('GET_STATUS');
+[status,history] = talk2tobii('GET_STATUS'); %%tetio_getTrackers()
 if status(2) == 1
 	display('tobii already connected');
 	return
@@ -21,7 +21,7 @@ if status(2) == 1
 end
 
 %% try to connect to the eyeTracker
-talk2tobii('CONNECT',hostName, portName);
+talk2tobii('CONNECT',hostName, portName);  %%tetio_connectTracker(productID)
 
 
 %check status of Tobii connection

@@ -151,6 +151,7 @@ for ind=1:size(pseries,1)
     taxis = taxis';
     subplot(4, 1, ind)
     plot(taxis,peff{ind},'linewidth',2); hold on
+    legd = [0.25, 0.50, 0.75, 1];
     plot(taxis, GammaHandle([A(ind), tpeak(ind), beta(ind), B(ind)], taxis), 'k-', 'linewidth', 1.5)
     xlabel('Time (s)'); ylabel('Pupil Diameter Change (mm)')
    title(sprintf('Pupillary response model for brightness %1.2f', legd(ind)))

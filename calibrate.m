@@ -87,7 +87,7 @@ n_samples_per_pnt = 16;
 calib_not_suc = 1;
 while calib_not_suc
 	% TALK2TOBII('START_CALIBRATION', calib_pnts, clear_prev, n_samples, [,filename]);
-	talk2tobii('START_CALIBRATION', pos, 1, n_samples_per_pnt);
+	talk2tobii('START_CALIBRATION', pos, 1, n_samples_per_pnt);  % tetio_startCalib()
 	%talk2tobii('START_CALIBRATION', pos, 1,n_samples_per_pnt,calFileName);
 	%had trouble with previous line (writing to file)
 	WaitSecs(0.5);
@@ -98,9 +98,9 @@ while calib_not_suc
 		position = pos(i,:);
 		% disp(position);
 		when0 = GetSecs()+ifi;
-		talk2tobii('ADD_CALIBRATION_POINT');
+		talk2tobii('ADD_CALIBRATION_POINT'); %tetio_addCalibPoint()
 		StimulusOnsetTime = swirl(window, totTime, ifi, when0, position, 1);
-		talk2tobii('DREW_POINT');
+		talk2tobii('DREW_POINT'); %maybe built into tetio_adCalibPoint()?? %% tetio_removeCalibPoint()
 		WaitSecs(0.5);    
 	end
 	
@@ -112,7 +112,7 @@ while calib_not_suc
 	end
 
 	%check quality of calibration
-	quality = talk2tobii('CALIBRATION_ANALYSIS');
+	quality = talk2tobii('CALIBRATION_ANALYSIS');%% 
     quality(:,5)=sign(quality(:,5)); %kludge added by JMP because returned values were outlandisly high 10-24-12
     quality(:,8)=sign(quality(:,8));
     cd(startdir)
@@ -123,7 +123,7 @@ while calib_not_suc
 	right_eye_used = find(quality(:,8) == 1);
 	right_eye_data = quality(right_eye_used, [1,2,6,7]);
 	
-	fig = figure('Name','CALIBRATION PLOT');
+	fig = figure('Name','CALIBRATION PLOT'); 
 	scatter(left_eye_data(:,1), left_eye_data(:,2), 'ok', 'filled');
 	axis([0 1 0 1]);		
 	hold on

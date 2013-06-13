@@ -24,7 +24,7 @@ end
 
 while 1
     fprintf('.');
-    status = talk2tobii('GET_STATUS');
+    status = talk2tobii('GET_STATUS'); %%tetio_getTrackers()
     for current_condition = 1:numCond
         if( status( conditions_array(current_condition) ) )
             condition_status(current_condition) = 1;
