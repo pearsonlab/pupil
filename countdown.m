@@ -3,12 +3,19 @@
 %at the start of their experiment just call this file before you begin
 % DISPLAY IS WHITE NUMBERS ON BLACK BACKGROUND
 
+
+
 for (i = 1:4);
     
     when = GetSecs + 1;
     
     % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
+    %which screen do we display to?
+which_screen=1;
+
+%open window, blank screen
+[BlankScreen, screenRect] = Screen('OpenOffScreenWindow',which_screen,[0 0 0],[],32);
+    %BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
     if i == 4
        txt = ''; 
     else

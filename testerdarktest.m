@@ -4,7 +4,7 @@ function testerdarktest(varargin)
 %% Create Global Variables
 global Partnum numtrial Partfile
 
-datadoc = strcat(Partnum,'darktest_',numtrial);
+datadoc = strcat(Partnum,'darktest_',numtrial); 
 default_data = strcat(datadoc,'_data');
 default_events = strcat(datadoc,'_events');
 datafile = strcat('/data/pupil/',Partfile);
@@ -18,7 +18,7 @@ try
     end
     addpath('/matlab/pupil/code/TESTER')
 
-%dlmwrite('default',zero(4),'\t') % MY ATTEMP TO SOLVE THE SAVE FILE Problem
+%dlmwrite('default',zero(4),'\t') % MY ATTEMPT TO SOLVE THE SAVE FILE Problem
 
 %%%%%%%% setup parameters %%%%%%%%%%%%%%
 %what are the RGB triples to flash onscreen for the test?
@@ -82,6 +82,7 @@ end
 
 if need_to_connect
     CONNECT %script to connect to tobii
+    %%tetio_connectTracker(productID)
 end
 
 %%%%%%%% countdown to begin test %%%%%%%%%
@@ -103,9 +104,9 @@ for (i = 1:4);
 end
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
-talk2tobii('START_TRACKING'); %start recording eye data
+talk2tobii('START_TRACKING'); %start recording eye data  %%tetio_startTracking
 WaitSecs(0.5);
-[status,history]=talk2tobii('GET_STATUS');
+[status,history]=talk2tobii('GET_STATUS'); %%tetio_getTrackers
 if ~status(7)
     disp('Tracker can''t start')
     return
@@ -116,21 +117,22 @@ end
 WaitSecs(habituation_dur);
 
 %start writing data to memory
-talk2tobii('RECORD');
+talk2tobii('RECORD');  %% tetio_readGazeData we think?
 WaitSecs(0.5);
 
 %record trial start
-talk2tobii('EVENT','task start',0)
+talk2tobii('EVENT','task start',0)  %%write new thing that will related the trial number to the data. using an while loop maybe? 
+%%no direct corresponding SDK function? %% look at the time synstuff ##
 
 for ind=1:numcycles
     %tell tobii trial starting
-    talk2tobii('EVENT','trial start',ind)
+    talk2tobii('EVENT','trial start',ind) %%same as before, SDK function missing ##
     
     %paint light stimulus onscreen
     Screen('FillRect',window,dark_stim(ind,:),[]);
     Screen('Flip',window);
     %tell Tobii
-    talk2tobii('EVENT','stim on',ind)
+    talk2tobii('EVENT','stim on',ind) %%%here again SDK function ##
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
@@ -139,32 +141,32 @@ for ind=1:numcycles
     Screen('FillRect',window,light_stim);
     Screen('Flip',window);
     %tell tobii
-    talk2tobii('EVENT','stim off',ind)
+    talk2tobii('EVENT','stim off',ind) %%%here again SDK function ##
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
     %tell tobii trial over
-    talk2tobii('EVENT','trial over',ind)
+    talk2tobii('EVENT','trial over',ind) %%%here again SDK function ##
     
     %save data
     if (ind==1)
-        appstr='TRUNK';
+        appstr='TRUNK'; %%find way to syncrhonize eye tracking dtat and events  for both append and trunk 
     else
-        appstr='APPEND';
+        appstr='APPEND'; %%find way to syncrhonize eye tracking dtat and events  for both append and trunk 
     end
     talk2tobii('SAVE_DATA',default_data,default_events,appstr); %NEED TO HAVE A WAY TO SPECIFY FILENAME
-    talk2tobii('CLEAR_DATA') %flush buffer
+    talk2tobii('CLEAR_DATA') %flush buffer  tetio_clearCalib() maybe? tetio_cleanUp()
 end
 
 %close tobii connection
-talk2tobii('STOP_RECORD');
+talk2tobii('STOP_RECORD'); %% tetio_stopTracking
 WaitSecs(0.5);
-talk2tobii('STOP_TRACKING');
+talk2tobii('STOP_TRACKING');%% tetio_stopTracking
 WaitSecs(0.5);
 tstatus
 
-Screen('CloseAll')
+Screen('CloseAll') 
 
 catch q
     ShowCursor
