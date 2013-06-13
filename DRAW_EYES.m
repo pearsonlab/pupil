@@ -8,7 +8,7 @@
 ESCAPE=KbName('Escape');
 
 % CHECK FOR OPEN PTB-3 WINDOWS
-openWindows = Screen('Windows'); %% GOODBYE
+openWindows = Screen('Windows'); 
 if (isempty(openWindows))
 	display('PTB-3 window not open: cannot use DrawEyes');
 	clear 'openWindows'
