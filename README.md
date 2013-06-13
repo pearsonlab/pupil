@@ -83,3 +83,6 @@ intervals we flash the screen with white and record the pupillary response.
 tstatus.m is a function similar to check_status.m but instead it prints to the command window
 the actual state of laptop to tobii connection. Run this file to check what exact state of connection
 tobii is in. Whether it is connecting, connnected, calibrating, etc.
+
+work_tetio_testerdarktest.m is the latest version of the SDK compatible testerdarktest.m file. It calibrates
+and executes testerdarktest.m. (In progress)
