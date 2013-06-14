@@ -203,7 +203,7 @@ end
 tetio_disconnectTracker; 
 tetio_cleanUp;
 
-DisplayData(leftEyeAll, rightEyeAll );
+%DisplayData(leftEyeAll, rightEyeAll );
 
 % % Save gaze data vectors to file here using e.g:
 csvwrite('gazedataleft.csv', z);
