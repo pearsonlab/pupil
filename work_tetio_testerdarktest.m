@@ -8,6 +8,7 @@ close all
 
 addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
 addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
 
 % *************************************************************************
 %
@@ -80,7 +81,7 @@ Calib.NewLocation = get(gcf,'position');
 
 disp('Starting TrackStatus');
 % Display the track status window showing the participant's eyes (to position the participant).
-TrackStatus; % Track status window will stay open until user key press.
+tetio_TrackStatus; % Track status window will stay open until user key press.
 disp('TrackStatus stopped');
 
 
@@ -93,7 +94,7 @@ disp('TrackStatus stopped');
 %
 % *************************************************************************
 
-numcycles = 5; %number of light/dark cycles
+numcycles = 2; %number of light/dark cycles
 flash_dur = 1; %duration of the stimulus flash in secondsreturn
 
 dark_stim = zeros(numcycles,3);
@@ -116,7 +117,8 @@ if isempty(openwins)
     Screen('Preference','VisualDebugLevel', 0);
     Screen('Preference', 'SuppressAllWarnings', 1);
     Screen('CloseAll')
-    %HideCursor; % turn off mouse cursor
+    
+    HideCursor; % turn off mouse cursor
     
     
     %which screen do we display to?
@@ -159,26 +161,21 @@ end
 %
 % *************************************************************************
 
-tetio_startTracking;
+%tetio_startTracking;
 
 % leftEyeAll = [];
 % rightEyeAll = [];
 % timeStampAll = [];
 
 
-    
-[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
 
-tetio_stopTracking; 
-tetio_disconnectTracker; 
-tetio_cleanUp;
-
-DisplayData(leftEyeAll, rightEyeAll );
 
 
 for ind=1:numcycles
     
+    tetio_startTracking;
     
+    WaitSecs(2)
     %paint light stimulus onscreen
     Screen('FillRect',window,dark_stim(ind,:),[]);
     Screen('Flip',window);
@@ -195,10 +192,21 @@ for ind=1:numcycles
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
+    tetio_stopTracking;
+    
+    z=tetio_readGazeData;
 end
+    
+%[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
+
+%tetio_stopTracking; 
+tetio_disconnectTracker; 
+tetio_cleanUp;
+
+DisplayData(leftEyeAll, rightEyeAll );
 
 % % Save gaze data vectors to file here using e.g:
-csvwrite('gazedataleft.csv', leftEyeAll);
+csvwrite('gazedataleft.csv', z);
 
 
 disp('Program finished.');
