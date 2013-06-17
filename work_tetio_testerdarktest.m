@@ -46,7 +46,7 @@ end
 
 
 
-
+% Do we need to synchronize clocks? We need some way to record. 
 
 for ind=1:numcycles
     
