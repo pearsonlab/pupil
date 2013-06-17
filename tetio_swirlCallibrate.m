@@ -5,6 +5,7 @@ startdir = pwd;
 addpath /Users/participant/t2t/lib/
 addpath /Users/Anna/Documents/GitHub/pupil
 
+
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
