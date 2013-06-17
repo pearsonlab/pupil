@@ -43,7 +43,7 @@ tetio_CALIBRATE_EyeTrackingSample
 
 % CHECK FOR TOBII CONNECTION %%%% NEED NEW CHECK STATUS HERE. 
 need_to_connect=0;
-cond_res = check_status(2, 10, 1, 1); % check slot 2 (connected), wait 10 seconds max, in 1 sec intervals.
+cond_res = tetio_check_status;
 tmp = find(cond_res==0, 1);
 if( ~isempty(tmp) )
 	display('tobii not connected');
