@@ -25,6 +25,14 @@ for i=1:numCond
 end
 
 while 1
+    
+    addpath /tobiisdk/Matlab/tetio
+    trackerinfo = tetio_getTrackers();
+	for i = 1:size(trackerinfo,2)
+		disp(trackerinfo(i).Status);
+	end
+    
+    
     tetio_getTrackers()
     good= {'ok'}
     a=strcmp(good, tetio_getTrackers(7));
