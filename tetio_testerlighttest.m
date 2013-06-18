@@ -13,7 +13,7 @@ try
     try
         cd(datafile)
     catch
-        mkdir(datafile)
+        mkdir(datafile)f
         cd(datafile)
     end
     addpath('/matlab/pupil/code/TESTER')
@@ -38,21 +38,6 @@ numtrials=size(stim_col,1);
 
 % Calibrate %
 tetio_swirlCallibrate
-
-%%%%%%%% communicate with Tobii %%%%%%%%%
-
-% CHECK FOR TOBII CONNECTION %%%%v
-need_to_connect=0;
-cond_res = tetio_check_status;
-tmp = find(cond_res==0, 1);
-if( ~isempty(tmp) )
-	display('tobii not connected');
-	need_to_connect=1;
-end
-
-if need_to_connect
-    tetio_CONNECT %script to connect to tobii
-end
 
 %%%%%%%% countdown to start task %%%%%%%%
 for (i = 1:4);
