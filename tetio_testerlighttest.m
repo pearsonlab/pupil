@@ -13,7 +13,7 @@ try
     try
         cd(datafile)
     catch
-        mkdir(datafile)f
+        mkdir(datafile)
         cd(datafile)
     end
     addpath('/matlab/pupil/code/TESTER')
@@ -37,7 +37,7 @@ numtrials=size(stim_col,1);
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 
 % Calibrate %
-tetio_swirlCallibrate
+tetio_CONNECT %%change back
 
 %%%%%%%% countdown to start task %%%%%%%%
 for (i = 1:4);

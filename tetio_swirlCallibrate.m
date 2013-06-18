@@ -2,8 +2,6 @@
 %based on David Paulsen's version
 %first created 8-1-12
 startdir = pwd;
-addpath /Users/participant/t2t/lib/
-addpath /Users/Anna/Documents/GitHub/pupil
 
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
@@ -15,17 +13,39 @@ Screen('CloseAll')
 %HideCursor; % turn off mouse cursor
 
 %which screen do we display to?
-which_screen=0;
+which_screen=1;
 
 %open window, blank screen
-[window, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
 horz=screenRect(3);
 vert=screenRect(4);
 
 %connect to Tobii
 
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
+
+% *************************************************************************
+%
+% Initialization and connection to the Tobii Eye-tracker
+%
+% *************************************************************************
+
 tetio_CONNECT;
 
+% CHECK FOR TOBII CONNECTION %%%% NEED NEW CHECK STATUS HERE. 
+%need_to_connect=0;
+%cond_res = tetio_check_status;
+%tmp = find(cond_res==0, 1);
+%if( ~isempty(tmp) )
+%	display('tobii not connected');
+%	need_to_connect=1;
+%end
+
+%if need_to_connect
+ %   tetio_CONNECT %script to connect to tobii
+%end
 
 % calibration points in [X,Y] coordinates; [0, 0] is top-left corner
 pos = [0.2 0.2;...
@@ -41,7 +61,7 @@ numpoints = size(pos,1);
 pos=pos(randperm(numpoints),:); %shuffle calibration point order
 
 if ~ exist('ifi','var')
-	ifi = Screen('GetFlipInterval',window,100);
+	ifi = Screen('GetFlipInterval',win,100);
 end
 
 %need to add input of subject number
@@ -57,7 +77,7 @@ for (i = 1:4);
     when = GetSecs + 1;
     
     % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
     if i == 4
        txt = ''; 
     else
@@ -65,8 +85,8 @@ for (i = 1:4);
     end
     Screen('TextSize', BlankScreen, 20);
     Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
 end
 
 
@@ -77,7 +97,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %display stimulus in the four corners of the screen
 
-[window, screenRect] = Screen('OpenWindow',which_screen,[255, 255, 255],[],32);
+[win, screenRect] = Screen('OpenWindow',which_screen,[255, 255, 255],[],32);
 
 	%%check for time sync. 
     
@@ -95,7 +115,7 @@ n_samples_per_pnt = 16;
 calib_not_suc = 1;
 while calib_not_suc
 	
-	tetio_startCalib(pos,1,n_samples_per_pnt);
+	%tetio_startCalib(pos,1,n_samples_per_pnt);
 	
 
 	for i=1:numpoints
@@ -103,7 +123,7 @@ while calib_not_suc
 		% disp(position);
 		when0 = GetSecs()+ifi;
 		tetio_addCalibPoint()
-		StimulusOnsetTime = swirl(window, totTime, ifi, when0, position, 1);
+		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 1);
 		WaitSecs(0.5);    
 	end
 	
@@ -151,8 +171,8 @@ while calib_not_suc
     
 end % END CALIBRATION
 disp('End Of Calibration');
-Screen('CopyWindow', BlankScreen, window);
-flipTime = Screen('Flip', window);
+Screen('CopyWindow', BlankScreen, win);
+flipTime = Screen('Flip', win);
 cd(startdir)
 %DISCONNECT -- don't disconnect, or calibration will be lost?!
 
@@ -190,6 +210,6 @@ cd(startdir)
 tetio_stopTracking;
 
 disp('End Of Calibration');
-Screen('CopyWindow', BlankScreen, window);
-flipTime = Screen('Flip', window);
+Screen('CopyWindow', BlankScreen, win);
+flipTime = Screen('Flip', win);
 cd(startdir)
