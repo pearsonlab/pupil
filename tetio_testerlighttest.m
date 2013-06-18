@@ -59,6 +59,7 @@ end
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
 
+%%% Check Sync Status %%% 
 WaitSecs(0.5);
 status=tetio_clockSyncState
 if status==0
