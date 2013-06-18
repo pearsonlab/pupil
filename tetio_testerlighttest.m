@@ -37,11 +37,11 @@ numtrials=size(stim_col,1);
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 
 % Calibrate %
-tetio_CALIBRATE_EyeTrackingSample
+tetio_swirlCallibrate
 
 %%%%%%%% communicate with Tobii %%%%%%%%%
 
-% CHECK FOR TOBII CONNECTION %%%% NEED NEW CHECK STATUS HERE. 
+% CHECK FOR TOBII CONNECTION %%%%v
 need_to_connect=0;
 cond_res = tetio_check_status;
 tmp = find(cond_res==0, 1);
@@ -73,7 +73,6 @@ for (i = 1:4);
 end
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
-talk2tobii('START_AUTO_SYNC')
 
 WaitSecs(0.5);
 status=tetio_clockSyncState
