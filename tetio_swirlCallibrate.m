@@ -116,11 +116,11 @@ while calib_not_suc
 		%disp(position);
 		when0 = GetSecs()+ifi;
 		tetio_addCalibPoint(pos(i,1), pos(i,2)) %%%% NEEDS HELP 
-		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 1);
+		StimulusOnsetTime = tetio_swirl(win, totTime, ifi, when0, position, 1);
 		WaitSecs(0.5);    
 	end
 	
-	tetio_check_status
+	tetio_check_status;
 
 	%check quality of calibration
 	quality = talk2tobii('CALIBRATION_ANALYSIS');%% 
