@@ -3,6 +3,8 @@
 %first created 8-1-12
 startdir = pwd;
 
+tetio_disconnectTracker
+
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
@@ -104,9 +106,6 @@ end
     if sync_state== 0 
         disp('Clock times are unsynchronized')
         clear Screen;
-
-    else
-	tetio_startTracking;
     end
     
 totTime = 4;        % swirl total display time during calibration
@@ -114,14 +113,14 @@ n_samples_per_pnt = 16;
 calib_not_suc = 1;
 while calib_not_suc
 	
-	%tetio_startCalib(pos,1,n_samples_per_pnt);
+	tetio_startCalib;
 	
 
 	for i=1:numpoints
 		position = pos(i,:);
-		% disp(position);
+		%disp(position);
 		when0 = GetSecs()+ifi;
-		tetio_addCalibPoint(pos(i,:))
+		tetio_addCalibPoint(pos(i,1), pos(i,2)) %%%% NEEDS HELP 
 		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 1);
 		WaitSecs(0.5);    
 	end
