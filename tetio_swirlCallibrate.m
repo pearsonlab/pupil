@@ -3,7 +3,6 @@
 %first created 8-1-12
 startdir = pwd;
 
-
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
@@ -122,7 +121,7 @@ while calib_not_suc
 		position = pos(i,:);
 		% disp(position);
 		when0 = GetSecs()+ifi;
-		tetio_addCalibPoint()
+		tetio_addCalibPoint(pos(i,:))
 		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 1);
 		WaitSecs(0.5);    
 	end

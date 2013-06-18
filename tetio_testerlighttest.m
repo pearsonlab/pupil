@@ -37,7 +37,7 @@ numtrials=size(stim_col,1);
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 
 % Calibrate %
-tetio_CONNECT %%change back
+tetio_swirlCallibrate
 
 %%%%%%%% countdown to start task %%%%%%%%
 for (i = 1:4);

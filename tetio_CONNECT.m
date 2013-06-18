@@ -11,7 +11,7 @@ addpath('/matlab/pupil');
 % *************************************************************************
  
 disp('Initializing tetio...');
-%tetio_init();
+tetio_init();
 
 % Set to tracker ID to the product ID of the tracker you want to connect to.
 trackerId = 'TT060-301-14200895';
@@ -39,7 +39,7 @@ fprintf('Frame rate: %d Hz.\n', currentFrameRate);
 
 %% sync. the clocks
 
-WaitSecs(1);
+WaitSecs(2);
 
 tetio_localToRemoteTime(tetio_localTimeNow())
 
