@@ -13,7 +13,7 @@ function condition_status = check_status(conditions_array, max_wait, tim_interv,
 % cond_res returns the latest status reported by the GET_STATUS
 %
 % Use help talk2tobii for more information on what 'GET_STATUS' returns
-
+conditions_array=7
 numCond = length(conditions_array);
 condition_status = zeros(1,numCond); % stores the statuses of requested conditions
 

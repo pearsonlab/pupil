@@ -52,35 +52,19 @@ for i=1:100
         statL = sampleTobii(5);
         statR = sampleTobii(6);
 
-        %difTime1 = sampleTobii(5)-time01; 
-        %difTime2 = sampleTobii(6)-time02;
-        %time01 = sampleTobii(5);
-        %time02 = sampleTobii(6);
-        
         Screen('TextSize', win,20);
         Screen('DrawText', win, '*',cx-boundsText(3)/2,cy-boundsText(4)/2,[255 255 250]);
-% DEBUG        
-%         if(difTime1 ~=0 || difTime2 ~=0 )
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'NewSample!',cx,cy,[255 255 250]);
-%         else
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'NO SAMPLE!',cx,cy,[255 255 250]);
-%         end
-%         
-%         if(valR>0 & valL>0)
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'Eyes Not Found!',cx,cy+20,[255 250 250]);
-%         elseif(valR==-1 || valL==-1)
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'Sample have not been acquired!',cx,cy+20,[255 250 250]);
-%         end
+% DEBUG                 
+         if(statL==-1 || statR==-1)
+             Screen('TextSize', win,10);
+             Screen('DrawText', win, 'Eyes Not Found!',cx,cy+20,[255 250 250]);
+         end
     end
     [now StimulusOnsetTime FlipTimestamp Missed Beampos]= Screen('Flip',win, when);
     when = StimulusOnsetTime+dt-ifi;    
 end
 
-return
+
 
 
 %%

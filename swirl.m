@@ -1,4 +1,4 @@
-function StimulusOnsetTime=swirl(win, totTime, ifi, when0, position, flagTobii)
+function StimulusOnsetTime=swirl(win, totTime, ifi, when0, position)
 % StimulusOnsetTime=swirl(win,totTime,ifi,when0,position,flagTobii)
 % This function draws a swirly pattern
 % win is the window handle returned from psyhctoolbox when it iniatialises
@@ -46,18 +46,18 @@ for i=1:100
     angle=angle+ainc;
     %check validity field - if possible
     %if eyes not found then display message
-    if(flagTobii)
-        sampleTobii = talk2tobii('GET_SAMPLE');
-        valL = sampleTobii(7);
-        valR = sampleTobii(8);
-
-        difTime1 = sampleTobii(5)-time01;
-        difTime2 = sampleTobii(6)-time02;
-        time01 = sampleTobii(5);
-        time02 = sampleTobii(6);
-        
-        Screen('TextSize', win,20);
-        Screen('DrawText', win, '*',cx-boundsText(3)/2,cy-boundsText(4)/2,[255 255 250]);
+%     if(flagTobii)
+%         sampleTobii = talk2tobii('GET_SAMPLE');
+%         valL = sampleTobii(7);
+%         valR = sampleTobii(8);
+% 
+%         difTime1 = sampleTobii(5)-time01;
+%         difTime2 = sampleTobii(6)-time02;
+%         time01 = sampleTobii(5);
+%         time02 = sampleTobii(6);
+%         
+%         Screen('TextSize', win,20);
+%         Screen('DrawText', win, '*',cx-boundsText(3)/2,cy-boundsText(4)/2,[255 255 250]);
 % DEBUG        
 %         if(difTime1 ~=0 || difTime2 ~=0 )
 %             Screen('TextSize', win,10);
@@ -79,7 +79,7 @@ for i=1:100
     when = StimulusOnsetTime+dt-ifi;    
 end
 
-return
+
 
 
 %%
@@ -92,4 +92,3 @@ for i=1:sides
     vert(i,2)=cy+size*sin(angle+2*pi*(i-1)/sides);
 end
 Screen('FillPoly', win, color, vert);
-return

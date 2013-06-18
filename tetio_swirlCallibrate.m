@@ -121,7 +121,7 @@ while calib_not_suc
 		%disp(position);
 		when0 = GetSecs()+ifi;
 		tetio_addCalibPoint(pos(i,1), pos(i,2)) %%%% NEEDS HELP 
-		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 1);
+		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 0);
 		WaitSecs(0.5);    
 	end
 	
