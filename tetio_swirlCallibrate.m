@@ -100,13 +100,8 @@ end
 
 [win, screenRect] = Screen('OpenWindow',which_screen,[255, 255, 255],[],32);
 
-	%%check for time sync. 
-    
-	sync_state=tetio_clockSyncState();
-    if sync_state== 0 
-        disp('Clock times are unsynchronized')
-        clear Screen;
-    end
+	%%check for time sync. (put into checkstatus)
+   
     
 totTime = 4;        % swirl total display time during calibration
 n_samples_per_pnt = 16;
@@ -121,16 +116,11 @@ while calib_not_suc
 		%disp(position);
 		when0 = GetSecs()+ifi;
 		tetio_addCalibPoint(pos(i,1), pos(i,2)) %%%% NEEDS HELP 
-		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 0);
+		StimulusOnsetTime = swirl(win, totTime, ifi, when0, position, 1);
 		WaitSecs(0.5);    
 	end
 	
-	cond_res = check_status(11, 90, 1, 1); % check slot 11 (calibration finished), wait 90 seconds, check in 1 sec intervals, for code 1)
-	tmp = find(cond_res==0, 1);
-	if( ~isempty(tmp) )
-		display('calibration failed');
-		error('check_status has failed- CALIBRATION');
-	end
+	tetio_check_status
 
 	%check quality of calibration
 	quality = talk2tobii('CALIBRATION_ANALYSIS');%% 

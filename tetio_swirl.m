@@ -1,4 +1,4 @@
-function StimulusOnsetTime=swirl(win, totTime, ifi, when0, position, flagTobii)
+function StimulusOnsetTime=tetio_swirl(win, totTime, ifi, when0, position, flagTobii)
 % StimulusOnsetTime=swirl(win,totTime,ifi,when0,position,flagTobii)
 % This function draws a swirly pattern
 % win is the window handle returned from psyhctoolbox when it iniatialises
