@@ -10,7 +10,7 @@ addpath('/matlab/pupil');
 %
 % Initialization and connection to the Tobii Eye-tracker
 %
-% *************************************d************************************
+% *************************************************************************
  
 disp('Initializing tetio...');
 tetio_init();
@@ -37,3 +37,19 @@ tetio_connectTracker(trackerId)
 	
 currentFrameRate = tetio_getFrameRate;
 fprintf('Frame rate: %d Hz.\n', currentFrameRate);
+
+
+%% sync. the clocks
+
+tetio_localToRemoteTime(tetio_localTimeNow())
+
+
+%%look for synchronization
+
+tetio_clockSyncState;
+
+if tetio_clockSyncState == 0
+    warning('tetio_clocksyncfalse' , 'Clocks are not synchronized');
+    disp('Clocks are not synchronized');
+end
+

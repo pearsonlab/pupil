@@ -23,7 +23,8 @@ horz=screenRect(3);
 vert=screenRect(4);
 
 %connect to Tobii
-%tetio_CONNECT;
+
+tetio_CONNECT;
 
 
 % calibration points in [X,Y] coordinates; [0, 0] is top-left corner
@@ -71,7 +72,6 @@ end
 
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%							START CALIBRATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,6 +84,7 @@ end
 	sync_state=tetio_clockSyncState();
     if sync_state== 0 
         disp('Clock times are unsynchronized')
+        clear Screen;
 
     else
 	tetio_startTracking;
