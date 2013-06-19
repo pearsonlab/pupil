@@ -16,7 +16,7 @@ try
         mkdir(datafile)
         cd(datafile)
     end
-    addpath('/matlab/pupil/code/TESTER')
+ 
 
 % dlmwrite('default',zero(4),'\t')
 %%%%%%%% setup parameters %%%%%%%%%%%%%%
@@ -37,7 +37,7 @@ numtrials=size(stim_col,1);
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 
 % Calibrate %
-tetio_swirlCallibrate
+tetio_calibrate_EyeTrackingSample
 
 %%%%%%%% countdown to start task %%%%%%%%
 for (i = 1:4);

@@ -1,4 +1,5 @@
-
+%% CONNECT TO TOBII TRACKER
+%%%% If not working, try again - can be finicky.
 
 addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
 addpath('/Applications/tobiiSDK/matlab//tetio');  
@@ -43,6 +44,7 @@ WaitSecs(2);
 
 tetio_localToRemoteTime(tetio_localTimeNow())
 
+WaitSecs(1)
 
 %%look for synchronization
 

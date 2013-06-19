@@ -1,7 +1,7 @@
 function StimulusOnsetTime=tetio_swirl(win, totTime, ifi, when0, position, flagTobii)
 % StimulusOnsetTime=swirl(win,totTime,ifi,when0,position,flagTobii)
 % This function draws a swirly pattern
-% win is the window handle returned from psyhctoolbox when it iniatialises
+% win is the window handle returned from psychtoolbox when it initializes
 % the screen context that it draws in
 % totTime is the time in seconds that the swirling pattern lasts
 % ifi is the time returned by the Screen('GetFlipInterval') command
@@ -46,20 +46,20 @@ for i=1:100
     angle=angle+ainc;
     %check validity field - if possible
     %if eyes not found then display message
-    if(flagTobii)
+    %if(flagTobii)
         %sampleTobii = talk2tobii('GET_SAMPLE');
-        sampleTobii = tetio_getCalibPlotData()
-        statL = sampleTobii(5);
-        statR = sampleTobii(6);
+        
+        %statL = sampleTobii(5);
+        %statR = sampleTobii(6);
 
         Screen('TextSize', win,20);
         Screen('DrawText', win, '*',cx-boundsText(3)/2,cy-boundsText(4)/2,[255 255 250]);
 % DEBUG                 
-         if(statL==-1 || statR==-1)
-             Screen('TextSize', win,10);
-             Screen('DrawText', win, 'Eyes Not Found!',cx,cy+20,[255 250 250]);
-         end
-    end
+         %if(statL==-1 || statR==-1)
+            % Screen('TextSize', win,10);
+             %Screen('DrawText', win, 'Eyes Not Found!',cx,cy+20,[255 250 250]);
+         %end
+    %end
     [now StimulusOnsetTime FlipTimestamp Missed Beampos]= Screen('Flip',win, when);
     when = StimulusOnsetTime+dt-ifi;    
 end

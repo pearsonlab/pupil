@@ -3,7 +3,6 @@
 %first created 8-1-12
 startdir = pwd;
 
-tetio_disconnectTracker
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
@@ -60,7 +59,7 @@ pos = [0.2 0.2;...
     0.8 0.8];
 numpoints = size(pos,1);
 pos=pos(randperm(numpoints),:); %shuffle calibration point order
-
+ 
 if ~ exist('ifi','var')
 	ifi = Screen('GetFlipInterval',win,100);
 end
@@ -72,6 +71,8 @@ else
 	calFileName = './calibrations/generic.cal';
 end
 
+
+WaitSecs(0.2)
 %countdown to start of calibration stims
 for (i = 1:4);
     
@@ -98,7 +99,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %display stimulus in the four corners of the screen
 
-[win, screenRect] = Screen('OpenWindow',which_screen,[255, 255, 255],[],32);
+[win, screenRect] = Screen('OpenWindow',which_screen,[0, 0, 0],[],32);
 
 	%%check for time sync. (put into checkstatus)
    
@@ -107,19 +108,40 @@ totTime = 4;        % swirl total display time during calibration
 n_samples_per_pnt = 16;
 calib_not_suc = 1;
 while calib_not_suc
-	
+	%tetio_startTracking;
 	tetio_startCalib;
 	
+WaitSecs(0.5)
 
-	for i=1:numpoints
+	for i=1:2;
 		position = pos(i,:);
 		%disp(position);
-		when0 = GetSecs()+ifi;
-		tetio_addCalibPoint(pos(i,1), pos(i,2)) %%%% NEEDS HELP 
-		StimulusOnsetTime = tetio_swirl(win, totTime, ifi, when0, position, 1);
-		WaitSecs(0.5);    
-	end
-	
+		when0 = GetSecs()+ifi; 
+		StimulusOnsetTime = tetio_swirl(win, totTime, ifi, when0, position, 0);
+        tetio_addCalibPoint(pos(i,1), pos(i,2));
+        WaitSecs(0.5);
+        %tetio_removeCalibPoint(pos(i,1), pos(i,2));
+    end
+
+    tetio_computeCalib;
+    CalibPlotData = tetio_getCalibPlotData;
+    
+	cont = 1;
+    while (cont == 1)
+        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
+        
+        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
+            cont = 0; calib_not_suc = 1;
+        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
+            cont = 0; calib_not_suc = 0;
+        end
+        
+    end
+end
+
+tetio_stopCalib;
+
+
 	tetio_check_status;
 
 	%check quality of calibration
@@ -142,22 +164,13 @@ while calib_not_suc
 	scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
 	scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');		
 	
-    cont = 1;
-    while (cont == 1)
-        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
-        
-        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
-            cont = 0; calib_not_suc = 1;
-        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
-            cont = 0; calib_not_suc = 0;
-        end
-        
-    end
+    
     % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
     if ishghandle(fig); close(fig);end
         
     
-end % END CALIBRATION
+  
+    % END CALIBRATION
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
 flipTime = Screen('Flip', win);
