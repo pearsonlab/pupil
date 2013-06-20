@@ -7,7 +7,7 @@ sync_state = tetio_clockSyncState();
 tracker_status = tetio_getTrackers;
 good = {'ok'};
 
-goodstatus= strcmp(tracker_status(6),good);
+goodstatus= strcmp(tracker_status.Status,good);
         
 if sync_state ~= 1 || goodstatus ~= 1
     disp('Connection not valid')

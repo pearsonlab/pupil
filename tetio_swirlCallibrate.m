@@ -113,7 +113,7 @@ while calib_not_suc
 	
 WaitSecs(0.5)
 
-	for i=1:2;
+	for i=1:numpoints;
 		position = pos(i,:);
 		%disp(position);
 		when0 = GetSecs()+ifi; 
