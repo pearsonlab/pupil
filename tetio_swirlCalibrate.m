@@ -128,17 +128,6 @@ WaitSecs(0.5)
     tetio_computeCalib;
     quality = tetio_getCalibPlotData;
     
-	cont = 1;
-    while (cont == 1)
-        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
-        
-        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
-            cont = 0; calib_not_suc = 1;
-        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
-            cont = 0; calib_not_suc = 0;
-        end
-        
-    end
 end
 
 	%check quality of calibration
@@ -198,30 +187,8 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
     
     % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
     if ishghandle(fig); close(fig);end
-        
-    
-  
-    % END CALIBRATION
-disp('End Of Calibration');
-Screen('CopyWindow', BlankScreen, win);
-flipTime = Screen('Flip', win);
-cd(startdir)
-%DISCONNECT -- don't disconnect, or calibration will be lost?!
+       
 
-	% check the quality of the calibration
-	left_eye_used = find(quality(:,5) == 1);
-	left_eye_data = quality(left_eye_used, 1:4);
-	right_eye_used = find(quality(:,8) == 1);
-	right_eye_data = quality(right_eye_used, [1,2,6,7]);
-	
-	fig = figure('Name','CALIBRATION PLOT'); 
-	scatter(left_eye_data(:,1), left_eye_data(:,2), 'ok', 'filled');
-	axis([0 1 0 1]);		
-	hold on
-	scatter(right_eye_data(:,1), right_eye_data(:,2), 'ok', 'filled');
-	scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
-	scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');		
-	
     cont = 1;
     while (cont == 1)
         tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
@@ -233,11 +200,13 @@ cd(startdir)
         end
         
     end
+    
     % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
     if ishghandle(fig); close(fig);end
         
-
+    % END CALIBRATION
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
 flipTime = Screen('Flip', win);
 cd(startdir)
+%DISCONNECT -- don't disconnect, or calibration will be lost?!
