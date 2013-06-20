@@ -108,7 +108,7 @@ totTime = 4;        % swirl total display time during calibration
 n_samples_per_pnt = 16;
 calib_not_suc = 1;
 while calib_not_suc
-	%tetio_startTracking;
+	
 	tetio_startCalib;
 	
 WaitSecs(0.5)
@@ -118,13 +118,15 @@ WaitSecs(0.5)
 		%disp(position);
 		when0 = GetSecs()+ifi; 
 		StimulusOnsetTime = tetio_swirl(win, totTime, ifi, when0, position, 0);
-        tetio_addCalibPoint(pos(i,1), pos(i,2));
+        tetio_addCalibPoint(pos(i,1), pos(i,2))
         WaitSecs(0.5);
         %tetio_removeCalibPoint(pos(i,1), pos(i,2));
     end
 
+    pause(0.5);
+    
     tetio_computeCalib;
-    CalibPlotData = tetio_getCalibPlotData;
+    quality = tetio_getCalibPlotData;
     
 	cont = 1;
     while (cont == 1)
@@ -139,22 +141,51 @@ WaitSecs(0.5)
     end
 end
 
-tetio_stopCalib;
-
-
-	tetio_check_status;
-
 	%check quality of calibration
-	quality = talk2tobii('CALIBRATION_ANALYSIS');%% 
-    quality(:,5)=sign(quality(:,5)); %kludge added by JMP because returned values were outlandisly high 10-24-12
-    quality(:,8)=sign(quality(:,8));
-    cd(startdir)
+	%% 
+    %quality(:,5)=sign(quality(:,5)); %kludge added by JMP because returned values were outlandisly high 10-24-12
+    %quality(:,8)=sign(quality(:,8));
+    
+    %cd(startdir)
+quality = quality';
 
-	% check the quality of the calibration
-	left_eye_used = find(quality(:,5) == 1);
-	left_eye_data = quality(left_eye_used, 1:4);
-	right_eye_used = find(quality(:,8) == 1);
-	right_eye_data = quality(right_eye_used, [1,2,6,7]);
+%%% Organize data %%%
+a = [1 2 3 4 5 6 7 8];
+a = a';
+organizevector = repmat(a, 157, 1);
+organized_quality = horzcat(quality, organizevector);
+
+trueXpos=find(organized_quality(:,2)==1);
+True_X(:,1)=organized_quality((trueXpos),1);
+
+trueYpos=find(organized_quality(:,2)==2);
+True_Y(:,1)=organized_quality((trueYpos),1);
+
+leftXpos=find(organized_quality(:,2)==3);
+Left_X(:,1)=organized_quality((leftXpos),1);
+
+leftYpos=find(organized_quality(:,2)==4);
+Left_Y(:,1)=organized_quality((leftYpos),1);
+
+leftstat=find(organized_quality(:,2)==5);
+Left_Status(:,1)=organized_quality((leftstat),1);
+
+rightXpos=find(organized_quality(:,2)==6);
+Right_X(:,1)=organized_quality((rightXpos),1);
+
+rightYpos=find(organized_quality(:,2)==7);
+Right_Y(:,1)=organized_quality((rightYpos),1);
+
+rightstat=find(organized_quality(:,2)==8);
+Right_Status(:,1)=organized_quality((rightstat),1);
+
+CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];
+
+%%% check the quality of the calibration %%%
+	left_eye_used = find(CalibrationData(:,5) == 1);
+	left_eye_data = CalibrationData(left_eye_used, 1:4);
+	right_eye_used = find(CalibrationData(:,8) == 1);
+	right_eye_data = CalibrationData(right_eye_used, [1,2,6,7]);
 	
 	fig = figure('Name','CALIBRATION PLOT'); 
 	scatter(left_eye_data(:,1), left_eye_data(:,2), 'ok', 'filled');
@@ -205,10 +236,6 @@ cd(startdir)
     % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
     if ishghandle(fig); close(fig);end
         
-    
-
-
-tetio_stopTracking;
 
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
