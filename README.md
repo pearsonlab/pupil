@@ -80,9 +80,20 @@ testerlighttest.m is the opposite of darktest. It is a functional version of lig
 test we habituate the patient to darkness via a darkened room and a black screen and then at
 intervals we flash the screen with white and record the pupillary response.
 
+tetio_CONNECT.m is the SDK compatible version of CONNECT.m.
+
+tetio_check_status.m is SDK compatible script that (1) checks whether the tracker and computer 
+clocks are synched and (2) the connection with Tobii.
+
+tetio_swirl.m is the SDK compatible version of swirl.m.
+
+tetio_swirlCalibrate.m is the SDK compatible version of calibrate.m.
+
+tetio_testerlighttest.m is the SDK compatible version of testerlightest.m.
+
 tstatus.m is a function similar to check_status.m but instead it prints to the command window
 the actual state of laptop to tobii connection. Run this file to check what exact state of connection
 tobii is in. Whether it is connecting, connnected, calibrating, etc.
 
 work_tetio_testerdarktest.m is the latest version of the SDK compatible testerdarktest.m file. It calibrates
-and executes testerdarktest.m. (In progress)
+and executes testerdarktest.m. 
