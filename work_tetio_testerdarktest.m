@@ -52,7 +52,7 @@ habituation_dur = 10; %habituation time (in s) before first flash
 recover_dur = 8*ones(numcycles,1); %(in s) after first flash
 
 
-
+tetio_CONNECT:
 
 %%%%%%%% countdown to begin test %%%%%%%%%
 for (i = 1:4);
@@ -60,7 +60,12 @@ for (i = 1:4);
     when = GetSecs + 1;
     
     % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[255 255 255]);
+    which_screen=1;
+
+%open window, blank screen
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+
+    BlankScreen = Screen('OpenOffScreenwindow', win,[255 255 255]);
     if i == 4
        txt = ''; 
     else
@@ -86,7 +91,7 @@ end
 
 
 
-% Do we need to synchronize clocks? We need some way to record. 
+
 
 for ind=1:numcycles
     
@@ -97,21 +102,27 @@ for ind=1:numcycles
     Screen('FillRect',window,dark_stim(ind,:),[]);
     Screen('Flip',window);
     
+    %Record Time of Stim. Onset
+    StimOnSet(ind)=GetSecs;
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
+    
     
     %clear stimulus
     Screen('FillRect',window,light_stim);
     Screen('Flip',window);
    
+    %Record Time Stimulus goes off
+    StimOff(ind)=GetSecs;
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
+    GazeDataPerTrial(ind)=tetio_readGazeData;
+    
     tetio_stopTracking;
     
-    z=tetio_readGazeData;
 end
     
 %[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
@@ -123,7 +134,7 @@ tetio_cleanUp;
 %DisplayData(leftEyeAll, rightEyeAll );
 
 % % Save gaze data vectors to file here using e.g:
-csvwrite('gazedataleft.csv', z);
+
 
 
 disp('Program finished.');
