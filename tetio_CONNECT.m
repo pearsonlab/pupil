@@ -18,12 +18,12 @@ tetio_init();
 trackerId = 'TT060-301-14200895';
 
 %   FUNCTION "SEARCH FOR TRACKERS" IF NOTSET
-if (strcmp(trackerId, 'NOTSET'))
+if (strcmp(trackerId, 'NOTSET'));
 	warning('tetio_matlab:EyeTracking', 'Variable trackerId has not been set.'); 
 	disp('Browsing for trackers...');
 
 	trackerinfo = tetio_getTrackers();
-	for i = 1:size(trackerinfo,2)
+	for i = 1:size(trackerinfo,2);
 		disp(trackerinfo(i).ProductId);
 	end
 
@@ -32,7 +32,7 @@ if (strcmp(trackerId, 'NOTSET'))
 end
 
 fprintf('Connecting to tracker "%s"...\n', trackerId);
-tetio_connectTracker(trackerId)
+tetio_connectTracker(trackerId);
 	
 currentFrameRate = tetio_getFrameRate;
 fprintf('Frame rate: %d Hz.\n', currentFrameRate);
@@ -42,7 +42,7 @@ fprintf('Frame rate: %d Hz.\n', currentFrameRate);
 
 WaitSecs(2);
 
-tetio_localToRemoteTime(tetio_localTimeNow())
+tetio_localToRemoteTime(tetio_localTimeNow());
 
 WaitSecs(1)
 
