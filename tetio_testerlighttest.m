@@ -93,7 +93,7 @@ for ind=1:numcycles
     
     tetio_stopTracking;
     
-    pupilgazedata=tetio_readGazeData;
+    pupilgazedata=tetio_readGazeData; %% ???
 end
 
 % % Save gaze data vectors to file here using e.g:
