@@ -74,15 +74,7 @@ end
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
 
-%%% Check Sync Status %%% 
-WaitSecs(0.5);
-status=tetio_clockSyncState
-if status==0
-    disp('Tracker can''t start, clocks not synchronized.')
-    return
-end
-
-%habituate to darkness
+% Habituate to darkness
 WaitSecs(habituation_dur);
 
 for ind=1:numcycles

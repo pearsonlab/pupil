@@ -117,6 +117,8 @@ for ind=1:numcycles
     
     %Record Time of Stim. Onset
     StimOnSet(ind)=GetSecs;
+    %not sure about the syncing of time so alternatively:
+    %StimOnSet(ind)=tetio_localToRemoteTime(tetio_localTimeNow())
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
@@ -128,13 +130,15 @@ for ind=1:numcycles
    
     %Record Time Stimulus goes off
     StimOff(ind)=GetSecs;
+    %StimOff(ind)=tetio_localToRemoteTime(tetio_localTimeNow())
+    
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
     tetio_readGazeData;
     GazeDataOver(ind)=GazeData;
-    timeover(ind)=timestamp;
+    timeover(ind)=timestamp';
     
     tetio_stopTracking;
     

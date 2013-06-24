@@ -1,5 +1,5 @@
 % Patient Tester
-% Stolen by Anna and Anna
+% Adapted from Ali's version by Anna and Anna
 % 06/24/2013
 %% Initialize Workspace
 clear; clc
@@ -124,7 +124,7 @@ if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
     display('Okay Moving on')
 else
     pause(2)
-    reversallearningfcn
+    tetio_reversallearningfcn
     display('Check to see if the data has been saved')
     display('Then press any key to continue')
     pause(5)

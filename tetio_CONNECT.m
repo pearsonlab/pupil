@@ -43,7 +43,7 @@ fprintf('Frame rate: %d Hz.\n', currentFrameRate);
 WaitSecs(3);
 
 
-%tetio_localToRemoteTime(tetio_localTimeNow())
+tetio_localToRemoteTime(tetio_localTimeNow())
 
 %tetio_localTimeNow()
 
