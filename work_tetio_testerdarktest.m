@@ -13,6 +13,13 @@ addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
 addpath('/Applications/tobiiSDK/matlab//tetio');  
 addpath('/matlab/pupil');
 
+%%%%%%%% PTB preliminaries %%%%%%%%%%%%%
+warning('off','MATLAB:dispatcher:InexactMatch');
+Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
+Screen('Preference','VisualDebugLevel', 0);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('CloseAll')
+
 %% Create Global Variables
 global Partnum numtrial Partfile
 
@@ -52,19 +59,24 @@ stim_dur = flash_dur * ones(numcycles,1); %duration of dark flash (in s)
 habituation_dur = 10; %habituation time (in s) before first flash
 recover_dur = 8*ones(numcycles,1); %(in s) after first flash
 
+%%% Connect to Tobii %%%
+
 tetio_CONNECT;
+
+which_screen=1;
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+horz = screenRect(3);
+vert = screenRect(4);
 
 %%%%%%%% countdown to begin test %%%%%%%%%
 for (i = 1:4);
     
     when = GetSecs + 1;
     
-    % PRESENT STARTING Screen
-    which_screen=1;
+  % PRESENT STARTING Screen
+  
 
 %open window, blank screen
-[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
-
     BlankScreen = Screen('OpenOffScreenwindow', win,[255 255 255]);
     if i == 4
        txt = ''; 
@@ -73,9 +85,10 @@ for (i = 1:4);
     end
     Screen('TextSize', BlankScreen, 20);
     Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [0 0 0], [255 255 255], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
 end
+
 
 % *************************************************************************
 %
@@ -89,18 +102,14 @@ end
 % rightEyeAll = [];
 % timeStampAll = [];
 
-
-
-
-
 for ind=1:numcycles
     
     tetio_startTracking;
     
     WaitSecs(2)
     %paint light stimulus onscreen
-    Screen('FillRect',window,dark_stim(ind,:),[]);
-    Screen('Flip',window);
+    Screen('FillRect',win,dark_stim(ind,:),[]);
+    Screen('Flip',win);
     
     %Record Time of Stim. Onset
     StimOnSet(ind)=GetSecs;
@@ -110,8 +119,8 @@ for ind=1:numcycles
     
     
     %clear stimulus
-    Screen('FillRect',window,light_stim);
-    Screen('Flip',window);
+    Screen('FillRect',win,light_stim);
+    Screen('Flip',win);
    
     %Record Time Stimulus goes off
     StimOff(ind)=GetSecs;
@@ -119,7 +128,7 @@ for ind=1:numcycles
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
-    GazeDataPerTrial(ind)=tetio_readGazeData;
+    GazeDataPerTrial=tetio_readGazeData;
     
     tetio_stopTracking;
     

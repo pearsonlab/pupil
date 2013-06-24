@@ -16,7 +16,7 @@ try
         mkdir(datafile)
         cd(datafile)
     end
-    addpath('/matlab/pupil/code/TESTER')
+    addpath('/matlab/pupil_old/code/TESTER')
 
 %dlmwrite('default',zero(4),'\t') % MY ATTEMPT TO SOLVE THE SAVE FILE Problem
 
