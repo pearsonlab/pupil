@@ -124,36 +124,15 @@ WaitSecs(0.5)
         
     %tetio_removeCalibPoint(pos(i,1), pos(i,2));
     end
-
-      % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
-   
-  cont = 1;
-    while (cont == 1)
-        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
-        
-        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
-            cont = 0; calib_not_suc = 1;
-        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
-            cont = 0; calib_not_suc = 0;
-        end
-        
-    end     
-
-    pause(0.5);
     
-    try
-        tetio_computeCalib;
-    catch q
-        disp('give up?')
-    end
-    quality = tetio_getCalibPlotData;
-end
-	%check quality of calibration
-	%% 
-    %quality(:,5)=sign(quality(:,5)); %kludge added by JMP because returned values were outlandisly high 10-24-12
-    %quality(:,8)=sign(quality(:,8));
     
-    %cd(startdir)
+%% organizes Data to an easier to read format
+
+
+quality = tetio_getCalibPlotData;
+
+%%Data organization
+
 quality = quality';
 
 %%% Organize data %%%
@@ -186,8 +165,9 @@ Right_Y=organized_quality((rightYpos),1);
 rightstat=find(organized_quality(:,2)==8);
 Right_Status=organized_quality((rightstat),1);
 
-CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];
+CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];      
 
+%%% 
 %%% check the quality of the calibration %%%
 	left_eye_used = find(CalibrationData(:,5) == 1);
 	left_eye_data = CalibrationData(left_eye_used, 1:4);
@@ -200,16 +180,32 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
 	hold on
 	scatter(right_eye_data(:,1), right_eye_data(:,2), 'ok', 'filled');
 	scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
-	scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');		
-	
+	scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');
    
-    % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
-   % if ishghandle(fig); close(fig);end
+  
+    %asks if the calibration was good or not
+    cont = 1;
+    while (cont == 1)
+        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
         
-   
-%Pause;
-%tetio_cleanUp;
-    % END CALIBRATION
+        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
+            cont = 0; calib_not_suc = 1;
+        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
+            cont = 0; calib_not_suc = 0;
+        end
+        
+    end     
+
+    pause;
+    
+    try
+        tetio_computeCalib;
+    catch q
+        disp('give up?')
+    end
+    
+end
+	
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
 flipTime = Screen('Flip', win);

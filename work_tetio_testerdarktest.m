@@ -44,7 +44,12 @@ end
 %what are the RGB triples to flash onscreen for the test?
 %[0 0 0] = black; [255 255 255] = white
 
-numcycles = 5; %number of light/dark cycles
+tetio_CONNECT;
+SetCalibParams;
+TrackStatus;
+tetio_swirlCalibrate;
+
+numcycles = 3; %number of light/dark cycles
 flash_dur = 1; %duration of the stimulus flash in secondsreturn
 
 dark_stim = zeros(numcycles,3);
@@ -128,7 +133,7 @@ for ind=1:numcycles
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
-    GazeDataPerTrial=tetio_readGazeData;
+    EyeDataTrial(ind,:)=tetio_readGazeData(:,:);
     
     tetio_stopTracking;
     
