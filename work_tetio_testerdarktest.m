@@ -29,6 +29,7 @@ try
         cd(datafile)
     end
     addpath('/matlab/pupil/code/TESTER')
+end
 
 %dlmwrite('default',zero(4),'\t') % MY ATTEMPT TO SOLVE THE SAVE FILE Problem
 
@@ -51,8 +52,7 @@ stim_dur = flash_dur * ones(numcycles,1); %duration of dark flash (in s)
 habituation_dur = 10; %habituation time (in s) before first flash
 recover_dur = 8*ones(numcycles,1); %(in s) after first flash
 
-
-tetio_CONNECT:
+tetio_CONNECT;
 
 %%%%%%%% countdown to begin test %%%%%%%%%
 for (i = 1:4);

@@ -40,7 +40,7 @@ fprintf('Frame rate: %d Hz.\n', currentFrameRate);
 
 %% sync. the clocks
 
-WaitSecs(2);
+WaitSecs(3);
 
 tetio_localToRemoteTime(tetio_localTimeNow());
 

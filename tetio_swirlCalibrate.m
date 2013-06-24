@@ -4,6 +4,7 @@
 startdir = pwd;
 
 
+
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
@@ -113,7 +114,7 @@ while calib_not_suc==1;
     
 WaitSecs(0.5)
 
-	for i=1:3;
+	for i=1:numpoints;
 		position = pos(i,:);
 		%disp(position);
 		when0 = GetSecs()+ifi; 
@@ -125,7 +126,7 @@ WaitSecs(0.5)
     end
 
       % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
-    if ishghandle(fig); close(fig);end
+   
   cont = 1;
     while (cont == 1)
         tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
@@ -140,7 +141,11 @@ WaitSecs(0.5)
 
     pause(0.5);
     
-    tetio_computeCalib;
+    try
+        tetio_computeCalib;
+    catch q
+        disp('give up?')
+    end
     quality = tetio_getCalibPlotData;
 end
 	%check quality of calibration
@@ -183,9 +188,6 @@ Right_Status=organized_quality((rightstat),1);
 
 CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];
 
-
-
-
 %%% check the quality of the calibration %%%
 	left_eye_used = find(CalibrationData(:,5) == 1);
 	left_eye_data = CalibrationData(left_eye_used, 1:4);
@@ -202,8 +204,11 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
 	
    
     % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
-    if ishghandle(fig); close(fig);end
+   % if ishghandle(fig); close(fig);end
         
+   
+%Pause;
+%tetio_cleanUp;
     % END CALIBRATION
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
