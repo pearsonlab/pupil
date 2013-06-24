@@ -190,8 +190,10 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
         
         if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
             cont = 0; calib_not_suc = 1;
+            tetio_stopCalib;
         elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
             cont = 0; calib_not_suc = 0;
+            
         end
         
     end     

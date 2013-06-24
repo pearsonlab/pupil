@@ -17,7 +17,17 @@ try
         cd(datafile)
     end
  
+    
+%%% Connect to Eye Tracker %%%
+tetio_CONNECT;
 
+%%% Position eyes in front of eye tracker %%%
+SetCalibParams;
+TrackStatus;
+
+%%% Calibrate %%%
+tetio_swirlCalibrate;
+    
 % dlmwrite('default',zero(4),'\t')
 %%%%%%%% setup parameters %%%%%%%%%%%%%%
 % what are the RGB triples to flash onscreen for the test?
@@ -38,6 +48,11 @@ numtrials=size(stim_col,1);
 
 % Calibrate %
 tetio_swirlCalibrate;
+
+which_screen=1;
+[window, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+horz = screenRect(3);
+vert = screenRect(4);
 
 %%%%%%%% countdown to start task %%%%%%%%
 for (i = 1:4);
@@ -81,25 +96,31 @@ for ind=1:numcycles
     Screen('FillRect',window,stim_col(ind,:),[]);
     Screen('Flip',window);
     
+    %Record Time of Stim. Onset
+    StimOnSet(ind)=GetSecs;
+    
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
     
     %clear stimulus
     Screen('FillRect',window,[0 0 0]);
     Screen('Flip',window);
+    
+    %Record Time Stimulus goes off
+    StimOff(ind)=GetSecs;
    
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
     tetio_stopTracking;
     
-    pupilgazedata=tetio_readGazeData; %% ???
+    tetio_readGazeData;
 end
 
 % % Save gaze data vectors to file here using e.g:
-csvwrite('gazedataleft.csv', pupilgazedata);
+%csvwrite('gazedataleft.csv', pupilgazedata);
 
-%close tobii connection
+%%% Close Tobii connection %%%
 tetio_disconnectTracker; 
 tetio_cleanUp;
 

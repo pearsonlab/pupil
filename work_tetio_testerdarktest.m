@@ -44,9 +44,15 @@ end
 %what are the RGB triples to flash onscreen for the test?
 %[0 0 0] = black; [255 255 255] = white
 
+
+%%% Connect to Eye Tracker %%%
 tetio_CONNECT;
+
+%%% Position eyes in front of eye tracker %%%
 SetCalibParams;
 TrackStatus;
+
+%%% Calibrate %%%
 tetio_swirlCalibrate;
 
 numcycles = 3; %number of light/dark cycles
@@ -64,10 +70,6 @@ stim_dur = flash_dur * ones(numcycles,1); %duration of dark flash (in s)
 habituation_dur = 10; %habituation time (in s) before first flash
 recover_dur = 8*ones(numcycles,1); %(in s) after first flash
 
-%%% Connect to Tobii %%%
-
-tetio_CONNECT;
-
 which_screen=1;
 [win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
 horz = screenRect(3);
@@ -79,9 +81,6 @@ for (i = 1:4);
     when = GetSecs + 1;
     
   % PRESENT STARTING Screen
-  
-
-%open window, blank screen
     BlankScreen = Screen('OpenOffScreenwindow', win,[255 255 255]);
     if i == 4
        txt = ''; 
@@ -133,7 +132,9 @@ for ind=1:numcycles
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
-    EyeDataTrial(ind,:)=tetio_readGazeData(:,:);
+    tetio_readGazeData;
+    GazeDataOver(ind)=GazeData;
+    timeover(ind)=timestamp;
     
     tetio_stopTracking;
     
@@ -141,7 +142,7 @@ end
     
 %[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
 
-%tetio_stopTracking; 
+%%% Close Tobii Connection %%%
 tetio_disconnectTracker; 
 tetio_cleanUp;
 
