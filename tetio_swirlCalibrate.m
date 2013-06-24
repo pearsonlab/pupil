@@ -22,9 +22,6 @@ vert=screenRect(4);
 
 %connect to Tobii
 
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
-addpath('/Applications/tobiiSDK/matlab//tetio');  
-addpath('/matlab/pupil');
 
 % *************************************************************************
 %
