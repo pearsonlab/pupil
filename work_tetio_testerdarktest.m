@@ -9,9 +9,14 @@ clc
 clear all
 close all
 
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
-addpath('/Applications/tobiiSDK/matlab//tetio');  
-addpath('/matlab/pupil');
+
+
+%%%%%%%% PTB preliminaries %%%%%%%%%%%%%
+warning('off','MATLAB:dispatcher:InexactMatch');
+Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
+Screen('Preference','VisualDebugLevel', 0);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('CloseAll')
 
 %% Create Global Variables
 global Partnum numtrial Partfile
@@ -29,6 +34,7 @@ try
         cd(datafile)
     end
     addpath('/matlab/pupil/code/TESTER')
+end
 
 %dlmwrite('default',zero(4),'\t') % MY ATTEMPT TO SOLVE THE SAVE FILE Problem
 
@@ -36,7 +42,23 @@ try
 %what are the RGB triples to flash onscreen for the test?
 %[0 0 0] = black; [255 255 255] = white
 
-numcycles = 5; %number of light/dark cycles
+
+%%% Connect to Eye Tracker %%%
+tetio_CONNECT;
+
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
+
+%%% Position eyes in front of eye tracker %%%
+SetCalibParams;
+TrackStatus;
+
+%%% Calibrate %%%
+tetio_swirlCalibrate;
+
+numcycles = 3; %number of light/dark cycles
 flash_dur = 1; %duration of the stimulus flash in secondsreturn
 
 dark_stim = zeros(numcycles,3);
@@ -51,20 +73,17 @@ stim_dur = flash_dur * ones(numcycles,1); %duration of dark flash (in s)
 habituation_dur = 10; %habituation time (in s) before first flash
 recover_dur = 8*ones(numcycles,1); %(in s) after first flash
 
-
-tetio_CONNECT:
+which_screen=1;
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+horz = screenRect(3);
+vert = screenRect(4);
 
 %%%%%%%% countdown to begin test %%%%%%%%%
 for (i = 1:4);
     
     when = GetSecs + 1;
     
-    % PRESENT STARTING Screen
-    which_screen=1;
-
-%open window, blank screen
-[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
-
+  % PRESENT STARTING Screen
     BlankScreen = Screen('OpenOffScreenwindow', win,[255 255 255]);
     if i == 4
        txt = ''; 
@@ -73,9 +92,10 @@ for (i = 1:4);
     end
     Screen('TextSize', BlankScreen, 20);
     Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [0 0 0], [255 255 255], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
 end
+
 
 % *************************************************************************
 %
@@ -83,15 +103,11 @@ end
 %
 % *************************************************************************
 
-%tetio_startTracking;
-
-% leftEyeAll = [];
-% rightEyeAll = [];
-% timeStampAll = [];
 
 
-
-
+leftEyeAll = [];
+rightEyeAll = [];
+timeStampAll = [];
 
 for ind=1:numcycles
     
@@ -99,35 +115,44 @@ for ind=1:numcycles
     
     WaitSecs(2)
     %paint light stimulus onscreen
-    Screen('FillRect',window,dark_stim(ind,:),[]);
-    Screen('Flip',window);
+    Screen('FillRect',win,dark_stim(ind,:),[]);
+    Screen('Flip',win);
     
     %Record Time of Stim. Onset
-    StimOnSet(ind)=GetSecs;
+    %StimOnSet(ind)=GetSecs;
+    %not sure about the syncing of time so alternatively:
+    StimOnSet(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
     
     
     %clear stimulus
-    Screen('FillRect',window,light_stim);
-    Screen('Flip',window);
+    Screen('FillRect',win,light_stim);
+    Screen('Flip',win);
    
     %Record Time Stimulus goes off
-    StimOff(ind)=GetSecs;
+    %StimOff(ind)=GetSecs;
+    StimOff(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
-    GazeDataPerTrial(ind)=tetio_readGazeData;
-    
+   [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+   
+    numGazeData = size(lefteye, 2);
+    leftEyeAll = vertcat(leftEyeAll, lefteye(:, 1:numGazeData));
+    rightEyeAll = vertcat(rightEyeAll, righteye(:, 1:numGazeData));
+    timeStampAll = vertcat(timeStampAll, timestamp(:,1));
+
     tetio_stopTracking;
     
 end
     
 %[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
 
-%tetio_stopTracking; 
+%%% Close Tobii Connection %%%
 tetio_disconnectTracker; 
 tetio_cleanUp;
 

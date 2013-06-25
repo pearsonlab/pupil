@@ -1,10 +1,27 @@
-function testerlighttest(varargin)
-%task code to perform a test of the pupillary light reflex
-%blank screen, flash screen, wait, repeat
+%
+% TesterdarkTest Modified with SDK Language
+%
+
+%task code to perform a test of the pupillary dark reflex
+%cycle between blank and full white
+
+clc 
+clear all
+close all
+
+
+
+%%%%%%%% PTB preliminaries %%%%%%%%%%%%%
+warning('off','MATLAB:dispatcher:InexactMatch');
+Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
+Screen('Preference','VisualDebugLevel', 0);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('CloseAll')
+
 %% Create Global Variables
 global Partnum numtrial Partfile
-%%
-datadoc = strcat(Partnum,'_lighttest_',numtrial);
+
+datadoc = strcat(Partnum,'darktest_',numtrial); 
 default_data = strcat(datadoc,'_data');
 default_events = strcat(datadoc,'_events');
 datafile = strcat('/data/pupil/',Partfile);
@@ -16,13 +33,30 @@ try
         mkdir(datafile)
         cd(datafile)
     end
- 
+    addpath('/matlab/pupil/code/TESTER')
+end
 
-% dlmwrite('default',zero(4),'\t')
+%dlmwrite('default',zero(4),'\t') % MY ATTEMPT TO SOLVE THE SAVE FILE Problem
+
 %%%%%%%% setup parameters %%%%%%%%%%%%%%
-% what are the RGB triples to flash onscreen for the test?
-% [0 0 0] = black; [255 255 255] = white
-% NB: Bradshaw papers use a green LED, not white
+%what are the RGB triples to flash onscreen for the test?
+%[0 0 0] = black; [255 255 255] = white
+
+
+%%% Connect to Eye Tracker %%%
+tetio_CONNECT;
+
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
+
+%%% Position eyes in front of eye tracker %%%
+%etCalibParams;
+%TrackStatus;
+
+%%% Calibrate %%%
+%tetio_swirlCalibrate;
 
 stim_col=255 *[ [0.25 0.25 0.25] ;
               [0.5 0.5 0.5];
@@ -34,18 +68,21 @@ recover_dur = [8 8 8 8]; %recovery time post-flash (in s)
 
 numtrials=size(stim_col,1);
 
-%%%%%%%% PTB preliminaries %%%%%%%%%%%%%
+% light_dur = 2; %duration of light stimulus (in s)
+% dark_dur = 0.2; %duration of dark stimulus (in s)
 
-% Calibrate %
-tetio_swirlCalibrate;
+which_screen=1;
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+horz = screenRect(3);
+vert = screenRect(4);
 
-%%%%%%%% countdown to start task %%%%%%%%
+%%%%%%%% countdown to begin test %%%%%%%%%
 for (i = 1:4);
     
     when = GetSecs + 1;
     
-    % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
+  % PRESENT STARTING Screen
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
     if i == 4
        txt = ''; 
     else
@@ -53,70 +90,76 @@ for (i = 1:4);
     end
     Screen('TextSize', BlankScreen, 20);
     Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
 end
 
-%%%%%%%% start the task %%%%%%%%%%%%%%%%%
 
-%%% Check Sync Status %%% 
-WaitSecs(0.5);
-status=tetio_clockSyncState
-if status==0
-    disp('Tracker can''t start, clocks not synchronized.')
-    return
-end
+% *************************************************************************
+%
+% Start tracking and plot the gaze data read from the tracker.
+%
+% *************************************************************************
 
-%habituate to darkness
-WaitSecs(habituation_dur);
 
-for ind=1:numcycles
+
+leftEyeAll = [];
+rightEyeAll = [];
+timeStampAll = [];
+
+for ind=1:numtrials
     
     tetio_startTracking;
     
-    WaitSecs(0.5);
-    timertrialstart(ind) = GetSecs %%% ???
+    WaitSecs(2)
+    %paint light stimulus onscreen
+    Screen('FillRect',win,stim_col(ind,:),[]);
+    Screen('Flip',win);
     
-    %paint stimulus onscreen
-    Screen('FillRect',window,stim_col(ind,:),[]);
-    Screen('Flip',window);
+    %Record Time of Stim. Onset
+    %StimOnSet(ind)=GetSecs;
+    %not sure about the syncing of time so alternatively:
+    StimOnSet(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
     
+    
     %clear stimulus
-    Screen('FillRect',window,[0 0 0]);
-    Screen('Flip',window);
+    Screen('FillRect',win,[0 0 0]);
+    Screen('Flip',win);
    
+    %Record Time Stimulus goes off
+    %StimOff(ind)=GetSecs;
+    StimOff(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    
+    
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
+   [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+   
+    numGazeData = size(lefteye, 2);
+    leftEyeAll = vertcat(leftEyeAll, lefteye(:, 1:numGazeData));
+    rightEyeAll = vertcat(rightEyeAll, righteye(:, 1:numGazeData));
+    timeStampAll = vertcat(timeStampAll, timestamp(:,1));
+
     tetio_stopTracking;
     
-    pupilgazedata=tetio_readGazeData; %% ???
 end
+    
+%[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
 
-% % Save gaze data vectors to file here using e.g:
-csvwrite('gazedataleft.csv', pupilgazedata);
-
-%close tobii connection
+%%% Close Tobii Connection %%%
 tetio_disconnectTracker; 
 tetio_cleanUp;
+
+%DisplayData(leftEyeAll, rightEyeAll );
+
+% % Save gaze data vectors to file here using e.g:
+
+
 
 disp('Program finished.');
 clear Screen;
 
-tstatus
-
-Screen('CloseAll')
-
-catch q
-    ShowCursor
-    sca
-    keyboard
-end
-
-%% Chose where to end up
-
-%cd(startdir) % Directory we started in
-cd(datafile) % Directory in which we save light test data
