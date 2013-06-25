@@ -9,9 +9,7 @@ clc
 clear all
 close all
 
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
-addpath('/Applications/tobiiSDK/matlab//tetio');  
-addpath('/matlab/pupil');
+
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
@@ -47,6 +45,11 @@ end
 
 %%% Connect to Eye Tracker %%%
 tetio_CONNECT;
+
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
 
 %%% Position eyes in front of eye tracker %%%
 SetCalibParams;
@@ -100,11 +103,11 @@ end
 %
 % *************************************************************************
 
-%tetio_startTracking;
 
-% leftEyeAll = [];
-% rightEyeAll = [];
-% timeStampAll = [];
+
+leftEyeAll = [];
+rightEyeAll = [];
+timeStampAll = [];
 
 for ind=1:numcycles
     
@@ -116,9 +119,9 @@ for ind=1:numcycles
     Screen('Flip',win);
     
     %Record Time of Stim. Onset
-    StimOnSet(ind)=GetSecs;
+    %StimOnSet(ind)=GetSecs;
     %not sure about the syncing of time so alternatively:
-    %StimOnSet(ind)=tetio_localToRemoteTime(tetio_localTimeNow())
+    StimOnSet(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
@@ -129,17 +132,20 @@ for ind=1:numcycles
     Screen('Flip',win);
    
     %Record Time Stimulus goes off
-    StimOff(ind)=GetSecs;
-    %StimOff(ind)=tetio_localToRemoteTime(tetio_localTimeNow())
+    %StimOff(ind)=GetSecs;
+    StimOff(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
-    tetio_readGazeData;
-    GazeDataOver(ind)=GazeData;
-    timeover(ind)=timestamp';
-    
+   [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+   
+    numGazeData = size(lefteye, 2);
+    leftEyeAll = vertcat(leftEyeAll, lefteye(:, 1:numGazeData));
+    rightEyeAll = vertcat(rightEyeAll, righteye(:, 1:numGazeData));
+    timeStampAll = vertcat(timeStampAll, timestamp(:,1));
+
     tetio_stopTracking;
     
 end

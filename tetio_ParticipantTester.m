@@ -79,7 +79,13 @@ if strcmp(CALB,'N') == 1 || strcmp(CALB,'n') == 1
 elseif strcmp(CALB,'Y') ==1 || strcmp(CALB, 'y') ==1
     display('Press any key to Calibrate')
     pause
+    %%% Connect ot Racker %%%%
+    tetio_CONNECT;
     %%% Position eyes in front of tracker %%%
+    addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+    addpath('/Applications/tobiiSDK/matlab//tetio');  
+    addpath('/matlab/pupil');
+    
     SetCalibParams;
     TrackStatus;
     %%% Calibrate %%%

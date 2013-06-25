@@ -207,7 +207,8 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
     end
     
 end
-	
+tetio_stopCalib;
+
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
 flipTime = Screen('Flip', win);
