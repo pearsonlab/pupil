@@ -103,9 +103,9 @@ end
 
 
 
-leftEyeAll = [];
-rightEyeAll = [];
-timeStampAll = [];
+leftEyeAll_light = [];
+rightEyeAll_light = [];
+timeStampAll_light = [];
 
 for ind=1:numtrials
     
@@ -140,15 +140,13 @@ for ind=1:numtrials
    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
    
     numGazeData = size(lefteye, 2);
-    leftEyeAll = vertcat(leftEyeAll, lefteye(:, 1:numGazeData));
-    rightEyeAll = vertcat(rightEyeAll, righteye(:, 1:numGazeData));
-    timeStampAll = vertcat(timeStampAll, timestamp(:,1));
+    leftEyeAll_light = vertcat(leftEyeAll_light, lefteye(:, 1:numGazeData));
+    rightEyeAll_light = vertcat(rightEyeAll_light, righteye(:, 1:numGazeData));
+    timeStampAll_light = vertcat(timeStampAll_light, timestamp(:,1));
 
     tetio_stopTracking;
     
 end
-    
-%[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
 
 %%% Close Tobii Connection %%%
 tetio_disconnectTracker; 
