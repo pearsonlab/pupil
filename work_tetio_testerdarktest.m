@@ -116,7 +116,7 @@ for ind=1:numcycles
     %Record Time of Stim. Onset
     %StimOnSet(ind)=GetSecs;
     %not sure about the syncing of time so alternatively:
-    StimOnSet(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    StimOnSet_dark(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
@@ -128,7 +128,7 @@ for ind=1:numcycles
    
     %Record Time Stimulus goes off
     %StimOff(ind)=GetSecs;
-    StimOff(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    StimOff_dark(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     
     %wait recovery time

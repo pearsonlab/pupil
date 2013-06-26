@@ -35,6 +35,16 @@ if isempty(openwins)
     Screen('CloseAll')
     %HideCursor; % turn off mouse cursor
     
+    %%% Connect to Eye Tracker %%%
+tetio_CONNECT;
+
+%%% Position eyes in front of eye tracker %%%
+SetCalibParams;
+TrackStatus;
+
+%%% Calibrate %%%
+tetio_swirlCalibrate;
+    
     %which screen do we display to?
     which_screen=1;
     

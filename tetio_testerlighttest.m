@@ -5,12 +5,6 @@
 %task code to perform a test of the pupillary dark reflex
 %cycle between blank and full white
 
-clc 
-clear all
-close all
-
-
-
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
@@ -119,7 +113,7 @@ for ind=1:numtrials
     %Record Time of Stim. Onset
     %StimOnSet(ind)=GetSecs;
     %not sure about the syncing of time so alternatively:
-    StimOnSet(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    StimOnSet_light(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     %wait the duration of the stimulus
     WaitSecs(stim_dur(ind));
@@ -131,7 +125,7 @@ for ind=1:numtrials
    
     %Record Time Stimulus goes off
     %StimOff(ind)=GetSecs;
-    StimOff(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    StimOff_light(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     
     %wait recovery time
