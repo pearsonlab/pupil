@@ -16,14 +16,7 @@ numargs = ceil(numswitch/2);
 if mod(numswitch, 2) == 0
     numargs = ceil(numswitch/2) +1;
 end
-rr = ones(10, numargs);
-rl = zeros(10, numargs);
-for i = 1:numargs
-    nr = 5+round((10-5).*rand);
-    nl = 5+round((10-5).*rand);
-    rr(1:nr, i) = 0;
-    rl(1:nl, i) = 1;
-end 
+
 switchpick = round(rand);
 xx = 0;
 if switchpick == 0
