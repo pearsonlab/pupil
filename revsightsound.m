@@ -51,6 +51,9 @@ elseif mod(numswitch, 2) == 0 && switchpick == 1
     trialvec((xx(end-1)+1):xx(end)) = x;
 end
 
+
+
+
 %% Setup matrix
 % Prob = input('Probability that correct answer results in correct stimulus [0,1]: ');
 % errorbounds = input('Error bounds on probability (i.e real probability is P +- errorbounds):  ');

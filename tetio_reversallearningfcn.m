@@ -66,7 +66,10 @@ setup_audio
 % setup_geometry
 
 %create task vectors
-tetio_reversallearning
+revsightsound
+
+% Trial vec is a row vector of 1's and 0's. Flag trial # in trialvec at which it switches between%
+trialchange = find(diff(trialvec)~=0)+1;
 
 %%%%%%%% communicate with Tobii %%%%%%%%%
 
@@ -96,7 +99,6 @@ end
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 
 %%%Recording prelims.
-
 
 leftEyeAll_rl = [];
 rightEyeAll_rl = [];
