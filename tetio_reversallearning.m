@@ -1,7 +1,6 @@
 %% Behavior task 1
 %% Initial attempt at task setup
-%% 22-2-2013
-%% Ali Bootwala
+%% Modified version of Ali's original reversallearning
 %% Initialize task
 if exist('trialvec','var') == 1
     clear trialvec x xx
@@ -14,25 +13,25 @@ numargs = ceil(numswitch/2);
 % 1 corresponds to a left stimulus
 % 0 corresponds to a right stimulus
 if mod(numswitch, 2) == 0
-    numargs = ceil(numswitch/2) +1; % Makes the number of arguments even.
+    numargs = ceil(numswitch/2) +1;
 end
 rr = ones(10, numargs);
 rl = zeros(10, numargs);
 for i = 1:numargs
-    nr = 5+round((10-5).*rand); %% Constrains nr to be between 5 and 10.
+    nr = 5+round((10-5).*rand);
     nl = 5+round((10-5).*rand);
-    rr(1:nr, i) = 0; % Insert random 0s into 1 matrix rr
-    rl(1:nl, i) = 1; % Insert random 1s into 0 matrix rl
+    rr(1:nr, i) = 0;
+    rl(1:nl, i) = 1;
 end 
-switchpick = round(rand); % Makes switchpick 1 or 0
+switchpick = round(rand);
 xx = 0;
 if switchpick == 0
     for j = 1:ceil(numswitch/2)
-        x = [rr(find(rr(:, j) == 0), j); rl(find(rl(:, j) == 1), j)]; % x shows us how many times we have 0s in rr and 1s in rl
+        x = [rr(find(rr(:, j) == 0), j); rl(find(rl(:, j) == 1), j)];
         xx(j + 1) = xx(j)+length(x);
         trialvec((xx(j)+1):xx(j+1)) = x;
        % clear x
-    end  
+    end        
 elseif switchpick == 1
     for j = 1:ceil(numswitch/2)
         x = [rl(find(rl(:, j) == 1), j); rr(find(rr(:, j) == 0), j)];
@@ -50,9 +49,6 @@ elseif mod(numswitch, 2) == 0 && switchpick == 1
     xx(end + 1) = xx(end) + length(x);
     trialvec((xx(end-1)+1):xx(end)) = x;
 end
-
-
-
 
 %% Setup matrix
 % Prob = input('Probability that correct answer results in correct stimulus [0,1]: ');
