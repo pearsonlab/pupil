@@ -93,6 +93,8 @@ end
 totTime = 4;        % swirl total display time during calibration
 n_samples_per_pnt = 16;
 calib_not_suc = 1;
+
+
 while calib_not_suc==1;
 	
 	tetio_startCalib;
@@ -107,13 +109,12 @@ WaitSecs(0.5)
         tetio_addCalibPoint(pos(i,1), pos(i,2))
         WaitSecs(0.5);
         
-    tetio_removeCalibPoint(pos(i,1), pos(i,2));
+   
     end
-end
+
     
     
 %% organizes Data to an easier to read format
-
 
 quality = tetio_getCalibPlotData;
 
@@ -182,9 +183,9 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
             
         end
         
-    end     
-
-    pause;
+    end
+    
+end    
     
     try
         tetio_computeCalib;
@@ -192,7 +193,6 @@ CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_S
         disp('give up?')
     end
     
-end
  tetio_stopCalib;
 
 disp('End Of Calibration');

@@ -1,6 +1,6 @@
 %simple function to plot pupil points
 
-function [q,k ]=pupilplots (timeStampAll,rightEyeAll, leftEyeAll, StimOff, StimOnSet);
+function [x,y] = pupilplots(timeStampAll,rightEyeAll, leftEyeAll, StimOff, StimOnSet);
 hold on
 yL = [-1 4];
 k=plot(timeStampAll,rightEyeAll(:,12));
