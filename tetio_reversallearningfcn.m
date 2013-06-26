@@ -1,4 +1,4 @@
-function reversallearningfcn(varargin)
+%function [sndplay, soundtime, presstime] = reversallearningfcn(varargin)
 
 
 %% Set up data files
@@ -66,13 +66,15 @@ setup_audio
 % setup_geometry
 
 %create task vectors
-reversallearning
+tetio_reversallearning
 
 %%%%%%%% communicate with Tobii %%%%%%%%%
+
 
 %% CHECK FOR TOBII CONNECTION
 tetio_CONNECT;
 
+%tetio_swirlCalibrate;
 %%%%%%%% countdown to start task %%%%%%%%
 for (i = 1:4);
     
@@ -93,15 +95,23 @@ end
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 
+%%%Recording prelims.
+
+
+leftEyeAll_rl = [];
+rightEyeAll_rl = [];
+timeStampAll_rl = [];
+
 WaitSecs(0.5);
 
 pressvec = zeros(1, length(trialvec));
 for ind = 1:length(trialvec)
- 
-    timertrialstart(ind) = GetSecs;
+    
+    tetio_startTracking;
+    timertrialstart(ind) = uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     % paint on screen stimulus
-    Screen('FillOval',window,[0 0 255], [horz*.25, vert*.25, horz*.75, vert*.75]) %balloon
+    Screen('FillOval',window,[0 100 30], [horz*.25, vert*.15, horz*.75, vert*.75]) %balloon
     Screen('Flip', window);
     
     
@@ -109,13 +119,16 @@ for ind = 1:length(trialvec)
     press = 0;
     while press == 0
         [secs, KeyCode] = KbWait([], 3);
-    if (find(KeyCode)==79)  %they chose right
+    if (find(KeyCode)==79)%they chose right
+        presstime(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
         pressvec(ind) = 0;
         press = 1;
     elseif (find(KeyCode)==80) %they chose left
+        presstime(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
 	    pressvec(ind) = 1;
         press =2;
     elseif find(KeyCode)==41 %they chose esc to bail out
+        presstime(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
 	    pressvec(ind) = 2;
         press = 3;
 	    %Screen('Closeall')
@@ -124,34 +137,49 @@ for ind = 1:length(trialvec)
     end
     
     
-    if pressvec(ind) == trialvec(ind)
-        PsychPortAudio('DeleteBuffer')
+    if pressvec(ind) == trialvec(ind);
+        PsychPortAudio('DeleteBuffer');
         PsychPortAudio('FillBuffer',pahandle,cashsnd');
         PsychPortAudio('SetLoop',pahandle);
         PsychPortAudio('Start',pahandle);
+        soundtime(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     %tell that cashsound happened
-        sndplay(ind) = 1;
+        sndplay(ind) = 1 % Record 'cash'
     elseif pressvec(ind) ~= trialvec(ind)
         PsychPortAudio('DeleteBuffer')
         PsychPortAudio('FillBuffer',pahandle,popsnd');
         PsychPortAudio('SetLoop',pahandle);
         PsychPortAudio('Start',pahandle);
+        soundtime(ind)=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
       % tell that pop happened
-        sndplay(ind) = 2;
+        sndplay(ind) = 2 % Record 'pop'
     end
+    Screen('FillRect',window, [0 0 0]);
+    Screen('Flip',window);
+    WaitSecs(0.5);
+    
+    %%recording
+    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+   
+    numGazeData = size(lefteye, 2);
+    leftEyeAll_rl = vertcat(leftEyeAll_rl, lefteye(:, 1:numGazeData));
+    rightEyeAll_rl = vertcat(rightEyeAll_rl, righteye(:, 1:numGazeData));
+    timeStampAll_rl = vertcat(timeStampAll_rl, timestamp(:,1));
+
+    tetio_stopTracking;
 end 
     %savedata
 
-Screen('CloseAll')
-
-try 
-catch q
-    ShowCursor
-    sca
-    keyboard
-end
-
-%% Chose where to end up
-
-%cd(startdir) % Directory we started in
-cd(datafile) % Directory in which we save light test data
+Screen('CloseAll');
+%end
+% try 
+% catch q
+%     ShowCursor
+%     sca
+%     keyboard
+% end
+% 
+% %% Chose where to end up
+% 
+% %cd(startdir) % Directory we started in
+% cd(datafile) % Directory in which we save light test data

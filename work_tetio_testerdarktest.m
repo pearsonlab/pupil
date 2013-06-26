@@ -105,9 +105,9 @@ end
 
 
 
-leftEyeAll = [];
-rightEyeAll = [];
-timeStampAll = [];
+leftEyeAll_dark = [];
+rightEyeAll_dark = [];
+timeStampAll_dark = [];
 
 for ind=1:numcycles
     
@@ -142,9 +142,9 @@ for ind=1:numcycles
    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
    
     numGazeData = size(lefteye, 2);
-    leftEyeAll = vertcat(leftEyeAll, lefteye(:, 1:numGazeData));
-    rightEyeAll = vertcat(rightEyeAll, righteye(:, 1:numGazeData));
-    timeStampAll = vertcat(timeStampAll, timestamp(:,1));
+    leftEyeAll_dark = vertcat(leftEyeAll_dark, lefteye(:, 1:numGazeData));
+    rightEyeAll_dark = vertcat(rightEyeAll_dark, righteye(:, 1:numGazeData));
+    timeStampAll_dark = vertcat(timeStampAll_dark, timestamp(:,1));
 
     tetio_stopTracking;
     
