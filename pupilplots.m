@@ -1,10 +1,14 @@
 %simple function to plot pupil points
 %for dark
 
+<<<<<<< HEAD
 yL = [-1 4];
 fig = figure('Name','Pupil During Dark Test'); 
 k=plot(timeStampAll_dark,rightEyeAll_dark(:,12));
 set(k, 'Color', 'm')
+=======
+function [x,y] = pupilplots(timeStampAll,rightEyeAll, leftEyeAll, StimOff, StimOnSet);
+>>>>>>> cef2ed92073e5f44f83c217860baa3c9bd05a800
 hold on
 q=plot(timeStampAll_dark,leftEyeAll_dark(:,12));
 set(q, 'Color', 'b')

@@ -5,10 +5,10 @@
 %task code to perform a test of the pupillary dark reflex
 %cycle between blank and full white
 
-clc 
-clear all
-close all
-
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
 
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
@@ -45,11 +45,6 @@ end
 
 %%% Connect to Eye Tracker %%%
 tetio_CONNECT;
-
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
-addpath('/Applications/tobiiSDK/matlab//tetio');  
-addpath('/matlab/pupil');
 
 %%% Position eyes in front of eye tracker %%%
 SetCalibParams;
