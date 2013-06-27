@@ -7,8 +7,6 @@
 stopkey=KbName('escape');
 spacebar = KbName('space');
 
-
-
 datadoc = strcat(Partnum,'revlearn',numtrial);
 default_data = strcat(datadoc,'_data');
 default_events = strcat(datadoc,'_events');
@@ -42,27 +40,47 @@ oddtrialvec = zeros(length(ntrials),1);
 oddtrialvec(randperm(ntrials,numhigh),1)=1;
 % Run Length Code %
 
-k=[oddtrialvec(diff(oddtrialvec) ~= 0)' oddtrialvec(end)]'; 
-
-num=diff([0 find(diff(oddtrialvec) ~= 0)' length(oddtrialvec)])';
-checkgood=[k num];
+checkgood=[([oddtrialvec(diff(oddtrialvec) ~= 0)' oddtrialvec(end)]') (diff([0 find(diff(oddtrialvec) ~= 0)' length(oddtrialvec)])')];
 
 %%checks to see if the vector is nice
-cont=1; 
-while (cont==1)
-for z=1:length(checkgood);
-    if checkgood(z,1)==0 & checkgood(z,2)<2  || checkgood(z,1)==1 & checkgood(z,2) == 2 
-        cond_check=1; cont=0; 
-    else 
-        cond_check=0;
-    end
+b=checkgood(:,1)==0 & checkgood(:,2)< 2  
+c=checkgood(:,1)==1 & checkgood(:,2) == 2 
+if sum(b) || sum(c) > 0
+    cond_check=1;
+else
+    cond_check=0;
 end
+      
 end
-end
-disp(oddtrialvec)
+
+oddtrialvec
 
 %%% Start the Task %%%
-%%% Randomize when high tones happen %%%
+which_screen=1;
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+horz = screenRect(3);
+vert = screenRect(4);
+
+%%%%%%%% countdown to begin test %%%%%%%%%
+for (i = 1:4);
+    
+    when = GetSecs + 1;
+    
+  % PRESENT STARTING Screen
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+    if i == 4
+       txt = ''; 
+    else
+        txt = num2str(4-i);
+    end
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
+end
+
+
+%%% Start the Task %%%
 for i= 1:length(oddtrialvec);
     
     [ch, when]=GetChar;
@@ -72,7 +90,7 @@ if oddtrialvect==1;
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,4);
-    type(ind)=1;
+    sndtype(ind)=1;
     keypress(i)=ch;
     WaitSecs(1)
 
@@ -81,7 +99,7 @@ else
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,4); 
-    type(ind)=2;
+    sndtype(ind)=2;
     keypress(i)=ch;
     WaitSecs(1)
 end
