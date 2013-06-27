@@ -7,6 +7,15 @@
 stopkey=KbName('escape');
 spacebar = KbName('space');
 
+%%%%%%%% PTB preliminaries %%%%%%%%%%%%%
+warning('off','MATLAB:dispatcher:InexactMatch');
+Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
+Screen('Preference','VisualDebugLevel', 0);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('CloseAll')
+
+%% Create Global Variables
+global Partnum numtrial Partfile
 datadoc = strcat(Partnum,'revlearn',numtrial);
 default_data = strcat(datadoc,'_data');
 default_events = strcat(datadoc,'_events');
@@ -22,14 +31,16 @@ datafile = strcat('/data/pupil/',Partfile);
    
 
 %%%% Sound Parameters %%%%
+
+addpath('/Users/participant/desktop')
     
-[lowsnd,lowF]=wavread('500.wav');
-[highsnd,highF]=wavread('1000.wav');
+[lowsnd,lowF]=wavread('500hz.wav');
+[highsnd,highF]=wavread('1000hz.wav');
 
 InitializePsychSound()
 pahandle=PsychPortAudio('Open',[],[],0,[],1);
 
-ntrials = 30;
+ntrials = 10;
 numhigh = ntrials/5;
 
 cond_check=1;
@@ -43,8 +54,8 @@ oddtrialvec(randperm(ntrials,numhigh),1)=1;
 checkgood=[([oddtrialvec(diff(oddtrialvec) ~= 0)' oddtrialvec(end)]') (diff([0 find(diff(oddtrialvec) ~= 0)' length(oddtrialvec)])')];
 
 %%checks to see if the vector is nice
-b=checkgood(:,1)==0 & checkgood(:,2)< 2  
-c=checkgood(:,1)==1 & checkgood(:,2) == 2 
+b=checkgood(:,1)==0 & checkgood(:,2)< 2; 
+c=checkgood(:,1)==1 & checkgood(:,2) == 2 ;
 if sum(b) || sum(c) > 0
     cond_check=1;
 else
@@ -79,33 +90,46 @@ for (i = 1:4);
     flipTime = Screen('Flip', win, when);
 end
 
+txt1='+'
+Screen('TextSize', BlankScreen, 50);
+   Screen('DrawText', BlankScreen, txt1, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
+
 
 %%% Start the Task %%%
+    recon=1; 
+while recon==1;
+	[ keyIsDown, timeSecs, keyCode ] = KbCheck;
+    keypress=[KbName(keyCode)];
+    startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
+
 for i= 1:length(oddtrialvec);
-    
-    [ch, when]=GetChar;
-    
-if oddtrialvect==1;
+  
+  
+if oddtrialvec(i)==1;
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,4);
-    sndtype(ind)=1;
-    keypress(i)=ch;
-    WaitSecs(1)
-
+    PsychPortAudio('Start',pahandle,1);
+    sndtype(i)=1;
+    WaitSecs(1.4)
 else
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
     PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,4); 
-    sndtype(ind)=2;
-    keypress(i)=ch;
-    WaitSecs(1)
+    PsychPortAudio('Start',pahandle,1); 
+    sndtype(i)=2;
+    WaitSecs(1.4)
+end
+end
+if i==length(oddtrialvec)
+    recon=0;
 end
 end
 
-    
+
+
 
 % Initialization Processes %
 
