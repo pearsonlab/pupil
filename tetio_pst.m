@@ -1,4 +1,4 @@
-function pst(varargin)
+%function [leftEyeAll_pst, rightEyeAll_pst , timeStampAll_pst ] =pst(varargin)
 %task code to perform the pupillary sleep test
 %basically, blank screen and wait
 addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
@@ -64,7 +64,34 @@ end
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
 
-% No countdown? 
+
+leftEyeAll_pst = [];
+rightEyeAll_pst = [];
+timeStampAll_pst = [];
+
+%%% Countdown to task %%%
+which_screen=1;
+[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
+horz = screenRect(3);
+vert = screenRect(4);
+
+%%%%%%%% countdown to begin test %%%%%%%%%
+for (i = 1:4);
+    
+    when = GetSecs + 1;
+    
+  % PRESENT STARTING Screen
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+    if i == 4
+       txt = ''; 
+    else
+        txt = num2str(4-i);
+    end
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
+end
 
 numcycles=2
 

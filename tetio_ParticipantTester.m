@@ -92,7 +92,7 @@ elseif strcmp(CALB,'Y') ==1 || strcmp(CALB, 'y') ==1
     tetio_swirlCalibrate
 end
 
-save('DataStruct','CalibrationData');
+save('PartDataStruct','CalibrationData');
 
 % 
 
@@ -159,7 +159,7 @@ if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
     display('Okay Moving on')
 else
     pause(2)
-    oddball_dev
+    Oddball_Dev;
     display('Check to see if the data has been saved')
     display('Then press any key to continue')
     pause(5)

@@ -200,13 +200,13 @@ for i=1:length(oddtrialvec);
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1);
-    sndtype_odd(i)=1;
+    sndtyp_odd(i)=1;
     else
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1); 
-    sndtype_odd(i)=2;
+    sndtyp_odd(i)=2;
     end
     
     t = GetSecs;
@@ -231,7 +231,8 @@ for i=1:length(oddtrialvec);
 end
 
 %here is where I make something to make sure that thye are not missing any
-%oddballs/pressing the key randomly, etc...
+%oddballs/pressing the key randomly, etc...using sndtype_odd and keyhit to
+%compare that there are no key presses during sndtype_odd==2
 
 ListenChar(0);
 % Stop playback:
