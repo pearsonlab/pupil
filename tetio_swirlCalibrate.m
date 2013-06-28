@@ -32,6 +32,9 @@ vert=screenRect(4);
 
 tetio_CONNECT;
 
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab//tetio');  
+addpath('/matlab/pupil');
 
 % calibration points in [X,Y] coordinates; [0, 0] is top-left corner
 pos = [0.2 0.2;...
@@ -106,7 +109,7 @@ WaitSecs(0.5)
 		disp(position);
 		when0 = GetSecs()+ifi; 
 		StimulusOnsetTime = tetio_swirl(win, totTime, ifi, when0, position, 0);
-        tetio_addCalibPoint(pos(i,1), pos(i,2))
+        tetio_addCalibPoint(pos(i,1), pos(i,2));
         WaitSecs(0.5);
         
    

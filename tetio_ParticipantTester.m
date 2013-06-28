@@ -109,6 +109,7 @@ elseif strcmp(RUNLT,'Y') ==1 || strcmp(RUNLT, 'y') ==1
 end
 
 %% DARK TEST
+tetio_CONNECT;
 TrackStatus;
 RUNDT = input('Would you like to run dark test? (Y/N):    ', 's');
 
@@ -124,6 +125,7 @@ else
 end
 
 %% Reversal Learning
+tetio_CONNECT
 TrackStatus;
 RUNRL = input('Would you like to run Reversal Learning? (Y/N):    ', 's');
 if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1

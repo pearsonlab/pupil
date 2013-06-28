@@ -39,11 +39,11 @@ if isempty(openwins)
 tetio_CONNECT;
 
 %%% Position eyes in front of eye tracker %%%
-SetCalibParams;
-TrackStatus;
+%SetCalibParams;
+%TrackStatus;
 
 %%% Calibrate %%%
-tetio_swirlCalibrate;
+%tetio_swirlCalibrate;
     
     %which screen do we display to?
     which_screen=1;
@@ -179,8 +179,11 @@ for ind = 1:length(trialvec)
     timeStampAll_rl = vertcat(timeStampAll_rl, timestamp(:,1));
 
     tetio_stopTracking;
-end 
-    %savedata
+end
+
+%%% Save Data to File %%%
+%csvwrite(
+
 
 Screen('CloseAll');
 %end

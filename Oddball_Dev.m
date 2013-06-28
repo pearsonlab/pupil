@@ -100,8 +100,8 @@ Screen('TextSize', BlankScreen, 50);
 %%% Start the Task %%%
     recon=1; 
 while recon==1;
-	[ keyIsDown, timeSecs, keyCode ] = KbCheck;
-    keypress=[KbName(keyCode)];
+	
+    
     startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
 
 for i= 1:length(oddtrialvec);
@@ -113,6 +113,8 @@ if oddtrialvec(i)==1;
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1);
     sndtype(i)=1;
+    [ keyIsDown, timeSecs, keyCode ] = KbCheck;
+    keydata=[keyIsDown(i) timeSecs(i) keyCode(i)]
     WaitSecs(1.4)
 else
     PsychPortAudio('DeleteBuffer')
@@ -120,6 +122,8 @@ else
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1); 
     sndtype(i)=2;
+    [keyIsDown, timeSecs, keyCode ] = KbCheck;
+    keydata=[keyIsDown(i) timeSecs(i) keyCode(i)]
     WaitSecs(1.4)
 end
 end
@@ -127,14 +131,6 @@ if i==length(oddtrialvec)
     recon=0;
 end
 end
-
-
-
-
-% Initialization Processes %
-
-
-
 
 
 

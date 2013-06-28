@@ -30,5 +30,15 @@ line([StimOnSet_light(i) StimOnSet_light(i)], yL, 'Color', 'g');
 end
 
 %for reversal learning
+yL = [-1 4];
+fig = figure('Name','Pupil During Reversal Learning'); 
+k=plot(timeStampAll_rl,rightEyeAll_rl(:,12));
+set(k, 'Color', 'm')
+hold on
+q=plot(timeStampAll_rl,leftEyeAll_rl(:,12));
+set(q, 'Color', 'b')
+plwoe=[soundtime' sndplay'];
+    %FINISH THIS, NEED TO PLOT POINTS OF SURPRISE
+
 
 
