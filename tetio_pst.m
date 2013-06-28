@@ -63,6 +63,8 @@ tetio_CONNECT;
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
 
+% No countdown? 
+
 %wait to habituate to start screen
 WaitSecs(habituation_dur);
 
