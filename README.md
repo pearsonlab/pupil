@@ -19,6 +19,10 @@ DrawEyes.m is a function file that draws stimuli at various locations
 on the tobii screen that have been preset by John Pearson and are used
 to calibrate the tobii eye tracker
 
+Oddball_Dev is SDK-based script that plays 500hz tone beeps interspersed randomly 
+with 1000hz tone beeps and records the participant's keyboard input at the 
+oddball, 1000hz tone. (NOTE: do not repeatedly execute before running a participant!)
+
 ParticipantTester.m skeleton file that calls other files to run the
 battery of tests desired by the user. Once Run it will prompt for
 user inputs and should be straightforward for use
@@ -57,7 +61,7 @@ response to the stimuli as the test proceeds and will soon be able to save data 
 patient responses in relation to stimulus desired, stimulus displayed, and stimulus
 heard. This test is not yet fully functional but will be shortly.
 
-revsightsound.m is reversallearning.m with few to no changes.
+revsightsound.m is reversallearning.m with a few minor changes.
 
 setup_audio.m is a short file that initializes the PsychPortAudio player and allows us
 to use the PsychPortAudio and it's low latency high accuracy player for sounds during
@@ -85,9 +89,9 @@ intervals we flash the screen with white and record the pupillary response.
 tetio_CONNECT.m is the SDK compatible version of CONNECT.m.
 
 tetio_ParticipantTester.m is the SDK-based version of ParticipantTester.m. It calls tetio scripts
-to execute the different tasks (calibrate, testerlighttest, testerdarktest, reversallearning, oddball). 
-Prior to tetio_swirlCalibrate it calls TrackStatus, an SDK script that allows the participant to position 
-his or her eyes in front of the eye tracker.
+to execute the different tasks (calibrate, testerlighttest, testerdarktest, reversallearning, oddball,
+pupillary sleep test). Prior to tetio_swirlCalibrate it calls TrackStatus, an SDK script that allows 
+the participant to position his or her eyes in front of the eye tracker.
 
 tetio_check_status.m is SDK compatible script that (1) checks whether the tracker and computer 
 clocks are synched and (2) the connection with Tobii.
@@ -99,15 +103,15 @@ for tetio_reversallearningfcn.m.
 
 tetio_reversallearningfcn.m is the SDK-based version of reversallearningfcn.m.
 
-tetio_swirl.m is the SDK compatible version of swirl.m.
+tetio_swirl.m is the SDK-based version of swirl.m.
 
-tetio_swirlCalibrate.m is the SDK compatible version of calibrate.m.
+tetio_swirlCalibrate.m is the SDK-based version of calibrate.m.
 
-tetio_testerlighttest.m is the SDK compatible version of testerlightest.m.
+tetio_testerlighttest.m is the SDK-based version of testerlightest.m.
 
 tstatus.m is a function similar to check_status.m but instead it prints to the command window
 the actual state of laptop to tobii connection. Run this file to check what exact state of connection
 tobii is in. Whether it is connecting, connnected, calibrating, etc.
 
-work_tetio_testerdarktest.m is the latest version of the SDK compatible testerdarktest.m file. It calibrates
+work_tetio_testerdarktest.m is the latest version of the SDK-based testerdarktest.m file. It calibrates
 and executes testerdarktest.m. 
