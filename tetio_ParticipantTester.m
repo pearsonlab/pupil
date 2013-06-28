@@ -94,7 +94,7 @@ end
 
 %% RUN TESTS
 %% LIGHT TEST
-
+TrackStatus;
 RUNLT = input('Would you like to run light test? (Y/N):    ', 's');
 
 if strcmp(RUNLT,'N') == 1 || strcmp(RUNLT,'n') == 1
@@ -109,7 +109,7 @@ elseif strcmp(RUNLT,'Y') ==1 || strcmp(RUNLT, 'y') ==1
 end
 
 %% DARK TEST
-
+TrackStatus;
 RUNDT = input('Would you like to run dark test? (Y/N):    ', 's');
 
 if strcmp(RUNDT,'N') ==1 || strcmp(RUNDT, 'n') ==1
@@ -124,7 +124,7 @@ else
 end
 
 %% Reversal Learning
-
+TrackStatus;
 RUNRL = input('Would you like to run Reversal Learning? (Y/N):    ', 's');
 if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
     display('Okay Moving on')
