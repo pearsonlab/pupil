@@ -79,7 +79,7 @@ if strcmp(CALB,'N') == 1 || strcmp(CALB,'n') == 1
 elseif strcmp(CALB,'Y') ==1 || strcmp(CALB, 'y') ==1
     display('Press any key to Calibrate')
     pause
-    %%% Connect ot Racker %%%%
+    %%% Connect to Racker %%%%
     tetio_CONNECT;
     %%% Position eyes in front of tracker %%%
     addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
@@ -91,6 +91,10 @@ elseif strcmp(CALB,'Y') ==1 || strcmp(CALB, 'y') ==1
     %%% Calibrate %%%
     tetio_swirlCalibrate
 end
+
+save('DataStruct','CalibrationData');
+
+% 
 
 %% RUN TESTS
 %% LIGHT TEST
@@ -108,6 +112,8 @@ elseif strcmp(RUNLT,'Y') ==1 || strcmp(RUNLT, 'y') ==1
     cd(STARTDIR)
 end
 
+save('PartDataStruct','-append','StimOnSet_light','StimOff_light','leftEyeAll_light','rightEyeAll_light','timeStampAll_light');
+
 %% DARK TEST
 tetio_CONNECT;
 TrackStatus;
@@ -124,6 +130,9 @@ else
     cd(STARTDIR)
 end
 
+save('PartDataStruct','-append','StimOnSet_dark','StimOff_dark','leftEyeAll_dark','rightEyeAll_dark','timeStampAll_dark');
+
+
 %% Reversal Learning
 tetio_CONNECT
 TrackStatus;
@@ -138,6 +147,44 @@ else
     pause(5)
     cd(STARTDIR)
 end
+
+
+save('PartDataStruct','-append','timertrialstart','presstime','soundtime','sndplay','leftEyeAll_rl','rightEyeAll_rl','timeStampAll_rl');
+
+%% OddBall Task 
+tetio_CONNECT
+TrackStatus;
+RUNRL = input('Would you like to run the Oddball Task? (Y/N):    ', 's');
+if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
+    display('Okay Moving on')
+else
+    pause(2)
+    oddball_dev
+    display('Check to see if the data has been saved')
+    display('Then press any key to continue')
+    pause(5)
+    cd(STARTDIR)
+end
+
+save('PartDataStruct','-append','keyhit','sndtyp_odd','leftEyeAll_odd','rightEyeAll_odd','timeStampAll_odd');
+
+
+%% Pupillary Sleep Test (pst)
+tetio_CONNECT
+TrackStatus;
+RUNRL = input('Would you like to run the Pupillary Sleep Test? (Y/N):    ', 's');
+if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
+    display('Okay Moving on')
+else
+    pause(2)
+    tetio_pst
+    display('Check to see if the data has been saved')
+    display('Then press any key to continue')
+    pause(5)
+    cd(STARTDIR)
+end
+
+save('PartDataStruct','-append','leftEyeAll_pst','rightEyeAll_pst','timeStampAll_pst');
 
 %% DONE
 display('FINISHED')
