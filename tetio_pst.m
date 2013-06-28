@@ -6,7 +6,7 @@ addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
 addpath('/Applications/tobiiSDK/matlab//tetio');  
 addpath('/matlab/pupil');
 
-tetio_CONNECT;
+%tetio_CONNECT;
 
 startdir = pwd;
 
@@ -142,6 +142,8 @@ catch q
     sca
     %keyboard
 end
+
+tetio_cleanUp;
 
 %% Chose where to end up
 

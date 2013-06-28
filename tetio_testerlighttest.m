@@ -38,7 +38,7 @@ end
 
 
 %%% Connect to Eye Tracker %%%
-tetio_CONNECT;
+%tetio_CONNECT;
 
 addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
 addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');

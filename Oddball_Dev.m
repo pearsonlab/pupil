@@ -51,7 +51,7 @@ numhigh = ntrials/5;
 cond_check=1;
 ListenChar(2);
 %for now a connection, take this out when Participant tester is complete
-tetio_CONNECT;
+%tetio_CONNECT;
 
 while cond_check==1;
    %%%% Randomization %%%%
@@ -241,5 +241,9 @@ PsychPortAudio('Stop', pahandle);
 % Close the audio device:
 PsychPortAudio('Close', pahandle);
 
+tetio_cleanUp;
+
 disp('Program finished.');
 clear Screen;
+
+

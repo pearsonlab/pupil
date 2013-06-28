@@ -115,7 +115,7 @@ end
 save('PartDataStruct','-append','StimOnSet_light','StimOff_light','leftEyeAll_light','rightEyeAll_light','timeStampAll_light');
 
 %% DARK TEST
-tetio_CONNECT;
+%tetio_CONNECT
 TrackStatus;
 RUNDT = input('Would you like to run dark test? (Y/N):    ', 's');
 
@@ -134,7 +134,7 @@ save('PartDataStruct','-append','StimOnSet_dark','StimOff_dark','leftEyeAll_dark
 
 
 %% Reversal Learning
-tetio_CONNECT
+%tetio_CONNECT
 TrackStatus;
 RUNRL = input('Would you like to run Reversal Learning? (Y/N):    ', 's');
 if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
@@ -152,7 +152,7 @@ end
 save('PartDataStruct','-append','timertrialstart','presstime','soundtime','sndplay','leftEyeAll_rl','rightEyeAll_rl','timeStampAll_rl');
 
 %% OddBall Task 
-tetio_CONNECT
+%tetio_CONNECT
 TrackStatus;
 RUNRL = input('Would you like to run the Oddball Task? (Y/N):    ', 's');
 if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
@@ -170,7 +170,7 @@ save('PartDataStruct','-append','keyhit','sndtyp_odd','leftEyeAll_odd','rightEye
 
 
 %% Pupillary Sleep Test (pst)
-tetio_CONNECT
+%tetio_CONNECT
 TrackStatus;
 RUNRL = input('Would you like to run the Pupillary Sleep Test? (Y/N):    ', 's');
 if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
@@ -188,7 +188,7 @@ save('PartDataStruct','-append','leftEyeAll_pst','rightEyeAll_pst','timeStampAll
 
 %% DONE
 display('FINISHED')
-
+tetio_disconnectTracker;
 
 %% Wrap up participant
 cd(STARTDIR)
