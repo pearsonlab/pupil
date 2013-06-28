@@ -1,6 +1,10 @@
 %% Oddball Task %%
 % Plays tones in a constant stream, participant must detect presence of odd
 % tone 
+
+%%%IF YOU ARE DOING THIS TASK SEVERAL TIMES OVER, you can get the problem
+%%%of an ever reducing number of trials, clear all if that problem comes
+%%%up. 
 %% Unify Key Names
 %KbCheck('UnifyKeyNames') 
 %KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
@@ -13,7 +17,7 @@ Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms
 Screen('Preference','VisualDebugLevel', 0);
 Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('CloseAll')
-ListenChar(2);
+
 
 %% Create Global Variables
 global Partnum numtrial Partfile
@@ -45,6 +49,9 @@ ntrials = 10;
 numhigh = ntrials/5;
 
 cond_check=1;
+ListenChar(2);
+%for now a connection, take this out when Participant tester is complete
+tetio_CONNECT;
 
 while cond_check==1;
    %%%% Randomization %%%%
@@ -73,6 +80,83 @@ which_screen=1;
 horz = screenRect(3);
 vert = screenRect(4);
 
+%%%%%%%%introduce sounds
+BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This is an introduction.'
+    
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win);
+    pause(1.8)
+      
+  BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='You will hear two sounds.'
+    
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win);
+    pause(1.8)
+      
+    
+     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='One of the sounds is the oddball';
+    
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win);
+    pause(1.8)
+    
+    
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='When the task begins press any key on the keyboard when you hear the oddball';
+    
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text, (floor(horz/2)-370), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win);
+    pause(1.8)
+    
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+      for (ze = 1:4);
+    if mod(ze,2)==1;
+    text2='this is the oddball sound'
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text2, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    Screen('Flip', win, when);
+    PsychPortAudio('DeleteBuffer')
+    PsychPortAudio('FillBuffer', pahandle, highsnd');
+    PsychPortAudio('SetLoop',pahandle);
+    PsychPortAudio('Start',pahandle,1);
+    pause(2)
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+    else
+    PsychPortAudio('DeleteBuffer')
+    PsychPortAudio('FillBuffer', pahandle, lowsnd');
+    PsychPortAudio('SetLoop',pahandle);
+    PsychPortAudio('Start',pahandle,1); 
+    text2='this is the regular sound'
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text2, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    Screen('Flip', win, when);
+    pause(2)
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+    end
+      end
+
+BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='The task will begin shortly';
+    
+    Screen('TextSize', BlankScreen, 20);
+    Screen('DrawText', BlankScreen, text, (floor(horz/2)-200), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win);
+    pause(3);
+      
 %%%%%%%% countdown to begin test %%%%%%%%%
 for (i = 1:4);
     
@@ -96,50 +180,65 @@ Screen('TextSize', BlankScreen, 50);
    Screen('DrawText', BlankScreen, txt1, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win, when);
+   
+    
 
 
+leftEyeAll_odd = [];
+rightEyeAll_odd = [];
+timeStampAll_odd = [];
 %%% Start the Task %%%
-    recon=1; 
-    leftEyeAll_oddball = [];
-rightEyeAll_oddball = [];
-timeStampAll_oddball = [];
-    
-    tetio_startTracking;
-while recon==1;
-	
-    
-    startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
 
-for i= 1:length(oddtrialvec);
-  
-  
-if oddtrialvec(i)==1;
+    
+    
+for i=1:length(oddtrialvec);
+    tetio_startTracking;
+    startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
+    tic;
+    if oddtrialvec(i)==1;
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1);
-    sndtype(i)=1;
-    WaitSecs(1.4)
-else
+    sndtype_odd(i)=1;
+    else
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1); 
-    sndtype(i)=2;
+    sndtype_odd(i)=2;
+    end
     
-    WaitSecs(1.4)
+    t = GetSecs;
+    while GetSecs - t < 1.4;
+        [keydown, secs]=KbCheck;
+        if keydown ==1
+            keyhit(i)=[tetio_localToRemoteTime(int64(secs))];
+        end
+    end
+    toc;
+    
+   [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+   
+    numGazeData = size(lefteye, 2);
+    leftEyeAll_odd= vertcat(leftEyeAll_odd, lefteye(:, 1:numGazeData));
+    rightEyeAll_odd = vertcat(rightEyeAll_odd, righteye(:, 1:numGazeData));
+    timeStampAll_odd = vertcat(timeStampAll_odd, timestamp(:,1));
+
+    tetio_stopTracking;
+       
+    
 end
-end
-if i==length(oddtrialvec)
-    recon=0;
-end
-end
-[ch when]=GetChar;
+
+%here is where I make something to make sure that thye are not missing any
+%oddballs/pressing the key randomly, etc...
+
 ListenChar(0);
-
-
 % Stop playback:
 PsychPortAudio('Stop', pahandle);
 
 % Close the audio device:
 PsychPortAudio('Close', pahandle);
+
+disp('Program finished.');
+clear Screen;
