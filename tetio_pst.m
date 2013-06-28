@@ -6,6 +6,8 @@ addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
 addpath('/Applications/tobiiSDK/matlab//tetio');  
 addpath('/matlab/pupil');
 
+tetio_CONNECT;
+
 startdir = pwd;
 
 try
@@ -18,7 +20,7 @@ try
     addpath('/matlab/pupil/code')
 
 %%%%%%%% setup parameters %%%%%%%%%%%%%%
-trial_dur= 30; %duration of test (in s)
+trial_dur= 10; %duration of test (in s)
 habituation_dur = 10; %(in s)
 
 cont = 1;
@@ -59,11 +61,12 @@ end
 %%%%%%%% communicate with Tobii %%%%%%%%%
 
 % CHECK FOR TOBII CONNECTION
-tetio_CONNECT;
 
 %%%%%%%% start the task %%%%%%%%%%%%%%%%%
 
 % No countdown? 
+
+numcycles=2
 
 %wait to habituate to start screen
 WaitSecs(habituation_dur);
