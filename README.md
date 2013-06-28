@@ -57,6 +57,8 @@ response to the stimuli as the test proceeds and will soon be able to save data 
 patient responses in relation to stimulus desired, stimulus displayed, and stimulus
 heard. This test is not yet fully functional but will be shortly.
 
+revsightsound.m is reversallearning.m with few to no changes.
+
 setup_audio.m is a short file that initializes the PsychPortAudio player and allows us
 to use the PsychPortAudio and it's low latency high accuracy player for sounds during
 testing. It is important to use the PsychPortAudio functions because their low latency
@@ -82,8 +84,20 @@ intervals we flash the screen with white and record the pupillary response.
 
 tetio_CONNECT.m is the SDK compatible version of CONNECT.m.
 
+tetio_ParticipantTester.m is the SDK-based version of ParticipantTester.m. It calls tetio scripts
+to execute the different tasks (calibrate, testerlighttest, testerdarktest, reversallearning, oddball). 
+Prior to tetio_swirlCalibrate it calls TrackStatus, an SDK script that allows the participant to position 
+his or her eyes in front of the eye tracker.
+
 tetio_check_status.m is SDK compatible script that (1) checks whether the tracker and computer 
 clocks are synched and (2) the connection with Tobii.
+
+tetio_pst.m is the SDK-based version of pst.m, the pupillary sleep test.
+
+tetio_reversallearning.m is the SDK-based version of reversallearning.m, which creates the trial vector
+for tetio_reversallearningfcn.m.
+
+tetio_reversallearningfcn.m is the SDK-based version of reversallearningfcn.m.
 
 tetio_swirl.m is the SDK compatible version of swirl.m.
 
