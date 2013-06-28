@@ -143,7 +143,7 @@ for ind=1:numtrials
 end
 
 %%% Close Tobii Connection %%%
-tetio_disconnectTracker; 
+%tetio_disconnectTracker; 
 tetio_cleanUp;
 
 %DisplayData(leftEyeAll, rightEyeAll );
