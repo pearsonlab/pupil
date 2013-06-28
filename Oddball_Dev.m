@@ -13,6 +13,7 @@ Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms
 Screen('Preference','VisualDebugLevel', 0);
 Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('CloseAll')
+ListenChar(2);
 
 %% Create Global Variables
 global Partnum numtrial Partfile
@@ -99,6 +100,11 @@ Screen('TextSize', BlankScreen, 50);
 
 %%% Start the Task %%%
     recon=1; 
+    leftEyeAll_oddball = [];
+rightEyeAll_oddball = [];
+timeStampAll_oddball = [];
+    
+    tetio_startTracking;
 while recon==1;
 	
     
@@ -113,8 +119,6 @@ if oddtrialvec(i)==1;
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1);
     sndtype(i)=1;
-    [ keyIsDown, timeSecs, keyCode ] = KbCheck;
-    keydata=[keyIsDown(i) timeSecs(i) keyCode(i)]
     WaitSecs(1.4)
 else
     PsychPortAudio('DeleteBuffer')
@@ -122,8 +126,7 @@ else
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1); 
     sndtype(i)=2;
-    [keyIsDown, timeSecs, keyCode ] = KbCheck;
-    keydata=[keyIsDown(i) timeSecs(i) keyCode(i)]
+    
     WaitSecs(1.4)
 end
 end
@@ -131,8 +134,8 @@ if i==length(oddtrialvec)
     recon=0;
 end
 end
-
-
+[ch when]=GetChar;
+ListenChar(0);
 
 
 % Stop playback:
