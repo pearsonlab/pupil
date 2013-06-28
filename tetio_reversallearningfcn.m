@@ -181,9 +181,10 @@ for ind = 1:length(trialvec)
     tetio_stopTracking;
 end
 
-%%% Save Data to File %%%
-%csvwrite(
+reversalmat = [soundtime' presstime'];
 
+%%% Save Data to File %%%
+csvwrite('reversallearning.csv', reversalmat);
 
 Screen('CloseAll');
 %end
