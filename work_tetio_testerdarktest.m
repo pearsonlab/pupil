@@ -44,14 +44,14 @@ end
 
 
 %%% Connect to Eye Tracker %%%
-tetio_CONNECT;
+%tetio_CONNECT;
 
 %%% Position eyes in front of eye tracker %%%
-SetCalibParams;
-TrackStatus;
+%SetCalibParams;
+%TrackStatus;
 
 %%% Calibrate %%%
-tetio_swirlCalibrate;
+%tetio_swirlCalibrate;
 
 numcycles = 3; %number of light/dark cycles
 flash_dur = 1; %duration of the stimulus flash in secondsreturn
@@ -148,7 +148,7 @@ end
 %[leftEyeAll, rightEyeAll, timeStampAll] = DataCollect(5, 0.4);
 
 %%% Close Tobii Connection %%%
-tetio_disconnectTracker; 
+%tetio_disconnectTracker; 
 tetio_cleanUp;
 
 %DisplayData(leftEyeAll, rightEyeAll );

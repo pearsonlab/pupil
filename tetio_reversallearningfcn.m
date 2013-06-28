@@ -36,7 +36,7 @@ if isempty(openwins)
     %HideCursor; % turn off mouse cursor
     
     %%% Connect to Eye Tracker %%%
-tetio_CONNECT;
+%tetio_CONNECT;
 
 %%% Position eyes in front of eye tracker %%%
 %SetCalibParams;
@@ -185,6 +185,7 @@ reversalmat = [soundtime' presstime'];
 
 %%% Save Data to File %%%
 csvwrite('reversallearning.csv', reversalmat);
+tetio_cleanUp;
 
 Screen('CloseAll');
 %end
