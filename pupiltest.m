@@ -74,6 +74,12 @@ while 1
         case '1'
             stub = 'darktest';
             outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            lightdarktest(0,outfile)
+            continue
+        case '3'
+            stub = 'lighttest';
+            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            lightdarktest(1,outfile)
             continue
         case 'Q'
             break

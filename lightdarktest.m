@@ -93,9 +93,13 @@ for ind=1:numtrials
     
 end
 
+
+
 %tetio_cleanUp; %%%% are we sure we need to do this?
 
-
+% return the screen to dark
+Screen('FillRect',win,[0 0 0],[]);
+Screen('Flip',win);
 
 disp('Program finished.');
 
