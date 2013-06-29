@@ -5,6 +5,12 @@
 %% Initialize Workspace
 clear; clc
 
+%% Take care of path
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab/tetio');  
+addpath('/matlab/pupil');
+
 %% End where we begin
 STARTDIR = pwd; %starting directory
 DATADIR = fullfile(filesep,'data','pupil'); %data directory
@@ -53,8 +59,9 @@ while 1
     
     switch choice
         case '0'
-            outfile = fullfile(subjdir,get_next_fname(subjnum,'calibrate'));
+            stub = 'calibrate';
             numpts = uint16(str2double(input('How many points?: ','s')));
+            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
             [errcode,calibdata] = calibrate(numpts,outfile);
             if errcode == 1
                 disp('Calibration not successful! Try again, perhaps with more points.')
@@ -63,7 +70,10 @@ while 1
                 savedata(subjnum,subjdir,stub,calibdata)
             end
             continue
+            
         case '1'
+            stub = 'darktest';
+            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
             continue
         case 'Q'
             break

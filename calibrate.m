@@ -11,24 +11,8 @@ function [errcode, calibdata] = calibrate(numpts, outfile)
 %switched to tobii sdk summer 2013
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
-warning('off','MATLAB:dispatcher:InexactMatch');
-Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
-Screen('Preference','VisualDebugLevel', 0);
-Screen('Preference', 'SuppressAllWarnings', 1);
-%HideCursor; % turn off mouse cursor
+PTBprelims
 
-% if PTB isn't already running, open a window
-windowPtrs = Screen('Windows');
-if isempty(windowPtrs)
-    %which screen do we display to?
-    which_screen=1;
-    [win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
-else
-    win = windowPtrs(1);
-    screenRect = Screen('Rect',win);
-end
-horz=screenRect(3);
-vert=screenRect(4);
 
 % *************************************************************************
 %
@@ -39,7 +23,7 @@ vert=screenRect(4);
 tetio_CONNECT;
 
 addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
-addpath('/Applications/tobiiSDK/matlab//tetio');
+addpath('/Applications/tobiiSDK/matlab/tetio');
 addpath('/matlab/pupil');
 
 % calibration points in [X,Y] coordinates; [0, 0] is top-left corner
@@ -76,9 +60,6 @@ end
 
 %display onscreen countdown
 countdown
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%							START CALIBRATION
