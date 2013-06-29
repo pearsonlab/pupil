@@ -1,4 +1,4 @@
-function [errcode, caldata] = calibrate(numpts)
+function [errcode, calibdata] = calibrate(numpts, outfile)
 %perform Tobii calibration routine
 % INPUTS:
 % numpts: number of calibration points to use
@@ -15,7 +15,7 @@ warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
 Screen('Preference','VisualDebugLevel', 0);
 Screen('Preference', 'SuppressAllWarnings', 1);
-HideCursor; % turn off mouse cursor
+%HideCursor; % turn off mouse cursor
 
 % if PTB isn't already running, open a window
 windowPtrs = Screen('Windows');
@@ -84,11 +84,9 @@ countdown
 %%							START CALIBRATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 totTime = 4;        % swirl total display time during calibration
-n_samples_per_pnt = 16;
-calib_not_suc = 1;
+calibdone = 0;
 
-
-while calib_not_suc==1;
+while ~calibdone
     
     tetio_startCalib; %tell eyetracker we want to start calibration
     
@@ -99,7 +97,7 @@ while calib_not_suc==1;
         position = pos(i,:);
         disp(position);
         when0 = GetSecs()+ifi;
-        swirl(win, totTime, ifi, when0, position, 0);
+        swirl(win, totTime, ifi, when0, position);
         tetio_addCalibPoint(pos(i,1), pos(i,2));
         WaitSecs(0.5);
     end
@@ -144,12 +142,12 @@ while calib_not_suc==1;
 %     CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];
 
     %%% check the quality of the calibration %%%
-    left_eye_used = find(CalibrationData(:,5) == 1);
+    left_eye_used = CalibrationData(:,5) == 1;
     left_eye_data = CalibrationData(left_eye_used, 1:4);
-    right_eye_used = find(CalibrationData(:,8) == 1);
+    right_eye_used = CalibrationData(:,8) == 1;
     right_eye_data = CalibrationData(right_eye_used, [1,2,6,7]);
     
-    fig = figure('Name','CALIBRATION PLOT');
+    figure('Name','CALIBRATION PLOT');
     scatter(left_eye_data(:,1), left_eye_data(:,2), 'ok', 'filled');
     axis([0 1 0 1]);
     hold on
@@ -157,34 +155,33 @@ while calib_not_suc==1;
     scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
     scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');
     
-    
     %asks if the calibration was good or not
-    cont = 1;
-    while (cont == 1)
-        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
+    while 1
+        tt = input('Enter "R" to retry calibration or "C" to confirm calibration: ','s');
         
-        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
-            cont = 0; calib_not_suc = 1;
-            tetio_stopCalib;
-        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
-            cont = 0; calib_not_suc = 0;
-            try
-                tetio_computeCalib;
-            catch q
-            end
-            
+        switch lower(tt)
+            case 'r'             
+                tetio_stopCalib;
+                break
+            case 'c'
+                try
+                    calibdata = tetio_computeCalib;
+                    calibdone = 1;
+                catch q
+                    errcode = 1;
+                    calibdata = q; %return error info as calibration data
+                    return
+                end
+                break 
         end
-        
     end
     
-    
-    disp('give up?')
 end
 
 tetio_stopCalib;
 
+save(outfile,'numpts','calibdata')
+
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);
-flipTime = Screen('Flip', win);
-cd(startdir)
-%DISCONNECT -- don't disconnect, or calibration will be lost?!
+Screen('Flip', win);

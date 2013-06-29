@@ -29,7 +29,6 @@ while ~subj_chosen
         end
     else
         mkdir(subjdir)
-        cd(subjdir)
         
     end
 end
@@ -49,22 +48,25 @@ menustr = sprintf(strcat('Please select an option:\n', ...
     'Choice:\t'));
 
 %% start the menu loop
-quit = 0;
-while ~quit
+while 1
     choice = input(menustr,'s');
     
     switch choice
         case '0'
+            outfile = fullfile(subjdir,get_next_fname(subjnum,'calibrate'));
             numpts = uint16(str2double(input('How many points?: ','s')));
-            errcode = calibrate(numpts);
+            [errcode,calibdata] = calibrate(numpts,outfile);
             if errcode == 1
                 disp('Calibration not successful! Try again, perhaps with more points.')
             else
                 disp('Calibration successful!')
+                savedata(subjnum,subjdir,stub,calibdata)
             end
             continue
+        case '1'
+            continue
         case 'Q'
-            quit = 1;
+            break
         
         
     end
