@@ -1,21 +1,14 @@
 %countdown.m
-%a file that can be input if we want a countdown from 3
-%at the start of their experiment just call this file before you begin
-% DISPLAY IS WHITE NUMBERS ON BLACK BACKGROUND
+%display countdown on active psychtoolbox screen
 
-
-
-for (i = 1:4);
+WaitSecs(0.2)
+%countdown to start of calibration stims
+for i = 1:4
     
     when = GetSecs + 1;
     
     % PRESENT STARTING Screen
-    %which screen do we display to?
-which_screen=1;
-
-%open window, blank screen
-[BlankScreen, screenRect] = Screen('OpenOffScreenWindow',which_screen,[0 0 0],[],32);
-    %BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
     if i == 4
        txt = ''; 
     else
@@ -23,6 +16,6 @@ which_screen=1;
     end
     Screen('TextSize', BlankScreen, 20);
     Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
+    Screen('CopyWindow', BlankScreen, win);
+    flipTime = Screen('Flip', win, when);
 end

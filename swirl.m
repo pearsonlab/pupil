@@ -1,7 +1,7 @@
-function StimulusOnsetTime=swirl(win, totTime, ifi, when0, position)
+function StimulusOnsetTime=tetio_swirl(win, totTime, ifi, when0, position, flagTobii)
 % StimulusOnsetTime=swirl(win,totTime,ifi,when0,position,flagTobii)
 % This function draws a swirly pattern
-% win is the window handle returned from psyhctoolbox when it iniatialises
+% win is the window handle returned from psychtoolbox when it initializes
 % the screen context that it draws in
 % totTime is the time in seconds that the swirling pattern lasts
 % ifi is the time returned by the Screen('GetFlipInterval') command
@@ -44,39 +44,13 @@ for i=1:100
     Screen('DrawingFinished',win);
     size=round(size-decr);
     angle=angle+ainc;
-    %check validity field - if possible
-    %if eyes not found then display message
-%     if(flagTobii)
-%         sampleTobii = talk2tobii('GET_SAMPLE');
-%         valL = sampleTobii(7);
-%         valR = sampleTobii(8);
-% 
-%         difTime1 = sampleTobii(5)-time01;
-%         difTime2 = sampleTobii(6)-time02;
-%         time01 = sampleTobii(5);
-%         time02 = sampleTobii(6);
-%         
-%         Screen('TextSize', win,20);
-%         Screen('DrawText', win, '*',cx-boundsText(3)/2,cy-boundsText(4)/2,[255 255 250]);
-% DEBUG        
-%         if(difTime1 ~=0 || difTime2 ~=0 )
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'NewSample!',cx,cy,[255 255 250]);
-%         else
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'NO SAMPLE!',cx,cy,[255 255 250]);
-%         end
-%         
-%         if(valR>0 & valL>0)
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'Eyes Not Found!',cx,cy+20,[255 250 250]);
-%         elseif(valR==-1 || valL==-1)
-%             Screen('TextSize', win,10);
-%             Screen('DrawText', win, 'Sample have not been acquired!',cx,cy+20,[255 250 250]);
-%         end
-    end
+    
+    
+    Screen('TextSize', win,20);
+    Screen('DrawText', win, '*',cx-boundsText(3)/2,cy-boundsText(4)/2,[255 255 250]);
+    
     [now StimulusOnsetTime FlipTimestamp Missed Beampos]= Screen('Flip',win, when);
-    when = StimulusOnsetTime+dt-ifi;    
+    when = StimulusOnsetTime+dt-ifi;
 end
 
 
@@ -92,3 +66,4 @@ for i=1:sides
     vert(i,2)=cy+size*sin(angle+2*pi*(i-1)/sides);
 end
 Screen('FillPoly', win, color, vert);
+return
