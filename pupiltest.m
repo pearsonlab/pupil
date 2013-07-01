@@ -6,10 +6,15 @@
 clear; clc; sca
 
 %% Take care of path
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
-addpath('/Applications/tobiiSDK/matlab/tetio');  
-addpath('/matlab/pupil');
+if ispc
+    addpath('C:\Users\pearson\Documents\MATLAB\tobiiSDK')
+    addpath('C:\Users\pearson\Documents\GitHub\pupil')
+else
+    addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+    addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+    addpath('/Applications/tobiiSDK/matlab/tetio');
+    addpath('/matlab/pupil');
+end
 
 %% End where we begin
 STARTDIR = pwd; %starting directory
