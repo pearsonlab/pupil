@@ -64,31 +64,34 @@ countdown
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%							START CALIBRATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-totTime = 4;        % swirl total display time during calibration
+totTime = 2;        % swirl total display time during calibration
 calibdone = 0;
 
 while ~calibdone
     
     tetio_startCalib; %tell eyetracker we want to start calibration
     
-    WaitSecs(0.5)
+    WaitSecs(0.5);
     
     %loop over calibration points
-    for i = 1:numpoints 
+    for i = 1:numpts 
         position = pos(i,:);
-        disp(position);
+        %disp(position);
         when0 = GetSecs()+ifi;
         swirl(win, totTime, ifi, when0, position);
         tetio_addCalibPoint(pos(i,1), pos(i,2));
         WaitSecs(0.5);
     end
     
-    
+    %blank screen
+    Screen('CopyWindow', BlankScreen, win);
+    Screen('Flip', win);
     
     %% organizes Data to an easier to read format
     
     quality = tetio_getCalibPlotData;
     CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
+    keyboard
     
     %%% Organize data %%%
 %     a = [1 2 3 4 5 6 7 8];
@@ -148,12 +151,13 @@ while ~calibdone
                 try
                     calibdata = tetio_computeCalib;
                     calibdone = 1;
+                    break
                 catch q
                     errcode = 1;
                     calibdata = q; %return error info as calibration data
+                    tetio_stopCalib;
                     return
                 end
-                break 
         end
     end
     

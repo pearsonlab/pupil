@@ -22,7 +22,7 @@ if (strcmp(trackerId, 'NOTSET'));
 		disp(trackerinfo(i).ProductId);
 	end
 
-	tetio_cleanUp();
+	%tetio_cleanUp();
 	error('Error: the variable trackerId has not been set. Edit the EyeTrackingSample.m script and replace "NOTSET" with your tracker id (should be in the list above) before running this script again.');
 end
 
@@ -38,7 +38,7 @@ fprintf('Frame rate: %d Hz.\n', currentFrameRate);
 WaitSecs(3);
 
 
-tetio_localToRemoteTime(tetio_localTimeNow())
+tetio_localToRemoteTime(tetio_localTimeNow());
 
 
 %%look for synchronization

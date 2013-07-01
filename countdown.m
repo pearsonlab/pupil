@@ -1,7 +1,7 @@
 %countdown.m
 %display countdown on active psychtoolbox screen
 
-WaitSecs(0.2)
+WaitSecs(0.2);
 %countdown to start of calibration stims
 for i = 1:4
     
