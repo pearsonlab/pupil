@@ -2,7 +2,11 @@
 % helper script to go find open psychtoolbox windows and either get
 % dimensions or initialize
 
-which_screen = 1;
+if ispc
+    which_screen = 2;
+else
+    which_screen = 1;
+end
 
 % if PTB isn't already running, open a window
 windowPtrs = Screen('Windows');

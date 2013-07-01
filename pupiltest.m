@@ -18,7 +18,11 @@ end
 
 %% End where we begin
 STARTDIR = pwd; %starting directory
-DATADIR = fullfile(filesep,'data','pupil'); %data directory
+if ispc
+    DATADIR = 'C:\Users\pearson\Documents\data\pupil';
+else
+    DATADIR = fullfile(filesep,'data','pupil'); %data directory
+end
 
 %% get subject details, check to see if files exist
 while 1
