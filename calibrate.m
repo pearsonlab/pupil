@@ -64,7 +64,7 @@ countdown
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%							START CALIBRATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-totTime = 2;        % swirl total display time during calibration
+totTime = 4;        % swirl total display time during calibration
 calibdone = 0;
 
 while ~calibdone
@@ -80,8 +80,12 @@ while ~calibdone
         when0 = GetSecs()+ifi;
         swirl(win, totTime, ifi, when0, position);
         tetio_addCalibPoint(pos(i,1), pos(i,2));
-        WaitSecs(0.2);
+        WaitSecs(0.5);
     end
+    
+    
+    quality = tetio_getCalibPlotData;
+    CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
     
     try
         calibdata = tetio_computeCalib;
@@ -97,8 +101,8 @@ while ~calibdone
     
     %% organizes Data to an easier to read format
     
-    quality = tetio_getCalibPlotData;
-    CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
+    %quality = tetio_getCalibPlotData;
+    %CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
     
     %%% Organize data %%%
 %     a = [1 2 3 4 5 6 7 8];
@@ -145,8 +149,6 @@ while ~calibdone
     scatter(right_eye_data(:,1), right_eye_data(:,2), 'ok', 'filled');
     scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
     scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');
-    
-    keyboard
     
     %asks if the calibration was good or not
     while 1
