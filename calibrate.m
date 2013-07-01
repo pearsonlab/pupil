@@ -80,8 +80,16 @@ while ~calibdone
         when0 = GetSecs()+ifi;
         swirl(win, totTime, ifi, when0, position);
         tetio_addCalibPoint(pos(i,1), pos(i,2));
-        WaitSecs(0.5);
+        WaitSecs(0.2);
     end
+    
+    try
+        calibdata = tetio_computeCalib;
+    catch q
+        errcode = 1;
+        calibdata = q; %return error info as calibration data
+    end
+    
     
     %blank screen
     Screen('CopyWindow', BlankScreen, win);
@@ -91,7 +99,6 @@ while ~calibdone
     
     quality = tetio_getCalibPlotData;
     CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
-    keyboard
     
     %%% Organize data %%%
 %     a = [1 2 3 4 5 6 7 8];
@@ -139,25 +146,18 @@ while ~calibdone
     scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
     scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');
     
+    keyboard
+    
     %asks if the calibration was good or not
     while 1
         tt = input('Enter "R" to retry calibration or "C" to confirm calibration: ','s');
         
         switch lower(tt)
             case 'r'             
-                tetio_stopCalib;
                 break
             case 'c'
-                try
-                    calibdata = tetio_computeCalib;
-                    calibdone = 1;
-                    break
-                catch q
-                    errcode = 1;
-                    calibdata = q; %return error info as calibration data
-                    tetio_stopCalib;
-                    return
-                end
+                calibdone = 1;
+                break
         end
     end
     
