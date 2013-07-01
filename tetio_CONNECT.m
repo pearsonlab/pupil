@@ -1,10 +1,5 @@
 %% CONNECT TO TOBII TRACKER
-%%%% If not working, try again - can be finicky.
 
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
-addpath('/Applications/tobiiSDK/matlab//tetio');  
-addpath('/matlab/pupil');
-% Repushing
 % *************************************************************************
 %
 % Initialization and connection to the Tobii Eye-tracker

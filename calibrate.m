@@ -1,39 +1,33 @@
-%jmp modified eye calibration routine for Tobii
+function [errcode, calibdata] = calibrate(numpts, outfile)
+%perform Tobii calibration routine
+% INPUTS:
+% numpts: number of calibration points to use
+% OUTPUTS:
+% errcode = 0 (calibration worked), 1 (something went wrong)
+% caldata: calibration data to be saved to file
+
 %based on David Paulsen's version
-%first created 8-1-12
-startdir = pwd;
-addpath /Users/participant/t2t/lib/
+%modded jmp 8-1-12 and thereafter
+%switched to tobii sdk summer 2013
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
-warning('off','MATLAB:dispatcher:InexactMatch');
-Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
-Screen('Preference','VisualDebugLevel', 0);
-Screen('Preference', 'SuppressAllWarnings', 1);
-Screen('CloseAll')
-%HideCursor; % turn off mouse cursor
+PTBprelims
 
-%which screen do we display to?
-which_screen=1;
 
-%open window, blank screen
-[window, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
-horz=screenRect(3);
-vert=screenRect(4);
+% *************************************************************************
+%
+% Initialization and connection to the Tobii Eye-tracker
+%
+% *************************************************************************
 
-%connect to Tobii
-CONNECT
+tetio_CONNECT;
 
-% CHECK FOR TOBII CONNECTION
-cond_res = check_status(2, 10, 1, 1); % check slot 2 (connected), wait 10 seconds max, in 1 sec intervals.
-tmp = find(cond_res==0, 1);
-if( ~isempty(tmp) )
-	display('tobii not connected');
-	return
-end
-
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/tetio');
+addpath('/matlab/pupil');
 
 % calibration points in [X,Y] coordinates; [0, 0] is top-left corner
-pos = [0.2 0.2;...
+pos = [0.2 0.2;
     0.5 0.2;
     0.8 0.2;
     0.2 0.5;
@@ -42,113 +36,133 @@ pos = [0.2 0.2;...
     0.2 0.8;
     0.5 0.8;
     0.8 0.8];
-numpoints = size(pos,1);
-pos=pos(randperm(numpoints),:); %shuffle calibration point order
+
+% define some special subsets of pts
+switch numpts
+    case {1, 2, 3}
+        disp('Warning! Calibrating with fewer than four points may result in poor calibration!')
+    case 4
+        idx = [1 3 7 9]; % 4-point calibration uses corners
+    case 5
+        idx = [1 3 5 7 9]; % 5-pt calibration uses corners + center
+    case 6
+        idx = [1 2 3 7 8 9]; % 6-pt calibration uses top and bottom rows
+    otherwise
+        idx = randperm(size(pos,1),numpts); % get a random subset of points
+end
+
+idx = Shuffle(idx); %randomize point order
+pos = pos(idx,:); %take only points we need
 
 if ~ exist('ifi','var')
-	ifi = Screen('GetFlipInterval',window,100);
+    ifi = Screen('GetFlipInterval',win,100);
 end
 
-%need to add input of subject number
-if ( exist('subjectNumber', 'var') )
-	calFileName = ['./calibrations/', num2str(subjectNumber), '.cal'];
-else
-	calFileName = './calibrations/generic.cal';
-end
-
-%countdown to start of calibration stims
-for (i = 1:4);
-    
-    when = GetSecs + 1;
-    
-    % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
-    if i == 4
-       txt = ''; 
-    else
-        txt = num2str(4-i);
-    end
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
-end
-
-
-
-
+%display onscreen countdown
+countdown
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%							START CALIBRATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%display stimulus in the four corners of the screen
 totTime = 4;        % swirl total display time during calibration
-n_samples_per_pnt = 16;
-calib_not_suc = 1;
-while calib_not_suc
-	% TALK2TOBII('START_CALIBRATION', calib_pnts, clear_prev, n_samples, [,filename]);
-	talk2tobii('START_CALIBRATION', pos, 1, n_samples_per_pnt);  % tetio_startCalib()
-	%talk2tobii('START_CALIBRATION', pos, 1,n_samples_per_pnt,calFileName);
-	%had trouble with previous line (writing to file)
-	WaitSecs(0.5);
-	%% It is wrong to try to check the status here because the
-	%% eyetracker waits for an 'ADD_CALIBRATION_POINT' and 'DREW_POINT'.
+calibdone = 0;
 
-	for i=1:numpoints
-		position = pos(i,:);
-		% disp(position);
-		when0 = GetSecs()+ifi;
-		talk2tobii('ADD_CALIBRATION_POINT'); %tetio_addCalibPoint()
-		StimulusOnsetTime = swirl(window, totTime, ifi, when0, position, 1);
-		talk2tobii('DREW_POINT'); %maybe built into tetio_adCalibPoint()?? %% tetio_removeCalibPoint()
-		WaitSecs(0.5);    
-	end
-	
-	cond_res = check_status(11, 90, 1, 1); % check slot 11 (calibration finished), wait 90 seconds, check in 1 sec intervals, for code 1)
-	tmp = find(cond_res==0, 1);
-	if( ~isempty(tmp) )
-		display('calibration failed');
-		error('check_status has failed- CALIBRATION');
-	end
-
-	%check quality of calibration
-	quality = talk2tobii('CALIBRATION_ANALYSIS');%% 
-    quality(:,5)=sign(quality(:,5)); %kludge added by JMP because returned values were outlandisly high 10-24-12
-    quality(:,8)=sign(quality(:,8));
-    cd(startdir)
-
-	% check the quality of the calibration
-	left_eye_used = find(quality(:,5) == 1);
-	left_eye_data = quality(left_eye_used, 1:4);
-	right_eye_used = find(quality(:,8) == 1);
-	right_eye_data = quality(right_eye_used, [1,2,6,7]);
-	
-	fig = figure('Name','CALIBRATION PLOT'); 
-	scatter(left_eye_data(:,1), left_eye_data(:,2), 'ok', 'filled');
-	axis([0 1 0 1]);		
-	hold on
-	scatter(right_eye_data(:,1), right_eye_data(:,2), 'ok', 'filled');
-	scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
-	scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');		
-	
-    cont = 1;
-    while (cont == 1)
-        tt= input('enter "R" to retry calibration or "C" to continue to testing\n','s');
-        
-        if ( strcmpi(tt,'R') || strcmpi(tt,'r') )
-            cont = 0; calib_not_suc = 1;
-        elseif ( strcmpi(tt,'C') || strcmpi(tt,'c') )
-            cont = 0; calib_not_suc = 0;
-        end
-        
-    end
-    % close figure if still open, if not, nothing (attempts to close nonhandle returns error)
-    if ishghandle(fig); close(fig);end
-        
+while ~calibdone
     
-end % END CALIBRATION
+    tetio_startCalib; %tell eyetracker we want to start calibration
+    
+    WaitSecs(0.5)
+    
+    %loop over calibration points
+    for i = 1:numpoints 
+        position = pos(i,:);
+        disp(position);
+        when0 = GetSecs()+ifi;
+        swirl(win, totTime, ifi, when0, position);
+        tetio_addCalibPoint(pos(i,1), pos(i,2));
+        WaitSecs(0.5);
+    end
+    
+    
+    
+    %% organizes Data to an easier to read format
+    
+    quality = tetio_getCalibPlotData;
+    CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
+    
+    %%% Organize data %%%
+%     a = [1 2 3 4 5 6 7 8];
+%     a = a';
+%     organizevector = repmat(a, ((length(quality))/8), 1);
+%     organized_quality = horzcat(quality, organizevector);
+%     
+%     trueXpos=find(organized_quality(:,2)==1);
+%     True_X=organized_quality((trueXpos),1);
+%     
+%     trueYpos=find(organized_quality(:,2)==2);
+%     True_Y=organized_quality((trueYpos),1);
+%     
+%     leftXpos=find(organized_quality(:,2)==3);
+%     Left_X=organized_quality((leftXpos),1);
+%     
+%     leftYpos=find(organized_quality(:,2)==4);
+%     Left_Y=organized_quality((leftYpos),1);
+%     
+%     leftstat=find(organized_quality(:,2)==5);
+%     Left_Status=organized_quality((leftstat),1);
+%     
+%     rightXpos=find(organized_quality(:,2)==6);
+%     Right_X=organized_quality((rightXpos),1);
+%     
+%     rightYpos=find(organized_quality(:,2)==7);
+%     Right_Y=organized_quality((rightYpos),1);
+%     
+%     rightstat=find(organized_quality(:,2)==8);
+%     Right_Status=organized_quality((rightstat),1);
+%     
+%     CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];
+
+    %%% check the quality of the calibration %%%
+    left_eye_used = CalibrationData(:,5) == 1;
+    left_eye_data = CalibrationData(left_eye_used, 1:4);
+    right_eye_used = CalibrationData(:,8) == 1;
+    right_eye_data = CalibrationData(right_eye_used, [1,2,6,7]);
+    
+    figure('Name','CALIBRATION PLOT');
+    scatter(left_eye_data(:,1), left_eye_data(:,2), 'ok', 'filled');
+    axis([0 1 0 1]);
+    hold on
+    scatter(right_eye_data(:,1), right_eye_data(:,2), 'ok', 'filled');
+    scatter(left_eye_data(:,3), left_eye_data(:,4), '+g');
+    scatter(right_eye_data(:,3), right_eye_data(:,4), 'xb');
+    
+    %asks if the calibration was good or not
+    while 1
+        tt = input('Enter "R" to retry calibration or "C" to confirm calibration: ','s');
+        
+        switch lower(tt)
+            case 'r'             
+                tetio_stopCalib;
+                break
+            case 'c'
+                try
+                    calibdata = tetio_computeCalib;
+                    calibdone = 1;
+                catch q
+                    errcode = 1;
+                    calibdata = q; %return error info as calibration data
+                    return
+                end
+                break 
+        end
+    end
+    
+end
+
+tetio_stopCalib;
+
+save(outfile,'numpts','calibdata')
+
 disp('End Of Calibration');
-Screen('CopyWindow', BlankScreen, window);
-flipTime = Screen('Flip', window);
-cd(startdir)
-%DISCONNECT -- don't disconnect, or calibration will be lost?!
+Screen('CopyWindow', BlankScreen, win);
+Screen('Flip', win);

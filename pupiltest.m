@@ -1,11 +1,96 @@
-% Patient Tester
-% Adapted from Ali's version by Anna and Anna
-% 06/24/2013
+% pupiltest.m
+% Created by Ali Bootwala
+% 11/23/2012
+% renamed jmp 2013-06-29
 %% Initialize Workspace
 clear; clc
 
+%% Take care of path
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+addpath('/Applications/tobiiSDK/matlab/tetio');  
+addpath('/matlab/pupil');
+
 %% End where we begin
-STARTDIR = pwd;
+STARTDIR = pwd; %starting directory
+DATADIR = fullfile(filesep,'data','pupil'); %data directory
+
+%% get subject details, check to see if files exist
+subj_chosen = 0;
+while ~subj_chosen
+    subjstr = input(sprintf('Please enter subject number: '),'s');
+    subjnum = uint16(str2double(subjstr)); %convert to integer
+    
+    % check to see whether subject directory exists
+    subjdir = fullfile(DATADIR,subjstr);
+    if exist(subjdir,'dir')
+        disp('Warning: Subject directory already exists! Previous data will not be overwritten.')
+        newsub = input('Do you wish to choose a new subject number (y/n)?:  ','s');
+        
+        switch lower(newsub)
+            case 'y'
+                continue
+            case 'n'
+                subj_chosen = 1;
+        end
+    else
+        mkdir(subjdir)
+        
+    end
+end
+%% set up menus
+
+menustr = sprintf(strcat('Please select an option:\n', ...
+    '-------------------------------------------\n', ...
+    '0) Calibrate Subject\n', ...
+    '1) Dark Test\n', ...
+    '2) Pupillary Sleep Test\n', ...
+    '3) Light Test\n', ...
+    '4) Reversal Learning\n', ...
+    '5) Oddball\n', ...
+    '6) Surprise\n', ...
+    '7) Run All\n', ...
+    'Q) Quit\n\n', ...
+    'Choice:\t'));
+
+%% start the menu loop
+while 1
+    choice = input(menustr,'s');
+    
+    switch choice
+        case '0'
+            stub = 'calibrate';
+            numpts = uint16(str2double(input('How many points?: ','s')));
+            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            [errcode,calibdata] = calibrate(numpts,outfile);
+            if errcode == 1
+                disp('Calibration not successful! Try again, perhaps with more points.')
+            else
+                disp('Calibration successful!')
+                savedata(subjnum,subjdir,stub,calibdata)
+            end
+            continue
+            
+        case '1'
+            stub = 'darktest';
+            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            lightdarktest(0,outfile)
+            continue
+        case '3'
+            stub = 'lighttest';
+            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            lightdarktest(1,outfile)
+            continue
+        case 'Q'
+            break
+        
+        
+    end
+    
+    
+end
+
+
 %% Create Global Variables
 global Partnum numtrial Partfile
 
@@ -79,116 +164,57 @@ if strcmp(CALB,'N') == 1 || strcmp(CALB,'n') == 1
 elseif strcmp(CALB,'Y') ==1 || strcmp(CALB, 'y') ==1
     display('Press any key to Calibrate')
     pause
-    %%% Connect to Racker %%%%
-    tetio_CONNECT;
-    %%% Position eyes in front of tracker %%%
-    addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
-    addpath('/Applications/tobiiSDK/matlab//tetio');  
-    addpath('/matlab/pupil');
-    
-    SetCalibParams;
-    TrackStatus;
-    %%% Calibrate %%%
-    tetio_swirlCalibrate
+    calibrate
 end
-
-save('PartDataStruct','CalibrationData');
-
-% 
 
 %% RUN TESTS
 %% LIGHT TEST
-TrackStatus;
+
 RUNLT = input('Would you like to run light test? (Y/N):    ', 's');
 
 if strcmp(RUNLT,'N') == 1 || strcmp(RUNLT,'n') == 1
     display('Okay Moving on')
 elseif strcmp(RUNLT,'Y') ==1 || strcmp(RUNLT, 'y') ==1
     pause(2)
-    tetio_testerlighttest
+    testerlighttest
     display('Check to see if the data has been saved')
     display('Then press any key to continue')
     pause
     cd(STARTDIR)
 end
 
-save('PartDataStruct','-append','StimOnSet_light','StimOff_light','leftEyeAll_light','rightEyeAll_light','timeStampAll_light');
-
 %% DARK TEST
-%tetio_CONNECT
-TrackStatus;
+
 RUNDT = input('Would you like to run dark test? (Y/N):    ', 's');
 
 if strcmp(RUNDT,'N') ==1 || strcmp(RUNDT, 'n') ==1
     display('Okay Moving on')
 else
     pause(2)
-    work_tetio_testerdarktest
+    testerdarktest
     display('Check to see if the data has been saved')
     display('Then press any key to continue')
     pause
     cd(STARTDIR)
 end
 
-save('PartDataStruct','-append','StimOnSet_dark','StimOff_dark','leftEyeAll_dark','rightEyeAll_dark','timeStampAll_dark');
-
-
 %% Reversal Learning
-%tetio_CONNECT
-TrackStatus;
+
 RUNRL = input('Would you like to run Reversal Learning? (Y/N):    ', 's');
 if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
     display('Okay Moving on')
 else
     pause(2)
-    tetio_reversallearningfcn
+    reversallearningfcn
     display('Check to see if the data has been saved')
     display('Then press any key to continue')
     pause(5)
     cd(STARTDIR)
 end
-
-
-save('PartDataStruct','-append','timertrialstart','presstime','soundtime','sndplay','leftEyeAll_rl','rightEyeAll_rl','timeStampAll_rl');
-
-%% OddBall Task 
-%tetio_CONNECT
-TrackStatus;
-RUNRL = input('Would you like to run the Oddball Task? (Y/N):    ', 's');
-if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
-    display('Okay Moving on')
-else
-    pause(2)
-    Oddball_Dev;
-    display('Check to see if the data has been saved')
-    display('Then press any key to continue')
-    pause(5)
-    cd(STARTDIR)
-end
-
-save('PartDataStruct','-append','keyhit','sndtyp_odd','leftEyeAll_odd','rightEyeAll_odd','timeStampAll_odd');
-
-
-%% Pupillary Sleep Test (pst)
-%tetio_CONNECT
-TrackStatus;
-RUNRL = input('Would you like to run the Pupillary Sleep Test? (Y/N):    ', 's');
-if strcmp(RUNRL,'N') ==1 || strcmp(RUNRL, 'n') ==1
-    display('Okay Moving on')
-else
-    pause(2)
-    tetio_pst
-    display('Check to see if the data has been saved')
-    display('Then press any key to continue')
-    pause(5)
-    cd(STARTDIR)
-end
-
-save('PartDataStruct','-append','leftEyeAll_pst','rightEyeAll_pst','timeStampAll_pst');
 
 %% DONE
 display('FINISHED')
-tetio_disconnectTracker;
+
 
 %% Wrap up participant
 cd(STARTDIR)
