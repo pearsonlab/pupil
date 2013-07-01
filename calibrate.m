@@ -81,24 +81,20 @@ while ~calibdone
         WaitSecs(0.2);
     end
     
-    WaitSecs(1); %let Tobii catch up
-    
-    try
-        tetio_computeCalib;
-    catch q
-        errcode = 1;
-        CalibrationData = q; %return error info as calibration data
-    end
-    
-    
     %blank screen
     Screen('CopyWindow', BlankScreen, win);
     Screen('Flip', win);
     
-    %% organizes Data to an easier to read format
+    WaitSecs(1); %let Tobii catch up
     
-    quality = tetio_getCalibPlotData;
-    CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
+    try
+        tetio_computeCalib;
+        quality = tetio_getCalibPlotData;
+        CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
+    catch q
+        errcode = 1;
+        CalibrationData = []; %return error info as calibration data
+    end
 
     %%% check the quality of the calibration %%%
     left_eye_used = CalibrationData(:,5) == 1;

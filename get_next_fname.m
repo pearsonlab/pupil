@@ -1,7 +1,10 @@
-function fname = get_next_fname(sub,stub)
+function fname = get_next_fname(datadir,sub,stub)
 % files for pupiltest are named <sub>.<version>.<stub>.pupiltest.mat
 % this function calculates version from files in current directory and
 % returns string of filename
+
+startdir = pwd;
+cd(datadir)
 
 % list contents of directory
 flist = dir;
@@ -19,4 +22,8 @@ lastver = max(str2double(match));
 % increment
 ver = uint16(lastver) + 1;
 
-fname = strcat(num2str(sub),'.',num2str(ver),'.',num2str(stub),'.pupiltest.mat');
+fpart = strcat(num2str(sub),'.',num2str(ver),'.',num2str(stub),'.pupiltest.mat');
+
+fname = fullfile(datadir,fpart);
+
+cd(startdir)

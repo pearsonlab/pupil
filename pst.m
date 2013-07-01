@@ -1,4 +1,6 @@
 function pst(duration,outfile)
+%duration is in seconds
+
 
 % set up windows, etc.
 PTBprelims
@@ -14,11 +16,12 @@ tetio_startTracking;
 
 WaitSecs(duration)
 
-data.gazedata = tetio_readGazeData;
-
 tetio_stopTracking;
-    
 
-%tetio_cleanUp; %%%% not sure we need this: jmp
-
+% read and save data
+[lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+data.lefteye = lefteye;
+data.righteye = righteye;
+data.timestamp = timestamp;
+data.trig = trigSignal;
 save(outfile,'duration','data');

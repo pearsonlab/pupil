@@ -71,24 +71,21 @@ for ind=1:numtrials
    
     %Record Time Stimulus goes off
     %StimOff(ind)=GetSecs;
-    data(ind).offtime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    data(ind).offtime=tetio_localToRemoteTime(tetio_localTimeNow());
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
     
-    %read eye data
-    data(ind).gazedata = tetio_readGazeData;
-    
-%     [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
-%    
-%     numGazeData = size(lefteye, 2);
-%     leftEyeAll_light = vertcat(leftEyeAll_light, lefteye(:, 1:numGazeData));
-%     rightEyeAll_light = vertcat(rightEyeAll_light, righteye(:, 1:numGazeData));
-%     timeStampAll_light = vertcat(timeStampAll_light, timestamp(:,1));
-
     tetio_stopTracking;
     
+    %read eye data
+    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+    
     %%%% save data each trial %%%%%%
+    data(ind).lefteye = lefteye;
+    data(ind).righteye = righteye;
+    data(ind).timestamp = timestamp;
+    data(ind).trig = trigSignal;
     save(outfile,'data','task')
     
 end

@@ -70,7 +70,7 @@ while 1
         case '0'
             stub = 'calibrate';
             numpts = uint16(str2double(input('How many points?: ','s')));
-            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            outfile = get_next_fname(subjdir,subjnum,stub);
             [errcode,calibdata] = calibrate(numpts,outfile);
             if errcode == 1
                 clc
@@ -83,12 +83,18 @@ while 1
             
         case '1'
             stub = 'darktest';
-            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            outfile = get_next_fname(subjdir,subjnum,stub);
             lightdarktest(0,outfile)
+            continue
+        case '2'
+            stub = 'pst';
+            pstdur = 120;
+            outfile = get_next_fname(subjdir,subjnum,stub);
+            pst(pstdur,outfile)
             continue
         case '3'
             stub = 'lighttest';
-            outfile = fullfile(subjdir,get_next_fname(subjnum,stub));
+            outfile = get_next_fname(subjdir,subjnum,stub);
             lightdarktest(1,outfile)
             continue
         case 'Q'
