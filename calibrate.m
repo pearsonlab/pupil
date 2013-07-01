@@ -1,4 +1,4 @@
-function [errcode, calibdata] = calibrate(numpts, outfile)
+function [errcode, CalibrationData] = calibrate(numpts, outfile)
 %perform Tobii calibration routine
 % INPUTS:
 % numpts: number of calibration points to use
@@ -9,6 +9,8 @@ function [errcode, calibdata] = calibrate(numpts, outfile)
 %based on David Paulsen's version
 %modded jmp 8-1-12 and thereafter
 %switched to tobii sdk summer 2013
+
+errcode = 0;
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
@@ -21,10 +23,6 @@ PTBprelims
 % *************************************************************************
 
 tetio_CONNECT;
-
-addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
-addpath('/Applications/tobiiSDK/matlab/tetio');
-addpath('/matlab/pupil');
 
 % calibration points in [X,Y] coordinates; [0, 0] is top-left corner
 pos = [0.2 0.2;
@@ -64,7 +62,7 @@ countdown
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%							START CALIBRATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-totTime = 4;        % swirl total display time during calibration
+totTime = 2;        % swirl total display time during calibration
 calibdone = 0;
 
 while ~calibdone
@@ -80,18 +78,16 @@ while ~calibdone
         when0 = GetSecs()+ifi;
         swirl(win, totTime, ifi, when0, position);
         tetio_addCalibPoint(pos(i,1), pos(i,2));
-        WaitSecs(0.5);
+        WaitSecs(0.2);
     end
     
-    
-    quality = tetio_getCalibPlotData;
-    CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
+    WaitSecs(1); %let Tobii catch up
     
     try
-        calibdata = tetio_computeCalib;
+        tetio_computeCalib;
     catch q
         errcode = 1;
-        calibdata = q; %return error info as calibration data
+        CalibrationData = q; %return error info as calibration data
     end
     
     
@@ -101,40 +97,8 @@ while ~calibdone
     
     %% organizes Data to an easier to read format
     
-    %quality = tetio_getCalibPlotData;
-    %CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
-    
-    %%% Organize data %%%
-%     a = [1 2 3 4 5 6 7 8];
-%     a = a';
-%     organizevector = repmat(a, ((length(quality))/8), 1);
-%     organized_quality = horzcat(quality, organizevector);
-%     
-%     trueXpos=find(organized_quality(:,2)==1);
-%     True_X=organized_quality((trueXpos),1);
-%     
-%     trueYpos=find(organized_quality(:,2)==2);
-%     True_Y=organized_quality((trueYpos),1);
-%     
-%     leftXpos=find(organized_quality(:,2)==3);
-%     Left_X=organized_quality((leftXpos),1);
-%     
-%     leftYpos=find(organized_quality(:,2)==4);
-%     Left_Y=organized_quality((leftYpos),1);
-%     
-%     leftstat=find(organized_quality(:,2)==5);
-%     Left_Status=organized_quality((leftstat),1);
-%     
-%     rightXpos=find(organized_quality(:,2)==6);
-%     Right_X=organized_quality((rightXpos),1);
-%     
-%     rightYpos=find(organized_quality(:,2)==7);
-%     Right_Y=organized_quality((rightYpos),1);
-%     
-%     rightstat=find(organized_quality(:,2)==8);
-%     Right_Status=organized_quality((rightstat),1);
-%     
-%     CalibrationData=[True_X True_Y Left_X Left_Y Left_Status Right_X Right_Y Right_Status];
+    quality = tetio_getCalibPlotData;
+    CalibrationData = reshape(quality,8,[])'; %reshape into 8-column matrix
 
     %%% check the quality of the calibration %%%
     left_eye_used = CalibrationData(:,5) == 1;
@@ -167,7 +131,7 @@ end
 
 tetio_stopCalib;
 
-save(outfile,'numpts','calibdata')
+save(outfile,'numpts','CalibrationData')
 
 disp('End Of Calibration');
 Screen('CopyWindow', BlankScreen, win);

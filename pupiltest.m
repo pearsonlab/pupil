@@ -52,6 +52,16 @@ menustr = sprintf(strcat('Please select an option:\n', ...
     'Q) Quit\n\n', ...
     'Choice:\t'));
 
+%% initialize Tobii SDK
+disp('Initializing tetio...');
+tetio_init();
+
+%% ready PTB
+warning('off','MATLAB:dispatcher:InexactMatch');
+Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
+Screen('Preference','VisualDebugLevel', 0);
+Screen('Preference', 'SuppressAllWarnings', 1);
+
 %% start the menu loop
 while 1
     choice = input(menustr,'s');
@@ -66,8 +76,8 @@ while 1
                 clc
                 fprintf('Calibration not successful! Try again, perhaps with more points.\n\n')
             else
+                clc
                 disp('Calibration successful!')
-                savedata(subjnum,subjdir,stub,calibdata);
             end
             continue
             

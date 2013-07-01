@@ -11,11 +11,11 @@ switch mode
         numtrials = 3; %number of light/dark cycles
         habit_mat = 255 * ones(1,3); %habituate to full bright
         stim_mat = zeros(numtrials,3); %dark during stimulus
-        rec_mat = 255*ones(1,3); %full bright during recovery
+        rec_mat = 255*ones(numtrials,3); %full bright during recovery
         stim_time = 1; %duration of the dark in seconds
     case 1
         task = 'lighttest';
-        stim_mat=255 * [ [0.25 0.25 0.25] ; %bright during stimulus
+        stim_mat = 255 * [ [0.25 0.25 0.25] ; %bright during stimulus
             [0.5 0.5 0.5];
             [0.75 0.75 0.75];
             [1 1 1] ] ;

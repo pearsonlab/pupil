@@ -24,7 +24,7 @@ BACKCOLOR = [0 0 0];
 
 dt = totTime/100;
 
-decr = 3;
+decr = 1;
 sides=floor(rand*3)+3;
 color=round(rand(3,1)*255);
 color(floor(rand*3)+1)=255;
