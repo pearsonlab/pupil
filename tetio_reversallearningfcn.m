@@ -1,54 +1,41 @@
 function reversallearningfcn(outfile)
-
+% code to perform reversal learning test
+% saves data to outfile
 
 %% Set up data files
 global Partnum numtrial Partfile trialvec
+
 %% Unify Key Names
 %KbCheck('UnifyKeyNames') 
-%KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
+KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
 stopkey=KbName('escape');
 Rkey=KbName('rightarrow');
 Lkey=KbName('leftarrow');
-  
-datadoc = strcat(Partnum,'revlearn',numtrial);
-default_data = strcat(datadoc,'_data');
-default_events = strcat(datadoc,'_events');
-datafile = strcat('/data/pupil/',Partfile);
 
-    try
-        cd(datafile)
-    catch
-        mkdir(datafile)
-        cd(datafile)
-    end
-    addpath('/matlab/pupil/code/TESTER')
-    
-%%PTB Settings (it tends to complain on PCs)
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
+PTBprelims
+
+% datadoc = strcat(Partnum,'revlearn',numtrial);
+% default_data = strcat(datadoc,'_data');
+% default_events = strcat(datadoc,'_events');
+% datafile = strcat('/data/pupil/',Partfile);
+% 
+%     try
+%         cd(datafile)
+%     catch
+%         mkdir(datafile)
+%         cd(datafile)
+%     end
+%     addpath('/matlab/pupil/code/TESTER')
+%     
+
 %check for open windows
 openwins=Screen('Windows');
-if isempty(openwins)
-    warning('off','MATLAB:dispatcher:InexactMatch');
-    Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
-    Screen('Preference','VisualDebugLevel', 0);
-    Screen('Preference', 'SuppressAllWarnings', 1);
-    Screen('CloseAll')
-    %HideCursor; % turn off mouse cursor
-    
-    %%% Connect to Eye Tracker %%%
-%tetio_CONNECT;
 
-%%% Position eyes in front of eye tracker %%%
-%SetCalibParams;
-%TrackStatus;
+%which screen do we display to?
+which_screen=1;
 
-%%% Calibrate %%%
-%tetio_swirlCalibrate;
-    
-    %which screen do we display to?
-    which_screen=1;
-    
-    %open window, blank screen
+%open window, blank screen
     [window, screenRect] = Screen('OpenWindow',which_screen,[0, 0, 0],[],32);
 else
     %blank the already open window
@@ -69,11 +56,6 @@ vert = screenRect(4);
 setup_audio
 [popsnd,popF]=wavread('pop.wav');
 [cashsnd,cashF]=wavread('cash.wav');
-% cash = audioplayer(cashsnd, cashF);
-% pops = audioplayer(popsnd, popF);
-
-% %setup geometry
-% setup_geometry
 
 %create task vectors
 revsightsound
@@ -81,33 +63,12 @@ revsightsound
 % Trial vec is a row vector of 1's and 0's. Flag trial # in trialvec at which it switches between%
 trialchange = find(diff(trialvec)~=0)+1;
 
-%%%%%%%% communicate with Tobii %%%%%%%%%
 
-
-%% CHECK FOR TOBII CONNECTION
-tetio_CONNECT;
-
-%tetio_swirlCalibrate;
 %%%%%%%% countdown to start task %%%%%%%%
-for (i = 1:4);
-    
-    when = GetSecs + 1;
-    
-    % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
-    if i == 4
-       txt = ''; 
-    else
-        txt = num2str(4-i);
-    end
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
-end
+countdown
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
-try 
+
 %%%Recording prelims.
 
 leftEyeAll_rl = [];

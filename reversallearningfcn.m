@@ -1,5 +1,6 @@
 function reversallearningfcn(varargin)
-
+%%% Code to perform reversal learning test
+%%% Saves data to outfile
 
  addpath('C:\Users\pearson\Documents\MATLAB\tobiiSDK')
     addpath('C:\Users\pearson\Documents\GitHub\pupil')
@@ -38,6 +39,7 @@ try
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 %check for open windows
 openwins=Screen('Windows');
+
 PTBprelims;
 
     %HideCursor; % turn off mouse cursor
