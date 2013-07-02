@@ -104,7 +104,7 @@ for ind = 1:length(trialvec)
 	    pressvec(ind) = 1;
         press =2;
     elseif find(KeyCode)==41 %they chose esc to bail out
-        data(inc).presstimeW=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        data(inc).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
 	    pressvec(ind) = 2;
         press = 3;
 	    %Screen('Closeall')
