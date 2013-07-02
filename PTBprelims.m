@@ -14,7 +14,7 @@ if isempty(windowPtrs)
     %which screen do we display to?
     [win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
 else
-    win = windowPtrs(which_screen);
+    win = windowPtrs(1);
     screenRect = Screen('Rect',win);
 end
 horz=screenRect(3);

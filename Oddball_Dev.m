@@ -37,10 +37,10 @@ datafile = strcat('/data/pupil/',Partfile);
 
 %%%% Sound Parameters %%%%
 
-addpath('/Users/participant/desktop')
+addpath('/Users/participant/desktop')%%change the stuff to the folder we want, remove from desktop
     
-[lowsnd,lowF]=wavread('500hz.wav');
-[highsnd,highF]=wavread('1000hz.wav');
+[lowsnd,lowF]=wavread('500.wav');
+[highsnd,highF]=wavread('1000.wav');
 
 InitializePsychSound()
 pahandle=PsychPortAudio('Open',[],[],0,[],1);
@@ -79,74 +79,25 @@ which_screen=1;
 [win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
 horz = screenRect(3);
 vert = screenRect(4);
-
+wehn=GetSecs +1;
 %%%%%%%%introduce sounds
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='This is an introduction.'
-    
     Screen('TextSize', BlankScreen, 20);
     Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win);
     pause(1.8)
-      
-  BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='You will hear two sounds.'
+
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='When the task begins press any key on the keyboard when you hear a sound';
     
     Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win);
-    pause(1.8)
-      
-    
-     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='One of the sounds is the oddball';
-    
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('DrawText', BlankScreen, text, (floor(horz/2)-400), floor(vert/2), [255 255 255], [0 0 0], 1);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win);
     pause(1.8)
     
-    
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='When the task begins press any key on the keyboard when you hear the oddball';
-    
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text, (floor(horz/2)-370), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win);
-    pause(1.8)
-    
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-      for (ze = 1:4);
-    if mod(ze,2)==1;
-    text2='this is the oddball sound'
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text2, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    Screen('Flip', win, when);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, highsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
-    pause(2)
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-    else
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, lowsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1); 
-    text2='this is the regular sound'
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text2, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    Screen('Flip', win, when);
-    pause(2)
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-    end
-      end
 
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='The task will begin shortly';
@@ -157,23 +108,11 @@ BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
     flipTime = Screen('Flip', win);
     pause(3);
       
-%%%%%%%% countdown to begin test %%%%%%%%%
-for (i = 1:4);
-    
-    when = GetSecs + 1;
-    
-  % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-    if i == 4
-       txt = ''; 
-    else
-        txt = num2str(4-i);
-    end
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win, when);
-end
+
+
+%display onscreen countdown
+countdown
+
 
 txt1='+'
 Screen('TextSize', BlankScreen, 50);

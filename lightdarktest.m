@@ -38,10 +38,6 @@ countdown
 %
 % *************************************************************************
 
-% leftEyeAll_light = [];
-% rightEyeAll_light = [];
-% timeStampAll_light = [];
-
 %put on habituation stimulus
 Screen('FillRect',win,habit_mat,[]);
 Screen('Flip',win);
@@ -51,7 +47,7 @@ for ind=1:numtrials
     
     tetio_startTracking;
     
-    WaitSecs(2)
+    WaitSecs(2);
     
     %paint light stimulus onscreen
     Screen('FillRect',win,stim_mat(ind,:),[]);
@@ -92,7 +88,7 @@ end
 
 
 
-%tetio_cleanUp; %%%% are we sure we need to do this?
+%tetio_cleanUp; %%%% are we sure we need to do this? not really...
 
 % return the screen to dark
 Screen('FillRect',win,[0 0 0],[]);

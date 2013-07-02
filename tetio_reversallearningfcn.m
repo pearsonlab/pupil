@@ -1,4 +1,4 @@
-%function [sndplay, soundtime, presstime] = reversallearningfcn(varargin)
+function reversallearningfcn(outfile)
 
 
 %% Set up data files
@@ -107,7 +107,7 @@ for (i = 1:4);
 end
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
-
+try 
 %%%Recording prelims.
 
 leftEyeAll_rl = [];
@@ -169,7 +169,7 @@ for ind = 1:length(trialvec)
     Screen('FillRect',window, [0 0 0]);
     Screen('Flip',window);
     WaitSecs(0.5);
-    
+    tetio_stopTracking;
     %%recording
     [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
    
@@ -178,24 +178,35 @@ for ind = 1:length(trialvec)
     rightEyeAll_rl = vertcat(rightEyeAll_rl, righteye(:, 1:numGazeData));
     timeStampAll_rl = vertcat(timeStampAll_rl, timestamp(:,1));
 
-    tetio_stopTracking;
+   %%%% save data each trial %%%%%%
+    data(ind).lefteye = lefteye;
+    data(ind).righteye = righteye;
+    data(ind).timestamp = timestamp;
+    data(ind).trig = trigSignal;
+    save(outfile,'data','task')
+     
 end
 
 reversalmat = [soundtime' presstime'];
 
 %%% Save Data to File %%%
-csvwrite('reversallearning.csv', reversalmat);
-tetio_cleanUp;
 
-Screen('CloseAll');
+
 %end
-% try 
-% catch q
-%     ShowCursor
-%     sca
-%     keyboard
-% end
-% 
+
+catch q
+     ShowCursor
+     sca
+     keyboard
+ end
+ 
+% return the screen to dark
+Screen('FillRect',win,[0 0 0],[]);
+Screen('Flip',win);
+
+disp('Program finished.');
+end
+
 % %% Chose where to end up
 % 
 % %cd(startdir) % Directory we started in

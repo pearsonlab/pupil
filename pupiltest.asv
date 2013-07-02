@@ -109,7 +109,7 @@ while 1
         case '4'
             stub = 'reversallearningfcn';
             outfile = get_next_fname(subjdir,subjnum,stub);
-            reversallearningfcn(rl,outfile)
+            reversallearningfcn(outfile)
             continue
         case 'Q'
             break

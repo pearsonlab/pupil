@@ -1,5 +1,12 @@
 function reversallearningfcn(varargin)
 
+
+ addpath('C:\Users\pearson\Documents\MATLAB\tobiiSDK')
+    addpath('C:\Users\pearson\Documents\GitHub\pupil')
+    addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample');
+    addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
+    addpath('/Applications/tobiiSDK/matlab/tetio');
+    addpath('/matlab/pupil');
 DEBUG = 1;
 
 %% Set up data files
@@ -31,12 +38,8 @@ try
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 %check for open windows
 openwins=Screen('Windows');
-if isempty(openwins)
-    warning('off','MATLAB:dispatcher:InexactMatch');
-    Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
-    Screen('Preference','VisualDebugLevel', 0);
-    Screen('Preference', 'SuppressAllWarnings', 1);
-    Screen('CloseAll')
+PTBprelims;
+
     %HideCursor; % turn off mouse cursor
     
     %which screen do we display to?
@@ -57,7 +60,7 @@ vert = screenRect(4);
     
 % InitializeMatlabOpenGL([],[],1);
 ListenChar(2); %keeps keyboard input from going to Matlab window
-    end
+
 %%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
 setup_audio
 [popsnd,popF]=wavread('pop.wav');
@@ -87,22 +90,8 @@ if ~DEBUG
     end
 
 %%%%%%%% countdown to start task %%%%%%%%
-for (i = 1:4);
-    
-    when = GetSecs + 1;
-    
-    % PRESENT STARTING Screen
-    BlankScreen = Screen('OpenOffScreenwindow', window,[0 0 0]);
-    if i == 4
-       txt = ''; 
-    else
-        txt = num2str(4-i);
-    end
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, window);
-    flipTime = Screen('Flip', window, when);
-end
+countdown
+
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 talk2tobii('START_AUTO_SYNC')
 talk2tobii('START_TRACKING'); %start recording eye data
@@ -203,7 +192,10 @@ catch q
     keyboard
 end
 
+
+
 %% Chose where to end up
 
 %cd(startdir) % Directory we started in
 cd(datafile) % Directory in which we save light test data
+end
