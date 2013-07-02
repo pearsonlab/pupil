@@ -5,6 +5,9 @@
 %%%IF YOU ARE DOING THIS TASK SEVERAL TIMES OVER, you can get the problem
 %%%of an ever reducing number of trials, clear all if that problem comes
 %%%up. 
+
+
+function Oddball_Dev(outfile)
 %% Unify Key Names
 %KbCheck('UnifyKeyNames') 
 %KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
@@ -12,28 +15,8 @@ stopkey=KbName('escape');
 spacebar = KbName('space');
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
-warning('off','MATLAB:dispatcher:InexactMatch');
-Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
-Screen('Preference','VisualDebugLevel', 0);
-Screen('Preference', 'SuppressAllWarnings', 1);
-Screen('CloseAll')
+PTBprelims
 
-
-%% Create Global Variables
-global Partnum numtrial Partfile
-datadoc = strcat(Partnum,'revlearn',numtrial);
-default_data = strcat(datadoc,'_data');
-default_events = strcat(datadoc,'_events');
-datafile = strcat('/data/pupil/',Partfile);
-
-    try
-        cd(datafile)
-    catch
-        mkdir(datafile)
-        cd(datafile)
-    end
-    addpath('/matlab/pupil/code/TESTER')
-   
 
 %%%% Sound Parameters %%%%
 
@@ -43,7 +26,7 @@ addpath('/Users/participant/desktop')%%change the stuff to the folder we want, r
 [highsnd,highF]=wavread('1000.wav');
 
 InitializePsychSound()
-pahandle=PsychPortAudio('Open',[],[],0,[],1);
+pahandle=PsychPortAudio('Open',[],[],0,[],2);
 
 ntrials = 10;
 numhigh = ntrials/5;
@@ -119,13 +102,7 @@ Screen('TextSize', BlankScreen, 50);
    Screen('DrawText', BlankScreen, txt1, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win, when);
-   
-    
 
-
-leftEyeAll_odd = [];
-rightEyeAll_odd = [];
-timeStampAll_odd = [];
 %%% Start the Task %%%
 
     
@@ -138,13 +115,13 @@ for i=1:length(oddtrialvec);
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
+    PsychPortAudio('Start',pahandle,2);
     sndtyp_odd(i)=1;
     else
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
     PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1); 
+    PsychPortAudio('Start',pahandle,2); 
     sndtyp_odd(i)=2;
     end
     
@@ -155,18 +132,19 @@ for i=1:length(oddtrialvec);
             keyhit(i)=[tetio_localToRemoteTime(int64(secs))];
         end
     end
-    toc;
+ 
     
-   [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
-   
-    numGazeData = size(lefteye, 2);
-    leftEyeAll_odd= vertcat(leftEyeAll_odd, lefteye(:, 1:numGazeData));
-    rightEyeAll_odd = vertcat(rightEyeAll_odd, righteye(:, 1:numGazeData));
-    timeStampAll_odd = vertcat(timeStampAll_odd, timestamp(:,1));
-
     tetio_stopTracking;
+  
+    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+ 
        
-    
+    %%%% save data each trial %%%%%%
+%     data(i).lefteye = lefteye;
+%     data(i).righteye = righteye;
+%     data(i).timestamp = timestamp;
+%     data(i).trig = trigSignal;
+%     save(outfile,'data','task')
 end
 
 %here is where I make something to make sure that thye are not missing any
@@ -179,10 +157,11 @@ PsychPortAudio('Stop', pahandle);
 
 % Close the audio device:
 PsychPortAudio('Close', pahandle);
-
-tetio_cleanUp;
+% return the screen to dark
+Screen('FillRect',win,[0 0 0],[]);
+Screen('Flip',win);
 
 disp('Program finished.');
-clear Screen;
+
 
 

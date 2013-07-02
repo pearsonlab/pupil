@@ -107,10 +107,14 @@ while 1
             lightdarktest(1,outfile)
             continue
         case '4'
-            stub = 'reversallearningfcn';
+            stub = 'tetio_reversallearningfcn';
             outfile = get_next_fname(subjdir,subjnum,stub);
-            reversallearningfcn(rl,outfile)
+            reversallearningfcn(outfile)
             continue
+        case '5'
+            stub = 'Oddball_Dev';
+            outfile = get_next_fname(subjdir,subjnum,stub);
+            Oddball_Dev(outfile)
         case 'Q'
             break
         
