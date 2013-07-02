@@ -96,15 +96,15 @@ for ind = 1:length(trialvec)
     while press == 0
         [secs, KeyCode] = KbWait([], 3);
     if (find(KeyCode)==79)%they chose right
-        data(inc).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        data(ind).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
         pressvec(ind) = 0;
         press = 1;
     elseif (find(KeyCode)==80) %they chose left
-        data(inc).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        data(ind).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
 	    pressvec(ind) = 1;
         press =2;
     elseif find(KeyCode)==41 %they chose esc to bail out
-        data(inc).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        data(ind).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
 	    pressvec(ind) = 2;
         press = 3;
 	    %Screen('Closeall')
@@ -126,10 +126,12 @@ for ind = 1:length(trialvec)
         PsychPortAudio('FillBuffer',pahandle,popsnd');
         PsychPortAudio('SetLoop',pahandle);
         PsychPortAudio('Start',pahandle);
-        data(inc).soundtime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        data(ind).soundtime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
       % tell that pop happened
         sndplay(ind) = 2 % Record 'pop'
     end
+    
+    %blank screen between each key press
     Screen('FillRect',window, [0 0 0]);
     Screen('Flip',window);
     WaitSecs(0.5);
@@ -149,11 +151,13 @@ for ind = 1:length(trialvec)
     data(ind).righteye = righteye;
     data(ind).timestamp = timestamp;
     data(ind).trig = trigSignal;
+    data(ind).presstime = presstime;
+    data(ind).soundtime = soundtime;
     save(outfile,'data','task')
      
 end
 
-reversalmat = [soundtime' presstime'];
+% reversalmat = [soundtime' presstime'];
 
 %%% Save Data to File %%%
 
