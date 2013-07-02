@@ -64,6 +64,7 @@ menustr = sprintf(strcat('Please select an option:\n', ...
 %% initialize Tobii SDK
 disp('Initializing tetio...');
 tetio_init();
+tetio_CONNECT;
 
 %% ready PTB
 warning('off','MATLAB:dispatcher:InexactMatch');
@@ -109,7 +110,7 @@ while 1
         case '4'
             stub = 'tetio_reversallearningfcn';
             outfile = get_next_fname(subjdir,subjnum,stub);
-            reversallearningfcn(outfile)
+            tetio_reversallearningfcn(outfile)
             continue
         case '5'
             stub = 'Oddball_Dev';

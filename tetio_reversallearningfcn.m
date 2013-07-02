@@ -6,52 +6,17 @@ function reversallearningfcn(outfile)
 global Partnum numtrial Partfile trialvec
 
 %% Unify Key Names
-%KbCheck('UnifyKeyNames') 
-KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
+ task = 'reversallearning'
+KbName('UnifyKeyNames'); %keynames will match those on Mac OS-X operating sys
+
+
 stopkey=KbName('escape');
-Rkey=KbName('rightarrow');
-Lkey=KbName('leftarrow');
+Rkey=KbName('RightArrow');
+Lkey=KbName('LeftArrow');
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
-
-% datadoc = strcat(Partnum,'revlearn',numtrial);
-% default_data = strcat(datadoc,'_data');
-% default_events = strcat(datadoc,'_events');
-% datafile = strcat('/data/pupil/',Partfile);
-% 
-%     try
-%         cd(datafile)
-%     catch
-%         mkdir(datafile)
-%         cd(datafile)
-%     end
-%     addpath('/matlab/pupil/code/TESTER')
-%     
-
-%check for open windows
-openwins=Screen('Windows');
-
-%which screen do we display to?
-which_screen=1;
-
-%open window, blank screen
-    [window, screenRect] = Screen('OpenWindow',which_screen,[0, 0, 0],[],32);
-else
-    %blank the already open window
-    window=openwins(1);
-    Screen('FillRect',window,[255, 255, 255]); 
-    Screen('Flip',window);
-    which_screen = 1;
-    [window, screenRect] = Screen('OpenWindow',which_screen,[0, 0, 0],[],32);
-end
-horz = screenRect(3);
-vert = screenRect(4);
-    
-% InitializeMatlabOpenGL([],[],1);
-%ListenChar(2); %keeps keyboard input from going to Matlab window
-
-
+try
 %%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
 setup_audio
 [popsnd,popF]=wavread('pop.wav');
@@ -69,13 +34,10 @@ countdown
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 
-%%%Recording prelims.
-
-% leftEyeAll_rl = [];
-% rightEyeAll_rl = [];
-% timeStampAll_rl = [];
 
 WaitSecs(0.5);
+presstime=[];%%empty matrix
+soundtime=[];
 
 pressvec = zeros(1, length(trialvec));
 for ind = 1:length(trialvec)
@@ -87,19 +49,19 @@ for ind = 1:length(trialvec)
     timertrialstart(ind) = uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     % paint on screen stimulus
-    Screen('FillOval',window,[0 100 30], [horz*.25, vert*.15, horz*.75, vert*.75]) %balloon
-    Screen('Flip', window);
+    Screen('FillOval',win,[0 100 30], [horz*.25, vert*.15, horz*.75, vert*.75]) %balloon
+    Screen('Flip', win);
     
     
     % Wait for response
     press = 0;
     while press == 0
-        [secs, KeyCode] = KbWait([], 3);
-    if (find(KeyCode)==79)%they chose right
+        [secs, KeyCode] = KbWait(-1);
+    if (find(KeyCode)==39)%they chose right
         data(ind).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
         pressvec(ind) = 0;
         press = 1;
-    elseif (find(KeyCode)==80) %they chose left
+    elseif (find(KeyCode)==37) %they chose left
         data(ind).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
 	    pressvec(ind) = 1;
         press =2;
@@ -132,8 +94,8 @@ for ind = 1:length(trialvec)
     end
     
     %blank screen between each key press
-    Screen('FillRect',window, [0 0 0]);
-    Screen('Flip',window);
+    Screen('FillRect',win, [0 0 0]);
+    Screen('Flip',win);
     WaitSecs(0.5);
     
     tetio_stopTracking;

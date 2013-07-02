@@ -10,7 +10,7 @@
 function Oddball_Dev(outfile)
 %% Unify Key Names
 %KbCheck('UnifyKeyNames') 
-%KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
+KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
 stopkey=KbName('escape');
 spacebar = KbName('space');
 
@@ -20,8 +20,6 @@ PTBprelims
 
 %%%% Sound Parameters %%%%
 
-addpath('/Users/participant/desktop')%%change the stuff to the folder we want, remove from desktop
-    
 [lowsnd,lowF]=wavread('500.wav');
 [highsnd,highF]=wavread('1000.wav');
 
@@ -57,12 +55,7 @@ end
 
 oddtrialvec
 
-%%% Start the Task %%%
-which_screen=1;
-[win, screenRect] = Screen('OpenWindow',which_screen,[0 0 0],[],32);
-horz = screenRect(3);
-vert = screenRect(4);
-wehn=GetSecs +1;
+
 %%%%%%%%introduce sounds
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='This is an introduction.'
