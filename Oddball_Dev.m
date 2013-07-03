@@ -32,9 +32,6 @@ numhigh = ntrials/5;
 
 cond_check=1;
 
-%for now a connection, take this out when Participant tester is complete
-%tetio_CONNECT;
-
 while cond_check==1;
    %%%% Randomization %%%%
 oddtrialvec = zeros(length(ntrials),1);
@@ -45,7 +42,7 @@ checkgood=[([oddtrialvec(diff(oddtrialvec) ~= 0)' oddtrialvec(end)]') (diff([0 f
 
 %%checks to see if the vector is nice
 b=checkgood(:,1)==0 & checkgood(:,2)< 2; 
-c=checkgood(:,1)==1 & checkgood(:,2) == 2 ;
+c=checkgood(:,1)==1 & checkgood(:,2) =< 2 ;
 if sum(b) || sum(c) > 0
     cond_check=1;
 else
@@ -54,7 +51,7 @@ end
       
 end
 
-oddtrialvec
+oddtrialvec;
 
 %%%%%%%%introduce sounds
 
