@@ -14,13 +14,15 @@ KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
 stopkey=KbName('escape');
 spacebar = KbName('space');
 
+task = 'Oddball'
+
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
 
 %%%% Sound Parameters %%%%
 
 [lowsnd,lowF]=wavread('500.wav');
-[highsnd,highF]=wavread('1000.wav');
+[highsnd,highF]=wavread('1000a.wav');
 
 InitializePsychSound()
 pahandle=PsychPortAudio('Open',[],[],0,[],2);
@@ -58,28 +60,28 @@ oddtrialvec
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='This is an introduction.'
     Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text, (floor(horz/2)-100), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', 0);
+  Screen('FrameRect', w, 0, bbox)
+    Screen('Flip',win);
     pause(1.8)
 
     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='When the task begins press any key on the keyboard when you hear a sound';
-    
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text, (floor(horz/2)-400), floor(vert/2), [255 255 255], [0 0 0], 1);
+  Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', 0);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win);
+    pause(1.8)
     pause(1.8)
     
 
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='The task will begin shortly';
-    
-    Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, text, (floor(horz/2)-200), floor(vert/2), [255 255 255], [0 0 0], 1);
+  Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', 0);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win);
+    pause(1.8)
     pause(3);
       
 
@@ -100,29 +102,31 @@ for i=1:length(oddtrialvec);
     
     tetio_startTracking;
     
-    startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
+    data(i).startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
     tic;
     
     if oddtrialvec(i)==1;
+    pahandle=PsychPortAudio('Open',[],[],0,[],1);
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,2);
-    sndtyp_odd(i)=1;
+    PsychPortAudio('Start',pahandle,1);
+    data(i).sndtyp_odd=1;
     
     else
+    pahandle=PsychPortAudio('Open',[],[],0,[],2);
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
     PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,2); 
-    sndtyp_odd(i)=2;
+    PsychPortAudio('Start',pahandle,1); 
+    data(i).sndtyp_odd=2;
     end
     
     t = GetSecs;
     while GetSecs - t < 1.4;
         [keydown, secs]=KbCheck;
         if keydown ==1
-            keyhit(i)=[tetio_localToRemoteTime(int64(secs))];
+            data(i).keyhit=[tetio_localToRemoteTime(int64(secs))];
         end
     end
  
@@ -132,11 +136,11 @@ for i=1:length(oddtrialvec);
  
        
     %%%% save data each trial %%%%%%
-%     data(i).lefteye = lefteye;
-%     data(i).righteye = righteye;
-%     data(i).timestamp = timestamp;
-%     data(i).trig = trigSignal;
-%     save(outfile,'data','task')
+    data(i).lefteye = lefteye;
+    data(i).righteye = righteye;
+    data(i).timestamp = timestamp;
+    data(i).trig = trigSignal;
+    save(outfile,'data','task')
 end
 
 %here is where I make something to make sure that thye are not missing any

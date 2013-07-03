@@ -44,7 +44,7 @@ for ind = 1:length(trialvec)
     
     tetio_startTracking;
     
-    WaitSecs(2);
+    WaitSecs(.5);
     
     timertrialstart(ind) = uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
@@ -102,11 +102,6 @@ for ind = 1:length(trialvec)
     
     %read eye data
     [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
-   
-%     numGazeData = size(lefteye, 2);
-%     leftEyeAll_rl = vertcat(leftEyeAll_rl, lefteye(:, 1:numGazeData));
-%     rightEyeAll_rl = vertcat(rightEyeAll_rl, righteye(:, 1:numGazeData));
-%     timeStampAll_rl = vertcat(timeStampAll_rl, timestamp(:,1));
 
    %%%% save data each trial %%%%%%
     data(ind).lefteye = lefteye;
