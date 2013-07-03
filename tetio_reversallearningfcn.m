@@ -28,7 +28,64 @@ revsightsound
 % Trial vec is a row vector of 1's and 0's. Flag trial # in trialvec at which it switches between%
 trialchange = find(diff(trialvec)~=0)+1;
 
+% On-screen instructions
+BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This the Reversal Learning Task. \n press any key to continue with the text'
+    Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255],'textbounds');
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause;
 
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='Either the right or left arrow is correct. \n You will learn by trial and error.';
+   Screen('TextSize', BlankScreen, 20);
+   Screen('Textbounds',win)
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255],'textbounds');
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause;
+    
+ % Sound samples   
+  for zed=mod(1:2,2)
+    if zed==1
+    pahandle=PsychPortAudio('Open',[],[],0,[],2);
+    PsychPortAudio('DeleteBuffer')
+    PsychPortAudio('FillBuffer', pahandle, cashsnd');
+    PsychPortAudio('SetLoop',pahandle);
+    PsychPortAudio('Start',pahandle,1);
+     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This is the result of pushing the correct arrow';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause(2.5);
+    
+    else
+         pahandle=PsychPortAudio('Open',[],[],0,[],2);
+    PsychPortAudio('DeleteBuffer')
+    PsychPortAudio('FillBuffer', pahandle, popsnd');
+    PsychPortAudio('SetLoop',pahandle);
+    PsychPortAudio('Start',pahandle,1);
+     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This is the result of pushing the incorrect arrow';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause(2.5);
+    end
+  end
+
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='You gain points by pushing the correct arrow in each round. \n Listen to the sounds to determine whether your arrow choice is correct.';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause;  
+  
 %display onscreen countdown
 countdown
 
@@ -49,16 +106,16 @@ for ind = 1:length(trialvec)
     timertrialstart(ind) = uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     % paint on screen stimulus
-    Screen('FillOval',win,[0 65 10], [horz*.25, vert*.15, horz*.75, vert*.75]) %balloon
-    txt1 = '+';
-   Screen('TextSize', win, 30);
-    Screen('DrawText', win, txt1, [horz*.25], [vert*.25], [0 0 0]);
-    Screen('Flip', win);
+   txt1='+';
+     Screen('TextSize', BlankScreen, 100);
+    [nx, ny, bbox] = DrawFormattedText(win, txt1, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
     
     
     % Wait for response
     press = 0;
-    while press == 0
+    while press == 0  
         [secs, KeyCode] = KbWait(-1);
     if (find(KeyCode)==39)%they chose right
         data(ind).presstime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));

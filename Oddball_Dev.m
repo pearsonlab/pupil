@@ -13,6 +13,8 @@ function Oddball_Dev(outfile)
 KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
 stopkey=KbName('escape');
 spacebar = KbName('space');
+Rkey=KbName('RightArrow');
+Lkey=KbName('LeftArrow');
 
 task = 'Oddball'
 
@@ -65,7 +67,7 @@ oddtrialvec;
     pause;
 
     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='When the task begins \n press the "L" when you hear a low sound \n and the "H" when you hear a high sound';
+   text='When the task begins \n press the right arrow when you hear a low sound \n and the left arrow when you hear a high sound';
    Screen('TextSize', BlankScreen, 20);
     [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
   Screen('FrameRect', win, 0, bbox)
@@ -80,12 +82,13 @@ oddtrialvec;
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1);
      BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is the high sound';
+   text='This is the high sound, please press the left arrow';
    Screen('TextSize', BlankScreen, 20);
     [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
   Screen('FrameRect', win, 0, bbox)
     Screen('Flip',win);
-    pause(1.4);
+    pause;   
+    
     else
          pahandle=PsychPortAudio('Open',[],[],0,[],2);
     PsychPortAudio('DeleteBuffer')
@@ -93,12 +96,12 @@ oddtrialvec;
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,1);
      BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is the low sound';
+   text='This is the low sound, plesae press the right arrow';
    Screen('TextSize', BlankScreen, 20);
     [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
   Screen('FrameRect', win, 0, bbox)
     Screen('Flip',win);
-    pause(1.4);
+    pause;
     end
     end
 
