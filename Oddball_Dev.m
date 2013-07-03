@@ -17,7 +17,6 @@ spacebar = KbName('space');
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
 
-
 %%%% Sound Parameters %%%%
 
 [lowsnd,lowF]=wavread('500.wav');
@@ -55,7 +54,6 @@ end
 
 oddtrialvec
 
-
 %%%%%%%%introduce sounds
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
    text='This is an introduction.'
@@ -85,7 +83,6 @@ BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
     pause(3);
       
 
-
 %display onscreen countdown
 countdown
 
@@ -98,18 +95,21 @@ Screen('TextSize', BlankScreen, 50);
 
 %%% Start the Task %%%
 
-    
-    
+   
 for i=1:length(oddtrialvec);
+    
     tetio_startTracking;
+    
     startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
     tic;
+    
     if oddtrialvec(i)==1;
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, highsnd');
     PsychPortAudio('SetLoop',pahandle);
     PsychPortAudio('Start',pahandle,2);
     sndtyp_odd(i)=1;
+    
     else
     PsychPortAudio('DeleteBuffer')
     PsychPortAudio('FillBuffer', pahandle, lowsnd');
@@ -126,7 +126,6 @@ for i=1:length(oddtrialvec);
         end
     end
  
-    
     tetio_stopTracking;
   
     [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
@@ -145,6 +144,7 @@ end
 %compare that there are no key presses during sndtype_odd==2
 
 ListenChar(0);
+
 % Stop playback:
 PsychPortAudio('Stop', pahandle);
 
