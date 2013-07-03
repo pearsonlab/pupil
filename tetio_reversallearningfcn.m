@@ -49,7 +49,10 @@ for ind = 1:length(trialvec)
     timertrialstart(ind) = uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
     
     % paint on screen stimulus
-    Screen('FillOval',win,[0 100 30], [horz*.25, vert*.15, horz*.75, vert*.75]) %balloon
+    Screen('FillOval',win,[0 65 10], [horz*.25, vert*.15, horz*.75, vert*.75]) %balloon
+    txt1 = '+';
+   Screen('TextSize', win, 30);
+    Screen('DrawText', win, txt1, [horz*.25], [vert*.25], [0 0 0]);
     Screen('Flip', win);
     
     

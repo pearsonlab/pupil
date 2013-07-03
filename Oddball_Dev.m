@@ -31,7 +31,7 @@ ntrials = 10;
 numhigh = ntrials/5;
 
 cond_check=1;
-ListenChar(2);
+
 %for now a connection, take this out when Participant tester is complete
 %tetio_CONNECT;
 
@@ -57,32 +57,63 @@ end
 oddtrialvec
 
 %%%%%%%%introduce sounds
-BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is an introduction.'
+
+    
+    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This the Oddball Task. \n press any key to continue with the text'
     Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', 0);
-  Screen('FrameRect', w, 0, bbox)
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
     Screen('Flip',win);
-    pause(1.8)
+    pause;
 
     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='When the task begins press any key on the keyboard when you hear a sound';
-  Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', 0);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win);
-    pause(1.8)
-    pause(1.8)
+   text='When the task begins \n press the "L" when you hear a low sound \n and the "H" when you hear a high sound';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause;
+    
+    for zed=mod(1:4,2)
+    if zed==1
+    pahandle=PsychPortAudio('Open',[],[],0,[],1);
+    PsychPortAudio('DeleteBuffer')
+    PsychPortAudio('FillBuffer', pahandle, highsnd');
+    PsychPortAudio('SetLoop',pahandle);
+    PsychPortAudio('Start',pahandle,1);
+     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This is the high sound';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause(1.4);
+    else
+         pahandle=PsychPortAudio('Open',[],[],0,[],2);
+    PsychPortAudio('DeleteBuffer')
+    PsychPortAudio('FillBuffer', pahandle, lowsnd');
+    PsychPortAudio('SetLoop',pahandle);
+    PsychPortAudio('Start',pahandle,1);
+     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
+   text='This is the low sound';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause(1.4);
+    end
+    end
+
     
 
 BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='The task will begin shortly';
-  Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', 0);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win);
-    pause(1.8)
-    pause(3);
+   text='When you are ready to begin \n press any key';
+   Screen('TextSize', BlankScreen, 20);
+    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
+    pause;
       
 
 %display onscreen countdown
@@ -90,11 +121,10 @@ countdown
 
 
 txt1='+'
-Screen('TextSize', BlankScreen, 50);
-   Screen('DrawText', BlankScreen, txt1, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
-    Screen('CopyWindow', BlankScreen, win);
-    flipTime = Screen('Flip', win, when);
-
+   Screen('TextSize', BlankScreen, 30);
+    [nx, ny, bbox] = DrawFormattedText(win, txt1, 'center', 'center', [255 255 255]);
+  Screen('FrameRect', win, 0, bbox)
+    Screen('Flip',win);
 %%% Start the Task %%%
 
    
@@ -147,7 +177,7 @@ end
 %oddballs/pressing the key randomly, etc...using sndtype_odd and keyhit to
 %compare that there are no key presses during sndtype_odd==2
 
-ListenChar(0);
+
 
 % Stop playback:
 PsychPortAudio('Stop', pahandle);
