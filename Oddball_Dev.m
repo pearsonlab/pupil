@@ -121,7 +121,7 @@ countdown
 
 
 txt1='+'
-   Screen('TextSize', BlankScreen, 30);
+   Screen('TextSize', BlankScreen, 60);
     [nx, ny, bbox] = DrawFormattedText(win, txt1, 'center', 'center', [255 255 255]);
   Screen('FrameRect', win, 0, bbox)
     Screen('Flip',win);
