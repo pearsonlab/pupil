@@ -71,9 +71,12 @@ warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
 Screen('Preference','VisualDebugLevel', 0);
 Screen('Preference', 'SuppressAllWarnings', 1);
+PTBprelims;
 
 %% start the menu loop
 while 1
+    display_instructions(win,'Relax. The task will begin shortly.',1);
+    
     choice = input(menustr,'s');
     
     switch choice

@@ -94,6 +94,7 @@ while ~calibdone
     catch q
         errcode = 1;
         CalibrationData = []; %return error info as calibration data
+        return
     end
 
     %%% check the quality of the calibration %%%

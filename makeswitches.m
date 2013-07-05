@@ -9,7 +9,8 @@ if ~exist('seed','var')
 end
 
 % set random number stream
-rng(seed);
+rand('seed',seed); %to be deprecated in future
+%rng(seed); %correct syntax in future
 
 % span of runs
 delta = maxrun-minrun;
