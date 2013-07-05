@@ -108,9 +108,9 @@ while 1
             lightdarktest(1,outfile)
             continue
         case '4'
-            stub = 'tetio_reversallearningfcn';
+            stub = 'revlearn';
             outfile = get_next_fname(subjdir,subjnum,stub);
-            tetio_reversallearningfcn(outfile)
+            revlearn(outfile)
             continue
         case '5'
             stub = 'Oddball_Dev';

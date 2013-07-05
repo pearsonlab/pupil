@@ -1,96 +1,73 @@
-function reversallearningfcn(outfile)
+function revlearn(outfile,flag,varargin)
 % code to perform reversal learning test
 % saves data to outfile
+% flag = 0 for generating a new set of switches; if so, varargin has two
+% arguments, the number of contingency switches and the minimum and maximum 
+% numbers of trials between switches
+% flag = 1 loads data from a file (name given in varargin)
 
-%% Set up data files
-global Partnum numtrial Partfile trialvec
+% default values if flag not specified
+if ~exist('flag','var')
+    flag = 0;
+    nswitch = 4;
+    minrun = 3;
+    maxrun = 6;
+    seed = 12345;
+    
+else
+    % set up switches when flag is specified
+    switch flag
+        case 0
+            nswitch = varargin{1};
+            minrun = varargin{2};
+            maxrun = varargin{3};
+            if length(varargin) > 3
+                seed = varargin{4};
+            else
+                seed = GetSecs;
+            end
+            trialvec = makeswitches(nswitch,minrun,maxrun,seed);
+        case 1
+            dat = load(varargin{1});
+            trialvec = dat.trialvec;
+    end
+    
+end
 
-%% Unify Key Names
- task = 'reversallearning'
+% Unify Key Names
 KbName('UnifyKeyNames'); %keynames will match those on Mac OS-X operating sys
-
-
 stopkey=KbName('escape');
 Rkey=KbName('RightArrow');
 Lkey=KbName('LeftArrow');
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
+
 try
 %%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
 setup_audio
 [popsnd,popF]=wavread('pop.wav');
 [cashsnd,cashF]=wavread('cash.wav');
 
-%create task vectors
-revsightsound
+% display instructions
+instructions = {['For this task, press the left or right key \n' ...
+    'when the cross appears onscreen.\n' ...
+    'You must learn by trial and error which is correct. \n\n' ...
+    '(Press any key to continue)']};
+display_instructions(win, instructions);
 
-% Trial vec is a row vector of 1's and 0's. Flag trial # in trialvec at which it switches between%
-trialchange = find(diff(trialvec)~=0)+1;
+% Sound samples
+txt = {'You will hear this for correct responses.'};
+playsound(pahandle, cashsnd)
+display_instructions(win,txt);
+txt = {'And this for incorrect responses.'};
+playsound(pahandle, popsnd);
+display_instructions(win,txt);
 
-% On-screen instructions
-BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This the Reversal Learning Task. \n press any key to continue with the text'
-    Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255],'textbounds');
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;
-
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='Either the right or left arrow is correct. \n You will learn by trial and error.';
-   Screen('TextSize', BlankScreen, 20);
-   Screen('Textbounds',win)
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255],'textbounds');
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;
-    
- % Sound samples   
-  for zed=mod(1:2,2)
-    if zed==1
-    pahandle=PsychPortAudio('Open',[],[],0,[],2);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, cashsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
-     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is the result of pushing the correct arrow';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause(2.5);
-    
-    else
-         pahandle=PsychPortAudio('Open',[],[],0,[],2);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, popsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
-     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is the result of pushing the incorrect arrow';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause(2.5);
-    end
-  end
-
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='You gain points by pushing the correct arrow in each round. \n Listen to the sounds to determine whether your arrow choice is correct.';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;  
-  
 %display onscreen countdown
 countdown
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
-
 
 WaitSecs(0.5);
 presstime=[];%%empty matrix
@@ -170,6 +147,7 @@ for ind = 1:length(trialvec)
     data(ind).trig = trigSignal;
     data(ind).presstime = presstime;
     data(ind).soundtime = soundtime;
+    task = 'revlearn';
     save(outfile,'data','task')
      
 end
