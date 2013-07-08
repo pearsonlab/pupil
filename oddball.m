@@ -80,7 +80,7 @@ countdown
 tetio_startTracking;
 
 WaitSecs(2); %give subjects a delay before first trial
-
+fixcross;
 for ind=1:length(trialvec);
     
     %cue onset

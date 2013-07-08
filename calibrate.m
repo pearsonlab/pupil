@@ -116,7 +116,9 @@ while ~calibdone
         tt = input('Enter "R" to retry calibration or "C" to confirm calibration: ','s');
         
         switch lower(tt)
-            case 'r'             
+            case 'r'
+                tetio_stopCalib;
+                countdown;
                 break
             case 'c'
                 calibdone = 1;
