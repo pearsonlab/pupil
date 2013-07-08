@@ -58,7 +58,8 @@ pars.iti_range = iti_range;
 %%%%%%%%%%%%%% Display Instructions %%%%%%%%%%%%%
 instructions = {['Press the left or right key \n' ...
     'when the cross appears onscreen.\n' ...
-    'You must learn by trial and error which is correct. \n\n' ...
+    'You must learn by trial and error\n' ...
+    'which is correct. \n\n' ...
     '(Press any key to continue)']};
 display_instructions(win, instructions);
 
@@ -85,11 +86,8 @@ for ind = 1:length(trialvec)
     cuetime = tetio_localToRemoteTime(tetio_localTimeNow());
     
     % Wait for response
-    [choice, RT] = handle_input(livekeys);
-    
-    % blank screen 
-    Screen('FillRect',win, [0 0 0]);
-    Screen('Flip',win);
+    [choice, ~] = handle_input(livekeys);
+    presstime=tetio_localToRemoteTime(tetio_localTimeNow());
     
     % correct or incorrect?
     if (choice==Lkey && trialvec(ind) == 0) || (choice==Rkey && trialvec(ind) == 1)
@@ -102,6 +100,12 @@ for ind = 1:length(trialvec)
         correct = 0;
     end
     
+    WaitSecs(1); %outcome period
+    
+    % blank screen 
+    Screen('FillRect',win, [0 0 0]);
+    Screen('Flip',win);
+    
     iti = iti_mean + iti_range*(2*rand-1);
     
     WaitSecs(iti);
@@ -110,7 +114,7 @@ for ind = 1:length(trialvec)
     data(ind).choice = choice;
     data(ind).correct = correct;
     data(ind).cuetime = cuetime;
-    data(ind).presstime = tetio_localToRemoteTime(RT);
+    data(ind).presstime = presstime;
     data(ind).soundtime = soundtime;
     save(outfile,'data','task','pars')
      

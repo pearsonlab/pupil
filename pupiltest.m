@@ -116,9 +116,9 @@ while 1
             revlearn(outfile)
             continue
         case '5'
-            stub = 'Oddball_Dev';
+            stub = 'oddball';
             outfile = get_next_fname(subjdir,subjnum,stub);
-            Oddball_Dev(outfile)
+            oddball(outfile)
         case 'Q'
             break
         
