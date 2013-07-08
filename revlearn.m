@@ -65,7 +65,7 @@ display_instructions(win, instructions);
 
 % Sound samples
 txt = {'You will hear this for correct responses.'};
-playsound(pahandle, rightsnd)
+playsound(pahandle, rightsnd);
 display_instructions(win,txt);
 txt = {'And this for incorrect responses.'; 'Press any key when ready.'};
 playsound(pahandle, wrongsnd);

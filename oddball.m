@@ -62,14 +62,15 @@ display_instructions(win, instructions);
 
 % Sound samples
 txt = {'Some sounds are low...'};
-playsound(pahandle, lowsnd)
+playsound(pahandle, lowsnd);
 display_instructions(win,txt);
 
 txt = {'...and some are high.'};
-playsound(pahandle, highsnd)
+playsound(pahandle, highsnd);
 display_instructions(win,txt);
 
-txt = {'When you hear a sound, press the space bar.'};
+txt = {['When you hear a sound, press the space bar.\n\n' ...
+    'Press any key when ready.']};
 display_instructions(win,txt);
 
 %display onscreen countdown
@@ -78,18 +79,21 @@ countdown
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 tetio_startTracking;
 
+WaitSecs(2); %give subjects a delay before first trial
+
 for ind=1:length(trialvec);
     
     %cue onset
     soundtime = tetio_localToRemoteTime(tetio_localTimeNow());
     if trialvec(ind)
-        playsound(pahandle, highsnd)
+        playsound(pahandle, highsnd);
     else
-        playsound(pahandle, lowsnd)
+        playsound(pahandle, lowsnd);
     end
     
     % Wait for response
-    [~, RT] = handle_input(livekeys);
+    handle_input(livekeys);
+    presstime = tetio_localToRemoteTime(tetio_localTimeNow());
     
     iti = iti_mean + iti_range*(2*rand-1);
     
@@ -97,7 +101,7 @@ for ind=1:length(trialvec);
     
     %%%% save data each trial %%%%%%
     data(ind).soundtime = soundtime;
-    data(ind).presstime = tetio_localToRemoteTime(RT);
+    data(ind).presstime = presstime;
     save(outfile,'data','task','pars')
     
 end
