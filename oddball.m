@@ -1,189 +1,119 @@
-%% Oddball Task %%
-% Plays tones in a constant stream, participant must detect presence of odd
-% tone 
+function oddball(outfile,flag,varargin)
+% code to perform reversal learning test
+% saves data to outfile
+% flag = 0 for generating a new set of switches; if so, varargin has two
+% arguments, the number of contingency switches and the minimum and maximum 
+% numbers of trials between switches
+% flag = 1 loads data from a file (name given in varargin)
 
-%%%IF YOU ARE DOING THIS TASK SEVERAL TIMES OVER, you can get the problem
-%%%of an ever reducing number of trials, clear all if that problem comes
-%%%up. 
+task = 'oddball';
 
+% default values if flag not specified
+if ~exist('flag','var')
+    nodd = 4;
+    minrun = 3;
+    maxrun = 6;
+    seed = 12345;
+    trialvec = makeoddballs(nodd,minrun,maxrun,seed);
+else
+    % set up switches when flag is specified
+    switch flag
+        case 0
+            nodd = varargin{1};
+            minrun = varargin{2};
+            maxrun = varargin{3};
+            if length(varargin) > 3
+                seed = varargin{4};
+            else
+                seed = GetSecs;
+            end
+            trialvec = makeoddballs(nodd,minrun,maxrun,seed);
+        case 1
+            dat = load(varargin{1});
+            trialvec = dat.trialvec;
+    end
+    
+end
 
-function Oddball_Dev(outfile)
-%% Unify Key Names
-%KbCheck('UnifyKeyNames') 
-KbName('UnifyKeyNames') %keynames will match those on Mac OS-X operating sys
-stopkey=KbName('escape');
-spacebar = KbName('space');
+% Unify Key Names
+KbName('UnifyKeyNames'); %keynames will match those on Mac OS-X operating sys
 Rkey=KbName('RightArrow');
 Lkey=KbName('LeftArrow');
-
-task = 'Oddball'
+spacebar = KbName('space');
+livekeys = [spacebar];
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
 
-%%%% Sound Parameters %%%%
-
+%%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
+setup_audio
 [lowsnd,lowF]=wavread('500.wav');
 [highsnd,highF]=wavread('1000a.wav');
 
-InitializePsychSound()
-pahandle=PsychPortAudio('Open',[],[],0,[],2);
+%%%%%%%%%%%%%% Task Parameters %%%%%%%%%%%%%
+iti_mean = 3;
+iti_range = 2;
+pars.iti_mean = iti_mean;
+pars.iti_range = iti_range;
 
-ntrials = 10;
-numhigh = ntrials/5;
+%%%%%%%%%%%%%% Display Instructions %%%%%%%%%%%%%
+instructions = {'In this task, you will listen to some sounds. \n'};
+display_instructions(win, instructions);
 
-cond_check=1;
+% Sound samples
+txt = {'Some sounds are low...'};
+playsound(pahandle, lowsnd)
+display_instructions(win,txt);
 
-while cond_check==1;
-   %%%% Randomization %%%%
-oddtrialvec = zeros(length(ntrials),1);
-oddtrialvec(randperm(ntrials,numhigh),1)=1;
-% Run Length Code %
+txt = {'...and some are high.'};
+playsound(pahandle, highsnd)
+display_instructions(win,txt);
 
-checkgood=[([oddtrialvec(diff(oddtrialvec) ~= 0)' oddtrialvec(end)]') (diff([0 find(diff(oddtrialvec) ~= 0)' length(oddtrialvec)])')];
-
-%%checks to see if the vector is nice
-b=checkgood(:,1)==0 & checkgood(:,2)< 2; 
-c=checkgood(:,1)==1 & checkgood(:,2) =< 2 ;
-if sum(b) || sum(c) > 0
-    cond_check=1;
-else
-    cond_check=0;
-end
-      
-end
-
-oddtrialvec;
-
-%%%%%%%%introduce sounds
-
-    
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This the Oddball Task. \n press any key to continue with the text'
-    Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;
-
-    BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='When the task begins \n press the right arrow when you hear a low sound \n and the left arrow when you hear a high sound';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;
-    
-    for zed=mod(1:4,2)
-    if zed==1
-    pahandle=PsychPortAudio('Open',[],[],0,[],1);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, highsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
-     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is the high sound, please press the left arrow';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;   
-    
-    else
-         pahandle=PsychPortAudio('Open',[],[],0,[],2);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, lowsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
-     BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='This is the low sound, plesae press the right arrow';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;
-    end
-    end
-
-    
-
-BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
-   text='When you are ready to begin \n press any key';
-   Screen('TextSize', BlankScreen, 20);
-    [nx, ny, bbox] = DrawFormattedText(win, text, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-    pause;
-      
+txt = {'When you hear a sound, press the space bar.'};
+display_instructions(win,txt);
 
 %display onscreen countdown
-countdown
+countdown    
+    
+%%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
+tetio_startTracking;
 
-
-txt1='+'
-   Screen('TextSize', BlankScreen, 60);
-    [nx, ny, bbox] = DrawFormattedText(win, txt1, 'center', 'center', [255 255 255]);
-  Screen('FrameRect', win, 0, bbox)
-    Screen('Flip',win);
-%%% Start the Task %%%
-
-   
-for i=1:length(oddtrialvec);
+for ind=1:length(trialvec);
     
-    tetio_startTracking;
-    
-    data(i).startSecs = tetio_localToRemoteTime(tetio_localTimeNow());
-    tic;
-    
-    if oddtrialvec(i)==1;
-    pahandle=PsychPortAudio('Open',[],[],0,[],1);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, highsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1);
-    data(i).sndtyp_odd=1;
-    
+    %cue onset
+    soundtime = tetio_localToRemoteTime(tetio_localTimeNow());
+    if trialvec(ind)
+        playsound(pahandle, highsnd)
     else
-    pahandle=PsychPortAudio('Open',[],[],0,[],2);
-    PsychPortAudio('DeleteBuffer')
-    PsychPortAudio('FillBuffer', pahandle, lowsnd');
-    PsychPortAudio('SetLoop',pahandle);
-    PsychPortAudio('Start',pahandle,1); 
-    data(i).sndtyp_odd=2;
+        playsound(pahandle, lowsnd)
     end
     
-    t = GetSecs;
-    while GetSecs - t < 1.4;
-        [keydown, secs]=KbCheck;
-        if keydown ==1
-            data(i).keyhit=[tetio_localToRemoteTime(int64(secs))];
-        end
-    end
- 
-    tetio_stopTracking;
-  
-    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
- 
-       
+    % Wait for response
+    [~, RT] = handle_input(livekeys);
+    
+    iti = iti_mean + iti_range*(2*rand-1);
+    
+    WaitSecs(iti);
+    
     %%%% save data each trial %%%%%%
-    data(i).lefteye = lefteye;
-    data(i).righteye = righteye;
-    data(i).timestamp = timestamp;
-    data(i).trig = trigSignal;
-    save(outfile,'data','task')
+    data(ind).soundtime = soundtime;
+    data(ind).presstime = tetio_localToRemoteTime(RT);
+    save(outfile,'data','task','pars')
+    
 end
+tetio_stopTracking;
 
-%here is where I make something to make sure that thye are not missing any
-%oddballs/pressing the key randomly, etc...using sndtype_odd and keyhit to
-%compare that there are no key presses during sndtype_odd==2
+%read eye data
+[lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+eyedata.lefteye = lefteye;
+eyedata.righteye = righteye;
+eyedata.timestamp = timestamp;
+eyedata.trig = trigSignal;
 
+save(outfile,'data','eyedata','task','pars','trialvec')
 
+shutdown_audio;
 
-% Stop playback:
-PsychPortAudio('Stop', pahandle);
-
-% Close the audio device:
-PsychPortAudio('Close', pahandle);
 % return the screen to dark
 Screen('FillRect',win,[0 0 0],[]);
 Screen('Flip',win);

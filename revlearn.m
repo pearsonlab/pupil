@@ -6,6 +6,8 @@ function revlearn(outfile,flag,varargin)
 % numbers of trials between switches
 % flag = 1 loads data from a file (name given in varargin)
 
+task = 'revlearn';
+
 % default values if flag not specified
 if ~exist('flag','var')
     nswitch = 4;
@@ -53,7 +55,7 @@ iti_range = 2;
 pars.iti_mean = iti_mean;
 pars.iti_range = iti_range;
 
-% display instructions
+%%%%%%%%%%%%%% Display Instructions %%%%%%%%%%%%%
 instructions = {['Press the left or right key \n' ...
     'when the cross appears onscreen.\n' ...
     'You must learn by trial and error which is correct. \n\n' ...
@@ -68,42 +70,34 @@ txt = {'And this for incorrect responses.'; 'Press any key when ready.'};
 playsound(pahandle, wrongsnd);
 display_instructions(win,txt);
 
-task = 'revlearn';
-
 %display onscreen countdown
 countdown
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 tetio_startTracking;
 
-presstime=[];%%empty matrix
-soundtime=[];
-
-pressvec = zeros(1, length(trialvec));
-
-% give subject a second to get ready
-WaitSecs(2);
+WaitSecs(2); %give subjects a delay before first trial
 
 for ind = 1:length(trialvec)
     %cue onset
     fixcross
     
-    cuetime = uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+    cuetime = tetio_localToRemoteTime(tetio_localTimeNow());
     
     % Wait for response
     [choice, RT] = handle_input(livekeys);
     
-    %blank screen 
+    % blank screen 
     Screen('FillRect',win, [0 0 0]);
     Screen('Flip',win);
     
-    
+    % correct or incorrect?
     if (choice==Lkey && trialvec(ind) == 0) || (choice==Rkey && trialvec(ind) == 1)
-        soundtime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        soundtime=tetio_localToRemoteTime(tetio_localTimeNow());
         playsound(pahandle,rightsnd);
         correct = 1;
     else
-        soundtime=uint64(tetio_localToRemoteTime(tetio_localTimeNow()));
+        soundtime=tetio_localToRemoteTime(tetio_localTimeNow());
         playsound(pahandle,wrongsnd);
         correct = 0;
     end
@@ -116,7 +110,7 @@ for ind = 1:length(trialvec)
     data(ind).choice = choice;
     data(ind).correct = correct;
     data(ind).cuetime = cuetime;
-    data(ind).presstime = uint64(tetio_localToRemoteTime(RT));
+    data(ind).presstime = tetio_localToRemoteTime(RT);
     data(ind).soundtime = soundtime;
     save(outfile,'data','task','pars')
      
@@ -131,6 +125,8 @@ eyedata.timestamp = timestamp;
 eyedata.trig = trigSignal;
 
 save(outfile,'data','eyedata','task','pars','trialvec')
+
+shutdown_audio;
 
 % return the screen to dark
 Screen('FillRect',win,[0 0 0],[]);
