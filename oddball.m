@@ -30,7 +30,7 @@ else
             trialvec = makeoddballs(nodd,minrun,maxrun,seed);
         case 1
             dat = load(varargin{1});
-            trialvec = dat.trialvec;
+            trialvec=varargin{2}
     end
     
 end
@@ -57,7 +57,7 @@ pars.iti_mean = iti_mean;
 pars.iti_range = iti_range;
 
 %%%%%%%%%%%%%% Display Instructions %%%%%%%%%%%%%
-instructions = {'In this task, you will listen to some sounds. \n'};
+instructions = {'In this task, you will listen to some sounds. \n Press any key to continue'};
 display_instructions(win, instructions);
 
 % Sound samples

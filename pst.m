@@ -9,8 +9,8 @@ PTBprelims
 countdown
 
 % paint blank screen
-Screen('FillRect',window,[0 0 0],[]);
-Screen('Flip',window);
+Screen('FillRect',win,[0 0 0],[]);
+Screen('Flip',win);
 
 tetio_startTracking;
 
