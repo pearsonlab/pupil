@@ -112,16 +112,19 @@ while 1
             continue
         case '4'
             stub = 'revlearn';
+            neworold=input('Would you like to generate a new vector? Y/N ','s');
+            lower(neworold);
+            %switchnum=input('How many switches would you like?', 's');
             outfile = get_next_fname(subjdir,subjnum,stub);
-            revlearn(outfile)
+            revlearn(outfile,(strcmp('neworold','n')),'switchnum')
             continue
         case '5'
             stub = 'oddball';
-            neworold=input('Would you like to generate a new vector or use an old one? N/O ','s');
+            neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
             %whichvector=input('')
             outfile = get_next_fname(subjdir,subjnum,stub);
-            oddball(outfile,(strcmp('neworold','0')==1),'OddballTrialVectors', 'five_oddtrial')
+            oddball(outfile,(strcmp('neworold','n')),'OddballTrialVectors', 'five_oddtrial')
         case 'Q'
             break
         
