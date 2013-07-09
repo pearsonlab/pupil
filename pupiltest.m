@@ -86,6 +86,8 @@ while 1
             outfile = get_next_fname(subjdir,subjnum,stub);
             [errcode,calibdata] = calibrate(numpts,outfile);
             if errcode == 1
+                tetio_stopcalib;
+                tetio_disconnectTracker;
                 clc
                 fprintf('Calibration not successful! Try again, perhaps with more points.\n\n')
             else
@@ -114,21 +116,15 @@ while 1
             stub = 'revlearn';
             neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
-            %switchnum=input('How many switches would you like?', 's');
             outfile = get_next_fname(subjdir,subjnum,stub);
-            revlearn(outfile,(strcmp('neworold','n')),'switchnum')
+            revlearn(outfile,(strcmp(neworold,'n')), 'RevVectors');
             continue
         case '5'
             stub = 'oddball';
             neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
-            %whichvector=input('')
             outfile = get_next_fname(subjdir,subjnum,stub);
-            oddball(outfile,(strcmp('neworold','n')),'OddballTrialVectors', 'five_oddtrial')
-        case 'Q'
-            break
-        
-        
+            oddball(outfile,(strcmp(neworold,'n')),'OddballTrialVectors')  
     end
     
     

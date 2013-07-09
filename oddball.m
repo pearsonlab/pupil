@@ -19,18 +19,16 @@ else
     % set up switches when flag is specified
     switch flag
         case 0
-            nodd = varargin{1};
-            minrun = varargin{2};
-            maxrun = varargin{3};
-            if length(varargin) > 3
-                seed = varargin{4};
-            else
+            nodd=input('How many oddballs would you like?', 's');
+            minrun=input('Minimum run?', 's');
+            maxrun=input('Maximum run?', 's');
                 seed = GetSecs;
             end
             trialvec = makeoddballs(nodd,minrun,maxrun,seed);
         case 1
+            vectfile=input('Would you like four,five, or six oddballs?(you must type out the word right now)', 's');
             dat = load(varargin{1});
-            trialvec=varargin{2}
+            trialvec = dat.(vectfile);
     end
     
 end

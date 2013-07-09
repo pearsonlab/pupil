@@ -19,18 +19,15 @@ else
     % set up switches when flag is specified
     switch flag
         case 0
-            nswitch = varargin{1};
-            minrun = varargin{2};
-            maxrun = varargin{3};
-            if length(varargin) > 3
-                seed = varargin{4};
-            else
-                seed = GetSecs;
-            end
+            nswitch=input('How many switches would you like?', 's');
+            minrun=input('Minimum run?', 's');
+            maxrun=input('Maximum run?', 's');
+            seed = GetSecs;
             trialvec = makeswitches(nswitch,minrun,maxrun,seed);
         case 1
+            vectfile=input('Would you like four,five, or six switches?(you must type out the word right now)', 's');
             dat = load(varargin{1});
-            trialvec = dat.trialvec;
+            trialvec = dat.(vectfile);
     end
     
 end
