@@ -1,4 +1,4 @@
-function revlearn(outfile,flag,varargin)
+function oddball(outfile,flag,varargin)
 % code to perform reversal learning test
 % saves data to outfile
 % flag = 0 for generating a new set of switches; if so, varargin has two
@@ -6,28 +6,33 @@ function revlearn(outfile,flag,varargin)
 % numbers of trials between switches
 % flag = 1 loads data from a file (name given in varargin)
 
-task = 'revlearn';
+task = 'oddball';
 
 % default values if flag not specified
 if ~exist('flag','var')
-    nswitch = 4;
+    nodd = 4;
     minrun = 3;
     maxrun = 6;
     seed = 12345;
-    trialvec = makeswitches(nswitch,minrun,maxrun,seed);
+    trialvec = makeoddballs(nodd,minrun,maxrun,seed);
 else
     % set up switches when flag is specified
     switch flag
         case 0
-            nswitch=input('How many switches would you like?', 's');
-            minrun=input('Minimum run?', 's');
-            maxrun=input('Maximum run?', 's');
-            seed = GetSecs;
-            trialvec = makeswitches(nswitch,minrun,maxrun,seed);
+            nodd=varargin{1};
+            minrun=varargin{2};
+            maxrun=varargin{3};
+            if length(varargin) > 3
+                seed = varargin{4};
+            else 
+                seed = GetSecs;
+            end 
+            trialvec = makeoddballs(nodd,minrun,maxrun,seed);
         case 1
-            
+            vectfile=input('Would you like four,five, or six oddballs?(you must type out the word right now)', 's');
             dat = load(varargin{1});
-            trialvec = dat.(varargin{2});
+            trialvec = dat.trialvec;
+
     end
     
 end
@@ -36,15 +41,16 @@ end
 KbName('UnifyKeyNames'); %keynames will match those on Mac OS-X operating sys
 Rkey=KbName('RightArrow');
 Lkey=KbName('LeftArrow');
-livekeys = [Lkey, Rkey];
+spacebar = KbName('space');
+livekeys = [spacebar];
 
 %%%%%%%% PTB preliminaries %%%%%%%%%%%%%
 PTBprelims
 
 %%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
 setup_audio
-[wrongsnd,popF]=wavread('buzz.wav');
-[rightsnd,cashF]=wavread('dinga.wav');
+[lowsnd,lowF]=wavread('500.wav');
+[highsnd,highF]=wavread('1000a.wav');
 
 %%%%%%%%%%%%%% Task Parameters %%%%%%%%%%%%%
 iti_mean = 3;
@@ -53,68 +59,53 @@ pars.iti_mean = iti_mean;
 pars.iti_range = iti_range;
 
 %%%%%%%%%%%%%% Display Instructions %%%%%%%%%%%%%
-instructions = {['Press the left or right key \n' ...
-    'when the cross appears onscreen.\n' ...
-    'You must learn by trial and error\n' ...
-    'which is correct. \n\n' ...
-    '(Press any key to continue)']};
+instructions = {'In this task, you will listen to some sounds. \n Press any key to continue'};
 display_instructions(win, instructions);
 
 % Sound samples
-txt = {'You will hear this for correct responses. \n (Press any key to continue)'};
-playsound(pahandle, rightsnd);
+txt = {'Some sounds are low...'};
+playsound(pahandle, lowsnd);
 display_instructions(win,txt);
-txt = {'And this for incorrect responses.'; 'Press any key when ready.'};
-playsound(pahandle, wrongsnd);
+
+txt = {'...and some are high.'};
+playsound(pahandle, highsnd);
+display_instructions(win,txt);
+
+txt = {['When you hear a sound, press the space bar.\n\n' ...
+    'Press any key when ready.']};
 display_instructions(win,txt);
 
 %display onscreen countdown
-countdown
-
+countdown    
+    
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 tetio_startTracking;
 
 WaitSecs(2); %give subjects a delay before first trial
-
-for ind = 1:length(trialvec)
+fixcross;
+for ind=1:length(trialvec);
+    
     %cue onset
-    fixcross
-    
-    cuetime = tetio_localToRemoteTime(tetio_localTimeNow());
-    
-    % Wait for response
-    [choice, ~] = handle_input(livekeys);
-    presstime=tetio_localToRemoteTime(tetio_localTimeNow());
-    
-    % correct or incorrect?
-    if (choice==Lkey && trialvec(ind) == 0) || (choice==Rkey && trialvec(ind) == 1)
-        soundtime=tetio_localToRemoteTime(tetio_localTimeNow());
-        playsound(pahandle,rightsnd);
-        correct = 1;
+    soundtime = tetio_localToRemoteTime(tetio_localTimeNow());
+    if trialvec(ind)
+        playsound(pahandle, highsnd);
     else
-        soundtime=tetio_localToRemoteTime(tetio_localTimeNow());
-        playsound(pahandle,wrongsnd);
-        correct = 0;
+        playsound(pahandle, lowsnd);
     end
     
-    WaitSecs(1); %outcome period
-    
-    % blank screen 
-    Screen('FillRect',win, [0 0 0]);
-    Screen('Flip',win);
+    % Wait for response
+    handle_input(livekeys);
+    presstime = tetio_localToRemoteTime(tetio_localTimeNow());
     
     iti = iti_mean + iti_range*(2*rand-1);
     
     WaitSecs(iti);
     
     %%%% save data each trial %%%%%%
-    data(ind).choice = choice;
-    data(ind).correct = correct;
-    data(ind).cuetime = cuetime;
-    data(ind).presstime = presstime;
     data(ind).soundtime = soundtime;
+    data(ind).presstime = presstime;
     save(outfile,'data','task','pars')
-     
+    
 end
 tetio_stopTracking;
 
@@ -134,4 +125,6 @@ Screen('FillRect',win,[0 0 0],[]);
 Screen('Flip',win);
 
 disp('Program finished.');
-end
+
+
+
