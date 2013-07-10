@@ -25,9 +25,8 @@ else
             seed = GetSecs;
             trialvec = makeswitches(nswitch,minrun,maxrun,seed);
         case 1
-            vectfile=input('Would you like four,five, or six switches?(you must type out the word right now)', 's');
             dat = load(varargin{1});
-            trialvec = dat.(vectfile);
+            trialvec = dat.(varargin{2});
     end
     
 end
