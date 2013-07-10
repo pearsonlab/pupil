@@ -124,9 +124,12 @@ while 1
             neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
             outfile = get_next_fname(subjdir,subjnum,stub);
-            oddball(outfile,(strcmp(neworold,'n')),'OddballTrialVectors')  
+            oddball(outfile,(strcmp(neworold,'n')),'OddballVectors')
+        case 'Q'
+            break
     end
     
+
     
 end
 

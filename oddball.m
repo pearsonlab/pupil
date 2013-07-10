@@ -23,12 +23,13 @@ else
             minrun=input('Minimum run?', 's');
             maxrun=input('Maximum run?', 's');
                 seed = GetSecs;
-            end
+       
             trialvec = makeoddballs(nodd,minrun,maxrun,seed);
         case 1
             vectfile=input('Would you like four,five, or six oddballs?(you must type out the word right now)', 's');
             dat = load(varargin{1});
             trialvec = dat.(vectfile);
+
     end
     
 end
