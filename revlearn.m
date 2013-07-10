@@ -25,6 +25,10 @@ else
             seed = GetSecs;
             trialvec = makeswitches(nswitch,minrun,maxrun,seed);
         case 1
+<<<<<<< HEAD
+=======
+            
+>>>>>>> 71cc58a1da0b7c97da0f6d70c530e55144a6102b
             dat = load(varargin{1});
             trialvec = dat.(varargin{2});
     end
@@ -60,7 +64,7 @@ instructions = {['Press the left or right key \n' ...
 display_instructions(win, instructions);
 
 % Sound samples
-txt = {'You will hear this for correct responses.'};
+txt = {'You will hear this for correct responses. \n (Press any key to continue)'};
 playsound(pahandle, rightsnd);
 display_instructions(win,txt);
 txt = {'And this for incorrect responses.'; 'Press any key when ready.'};

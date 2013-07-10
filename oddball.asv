@@ -29,8 +29,9 @@ else
             end 
             trialvec = makeoddballs(nodd,minrun,maxrun,seed);
         case 1
+            vectfile=input('Would you like four,five, or six oddballs?(you must type out the word right now)', 's');
             dat = load(varargin{1});
-            trialvec = dat.(varargin{2});
+            trialvec = dat.trialvec;
 
     end
     
@@ -62,11 +63,11 @@ instructions = {'In this task, you will listen to some sounds. \n Press any key 
 display_instructions(win, instructions);
 
 % Sound samples
-txt = {'Some sounds are low... \n Press any key to continue'};
+txt = {'Some sounds are low...'};
 playsound(pahandle, lowsnd);
 display_instructions(win,txt);
 
-txt = {'...and some are high.  \n Press any key to continue'};
+txt = {'...and some are high.'};
 playsound(pahandle, highsnd);
 display_instructions(win,txt);
 
