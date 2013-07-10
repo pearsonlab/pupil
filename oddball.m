@@ -60,11 +60,11 @@ instructions = {'In this task, you will listen to some sounds. \n Press any key 
 display_instructions(win, instructions);
 
 % Sound samples
-txt = {'Some sounds are low...'};
+txt = {'Some sounds are low... \n Press any key to continue'};
 playsound(pahandle, lowsnd);
 display_instructions(win,txt);
 
-txt = {'...and some are high.'};
+txt = {'...and some are high.  \n Press any key to continue'};
 playsound(pahandle, highsnd);
 display_instructions(win,txt);
 
