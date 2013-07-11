@@ -1,16 +1,25 @@
 %%%% Hello world! Little tiny plotting function. 
 function cleanplot(filename)
 load('filename')
+<<<<<<< HEAD
 
 
 datamat = repmat((NaN), max([length(data(1).lefteye),length(data(2).lefteye),length(data(3).lefteye)]),7);
 
 
+=======
+ 
+ 
+datamat = repmat((NaN), max([length(data(1).lefteye),length(data(2).lefteye),length(data(3).lefteye)]),7);
+ 
+ 
+>>>>>>> 8200d8b3d4eee11e0fdf3531091df2ac7a7bf0a8
 for i = 1:length(data)
     
     data(i).lefteye(data(i).lefteye(:,13)~=0,12) = NaN;
     data(i).righteye(data(i).righteye(:,13)~=0,12) = NaN;
     
+<<<<<<< HEAD
     datamat(1:length(data(i).lefteye),i)=data(i).lefteye(:,12);
    % datamat{1:length(data(i).righteye),i}=data(i).righteye(:,12);
   
@@ -18,6 +27,17 @@ for i = 1:length(data)
 end
 
 
+=======
+    for z=1:2:5 %%using numbers and double loops is gross, but whatevs for now 
+    datamat(1:length(data(i).lefteye),z)=data(i).lefteye(:,12);
+    datamat(1:length(data(i).righteye),z+1)=data(i).righteye(:,12);
+    end
+   
+  
+ 
+end
+ 
+ 
+>>>>>>> 8200d8b3d4eee11e0fdf3531091df2ac7a7bf0a8
 combin=horzcat(data.lefteye(:,12), data.righteye(:,12));
 plot(combin);
-
