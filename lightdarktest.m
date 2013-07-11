@@ -43,6 +43,9 @@ Screen('FillRect',win,habit_mat,[]);
 Screen('Flip',win);
 WaitSecs(habituation_dur);
 
+
+ 
+
 for ind=1:numtrials
   
     tetio_startTracking;
@@ -82,11 +85,11 @@ for ind=1:numtrials
     data(ind).righteye = righteye;
     data(ind).timestamp = timestamp;
     data(ind).trig = trigSignal;
-    save(outfile,'data','task')
+    save(outfile,'data','task') 
    
 end
 
- 
+
 
    
     
