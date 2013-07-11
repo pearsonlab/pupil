@@ -42,10 +42,10 @@ countdown
 Screen('FillRect',win,habit_mat,[]);
 Screen('Flip',win);
 WaitSecs(habituation_dur);
-tetio_startTracking;
+
 for ind=1:numtrials
-    
-    
+  
+    tetio_startTracking;
     
     WaitSecs(2);
     
@@ -71,9 +71,9 @@ for ind=1:numtrials
     
     %wait recovery time
     WaitSecs(recover_dur(ind));
-    
-    
-    
+
+    tetio_stopTracking;
+     
     %read eye data
     [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
     
@@ -83,9 +83,14 @@ for ind=1:numtrials
     data(ind).timestamp = timestamp;
     data(ind).trig = trigSignal;
     save(outfile,'data','task')
-    
+   
 end
-tetio_stopTracking;
+
+ 
+
+   
+    
+
 
 
 %tetio_cleanUp; %%%% are we sure we need to do this? not really...

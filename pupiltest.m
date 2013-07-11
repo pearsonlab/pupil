@@ -46,7 +46,13 @@ while 1
         break
     end
 end
+
+%%bring up the track pupil so partcipant can see their eyes and the
+%%experimenter can adjust the screen accordingly
+TrackPupil;
+
 %% set up menus
+
 
 menustr = sprintf(strcat('Please select an option:\n', ...
     '-------------------------------------------\n', ...
@@ -86,7 +92,7 @@ while 1
             outfile = get_next_fname(subjdir,subjnum,stub);
             [errcode,calibdata] = calibrate(numpts,outfile);
             if errcode == 1
-                tetio_stopcalib;
+                tetio_stopCalib;
                 tetio_disconnectTracker;
                 clc
                 fprintf('Calibration not successful! Try again, perhaps with more points.\n\n')
@@ -124,11 +130,7 @@ while 1
             neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
             outfile = get_next_fname(subjdir,subjnum,stub);
-<<<<<<< HEAD
             oddball(outfile,(strcmp(neworold,'n')),'OddballVectors', 'four')
-=======
-            oddball(outfile,(strcmp(neworold,'n')),'OddballVectors','four')
->>>>>>> 71cc58a1da0b7c97da0f6d70c530e55144a6102b
         case 'Q'
             break
     end

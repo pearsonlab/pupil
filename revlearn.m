@@ -25,10 +25,6 @@ else
             seed = GetSecs;
             trialvec = makeswitches(nswitch,minrun,maxrun,seed);
         case 1
-<<<<<<< HEAD
-=======
-            
->>>>>>> 71cc58a1da0b7c97da0f6d70c530e55144a6102b
             dat = load(varargin{1});
             trialvec = dat.(varargin{2});
     end

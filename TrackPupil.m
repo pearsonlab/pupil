@@ -24,8 +24,7 @@ Calib.BigMark = 25; % the big marker
 Calib.TrackStat = 25; % 
 Calib.SmallMark = 7; % the small marker
 Calib.delta = 200; % Moving speed from point a to point b
-Calib.resize = 1; % To show a smaller window
-Calib.NewLocation = get(gcf,'position');
+Calib.resize = 1; % To show a smaller windw
 
 
 %%%% This is the trackstatus code itself. It will appear on the master
@@ -66,7 +65,9 @@ Calib.NewLocation = get(gcf,'position');
 	breakLoopFlag=0;
 	updateFrequencyInHz = 60;
 
-	tetio_startTracking;
+	tetio_init;
+    tetio_CONNECT;
+    tetio_startTracking;
 
 	validLeftEyePos = 0;
 	validRightEyePos = 0;
@@ -117,3 +118,4 @@ Calib.NewLocation = get(gcf,'position');
 
 	close ALL;
 	tetio_stopTracking;
+    tetio_cleanUp;
