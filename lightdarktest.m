@@ -75,21 +75,19 @@ for ind=1:numtrials
     %wait recovery time
     WaitSecs(recover_dur(ind));
 
-    tetio_stopTracking;
-     
-    %read eye data
-    [lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
     
-    %%%% save data each trial %%%%%%
-    data(ind).lefteye = lefteye;
-    data(ind).righteye = righteye;
-    data(ind).timestamp = timestamp;
-    data(ind).trig = trigSignal;
-    save(outfile,'data','task') 
-   
 end
 
+tetio_stopTracking;
+     
+%read eye data
+[lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
+eyedata.lefteye = lefteye;
+eyedata.righteye = righteye;
+eyedata.timestamp = timestamp;
+eyedata.trig = trigSignal;
 
+save(outfile,'data','eyedata', 'task');
 
    
     
