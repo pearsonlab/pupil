@@ -44,11 +44,9 @@ Screen('Flip',win);
 WaitSecs(habituation_dur);
 
 
- 
+ tetio_startTracking;
 
 for ind=1:numtrials
-  
-    tetio_startTracking;
     
     WaitSecs(2);
     

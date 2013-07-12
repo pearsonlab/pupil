@@ -84,7 +84,7 @@ while 1
     display_instructions(win,'Relax. The task will begin shortly.',1);
     
     choice = input(menustr,'s');
-    
+    TrackPupil;
     switch choice
         case '0'
             stub = 'calibrate';
