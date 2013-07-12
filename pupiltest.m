@@ -49,7 +49,7 @@ end
 
 %%bring up the track pupil so partcipant can see their eyes and the
 %%experimenter can adjust the screen accordingly
-TrackPupil;
+
 
 %% set up menus
 
@@ -71,7 +71,7 @@ menustr = sprintf(strcat('Please select an option:\n', ...
 disp('Initializing tetio...');
 tetio_init();
 tetio_CONNECT;
-
+TrackPupil;
 %% ready PTB
 warning('off','MATLAB:dispatcher:InexactMatch');
 Screen('Preference', 'SkipSyncTests',2); %disables all testing -- use only if ms timing is not at all an issue
@@ -84,7 +84,7 @@ while 1
     display_instructions(win,'Relax. The task will begin shortly.',1);
     
     choice = input(menustr,'s');
-    TrackPupil;
+    TrackPupil; %%this is here to make sure that the person doesn't move in between tests and then we lose their eyes and then the last 3 tests record no data at all, ya know, for example
     switch choice
         case '0'
             stub = 'calibrate';
