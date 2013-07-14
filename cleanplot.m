@@ -3,7 +3,7 @@ function cleanplot(filename)
 addpath ('C:\Users\Anna\Desktop\Work\Duke Summer\data\part.7data')  %%this is specifically for Anna Leigh's computer, take this out!!!
 load('filename')
  
-hold on
+
 datamat = repmat((NaN), length(eyedata.lefteye),3); % this creates a matrix with the size of the eyedata full of NaN
 
 
@@ -24,21 +24,24 @@ datamat(:,3)=eyedata.timestamp;
 chopmat=[];
 %%this spits out the bins that contain the position of each onset of the
 %%stimulus
-for ind = 1:length(data)
-for i=1:length(datamat)
+for ind = 1:length(data);
+for i=1:length(datamat);
 d(i)=data(ind).ontime-(datamat(i,3));
 end
 [n onbin(ind)]=min(abs(d));
-chopmat(:,ind)=datamat((onbin(ind)-60):(onbin(ind)+120),1)
+chopmat(:,ind)=datamat((onbin(ind)-60):(onbin(ind)+120),1);
+chopmat(:,ind+3)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
 end
 
-
+chopmat(:,7)=(chopmat(:,1)+chopmat(:,4)/2);
+chopmat(:,8)=(chopmat(:,2)+chopmat(:,5)/2);
+chopmat(:,9)=(chopmat(:,3)+chopmat(:,6)/2);
+plot(chopmat(:,7:9));
 
 % switch type
 %     case oddball
 %data(find(trialvec(1,:)==1)) %find the trials where an oddball occured
 
 
-plot(datamat(:,3),datamat(:,1));
-set((plot(datamat(:,3),datamat(:,2))), 'Color', 'r');
+
 
