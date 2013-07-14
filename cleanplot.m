@@ -1,5 +1,6 @@
 %%%% Hello world! Little tiny plotting function. 
 function cleanplot(filename)
+addpath ('C:\Users\Anna\Desktop\Work\Duke Summer\data\part.7data')  %%this is specifically for Anna Leigh's computer, take this out!!!
 load('filename')
  
 hold on
