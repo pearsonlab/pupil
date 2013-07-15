@@ -1,48 +1,59 @@
 %%%% Hello world! Little tiny plotting function. 
 function cleanplot(filename)
 
- 
-
 datamat = repmat((NaN), length(eyedata.lefteye),3); % this creates a matrix with the size of the eyedata full of NaN
 
 
-%tobii gives bad eye data back as a -1 or 4 or whatever, so this ensures
+%tobii gives bad eye data back as a -1 or 4 in column 13 of the eye data matrix, so this ensures
 %that all of the bad eye data is now considered a NaN
 eyedata.lefteye(eyedata.lefteye(:,13)~=0,12) = NaN;
 eyedata.righteye(eyedata.righteye(:,13)~=0,12) = NaN;
 
-    %get timestamp into a signed time so that it can be used
+%get timestamp into a signed time so that it can be used
 eyedata.timestamp=int64(eyedata.timestamp);
 %eyedata.timestamp=(eyedata.timestamp-(datamat(1,3))/1000000
 
-%create a matrix with left, right, and timestamp
+%create a matrix of 3 columns with left, right, and timestamp
 datamat(:,1)=eyedata.lefteye(:,12);
 datamat(:,2)=eyedata.righteye(:,12);
 datamat(:,3)=eyedata.timestamp;
 
-
 switch type
-     case oddball
-plot((datamat(:,1)+(datamat(:,2)))/2); %plot the average of the left and right pupil
-
-%this will draw a line where every sound occured. 
-for ind=1:length(data);
-for i=1:length(datamat);
-tofindbins(i,ind)=data(ind).soundtime-datamat(i,3);
-
-end
-[n timebin]=min(abs(tofindbins(:,ind)));
-line([timebin timebin],[3 5.5]);
-end
-
-odd.sound=data(find(trialvec(1,:)==1));%find the trials where an oddball occured
-for z = 1:length(odd.sound)
-    oddbins(z)=odd.sound(z).soundtime-datamat(i,3);
-
-case lightdark
-
     
-    chopmat=[];
+case oddball
+    odd.sound=data(find(trialvec(1,:)==1));%find the trials where an oddball occurred
+    plot((datamat(:,1)+(datamat(:,2)))/2); %plot the average of the left and right pupil
+    hold on
+%this will draw a vertical line marking when a sound occurred. 
+    for ind=1:length(data);
+        for i=1:length(datamat);
+        tofindbins(i,ind)=data(ind).soundtime-datamat(i,3);
+    
+        [n timebin]=min(abs(tofindbins(:,ind)));
+    
+            for z = 1:length(odd.sound)
+             oddbins(z)=odd.sound(z).soundtime-datamat(i,3);
+             [row col] = find(tofindbins == oddbins(z)); % find column that includes oddball in tofindbins  
+            end
+             if timebin ~= col
+                
+                n = line([timebin timebin],[3 5.5],'Color','blue');
+%                 set(n,'Color','blue');
+                
+             else
+                 
+                y = line([timebin timebin],[3 5.5],'Color','red');
+%                 set(y,'Color','red');
+                 
+             end
+            
+        end
+    end
+    
+case lightdark
+    
+     chopmat=[];
+     
 %%this spits out the bins that contain the position of each onset of the
 %%stimulus
 for ind = 1:length(data);
