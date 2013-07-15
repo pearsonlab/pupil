@@ -18,9 +18,9 @@ datamat(:,1)=eyedata.lefteye(:,12);
 datamat(:,2)=eyedata.righteye(:,12);
 datamat(:,3)=eyedata.timestamp;
 
-switch type
+%switch type
     
-case oddball
+%case oddball
     odd.sound=data(find(trialvec(1,:)==1));%find the trials where an oddball occurred
     plot((datamat(:,1)+(datamat(:,2)))/2); %plot the average of the left and right pupil
     hold on
@@ -28,28 +28,14 @@ case oddball
     for ind=1:length(data);
         for i=1:length(datamat);
         tofindbins(i,ind)=data(ind).soundtime-datamat(i,3);
-    
         [n timebin]=min(abs(tofindbins(:,ind)));
-    
-            for z = 1:length(odd.sound)
-             oddbins(z)=odd.sound(z).soundtime-datamat(i,3);
-             [row col] = find(tofindbins == oddbins(z)); % find column that includes oddball in tofindbins  
-            end
-             if timebin ~= col
-                
-                n = line([timebin timebin],[3 5.5],'Color','blue');
-%                 set(n,'Color','blue');
-                
-             else
-                 
-                y = line([timebin timebin],[3 5.5],'Color','red');
-%                 set(y,'Color','red');
-                 
-             end
-            
+        line([timebin timebin],[3 5.5],'Color','b')
         end
     end
     
+
+    
+  
 case lightdark
     
      chopmat=[];
