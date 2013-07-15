@@ -28,12 +28,24 @@ datamat(:,3)=eyedata.timestamp;
     for ind=1:length(data);
         for i=1:length(datamat);
         tofindbins(i,ind)=data(ind).soundtime-datamat(i,3);
-        [n timebin]=min(abs(tofindbins(:,ind)));
-        line([timebin timebin],[3 5.5],'Color','b')
-        end
+        
+        [n timebin]=min(abs(tofindbins(:,ind))); % find the bin with the least difference between soundtime and bintime.
+        line([timebin timebin],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+             
+      end
     end
     
-
+    for i=1:length(datamat);
+ % this will draw red vertical lines at oddball time points
+ for ind=1:length(odd.sound);
+        
+        oddbins(i,ind)=odd.sound(ind).soundtime-datamat(i,3);
+        
+        [n oddbin(ind)]=min(abs(oddbins(:,ind)));
+        y = line([oddbin(ind) oddbin(ind)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+        set(y, 'Color', 'r');     
+      end
+    end
     
   
 case lightdark
