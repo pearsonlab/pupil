@@ -37,7 +37,7 @@ end
 
 odd.sound=data(find(trialvec(1,:)==1));%find the trials where an oddball occured
 for z = 1:length(odd.sound)
-    oddbins(z)=odd.sound(z).soundtime-datamat(i,3);
+    oddbins(i,ind)=data(ind).soundtime-datamat(i,3);
 
 case lightdark
 
