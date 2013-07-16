@@ -1,85 +1,112 @@
 %%%% Hello world! Little tiny plotting function. 
+% With Love, Annas
 function cleanplot(filename)
+%% Explanations
+%%% datamat = 3-column matrix vertcatting lefteye(1), righteye(2), and
+% timestamp(3)
 
 
-% Create a NaN matrix the size of eyedata
-datamat = repmat((NaN), length(eyedata.lefteye),3); 
 
+%% Data Cleaning PreLims
 
- 
-% Create a NaN matrix the size of eyedata
-datamat = repmat((NaN), length(eyedata.lefteye),3); 
- 
-
-%tobii gives bad eye data back as a -1 or 4 in column 13 of the eye data matrix, so this ensures
-%that all of the bad eye data is now considered a NaN
+% Replace bad eye data with NaN (Column 13 values of either -1 or 4 are
+%bad). 
 eyedata.lefteye(eyedata.lefteye(:,13)~=0,12) = NaN;
 eyedata.righteye(eyedata.righteye(:,13)~=0,12) = NaN;
- 
-%get timestamp into a signed time so that it can be used
+
+% Get timestamp into a signed time so that it can be used
 eyedata.timestamp=int64(eyedata.timestamp);
 %eyedata.timestamp=(eyedata.timestamp-(datamat(1,3))/1000000
 
- 
-
-%Replace NaN matrix with 3 columns of the same length to be plotted: left, right, and
-%timestamp
+% Create a matrix the size of longest eyedata to combine left, right,
+% and timestamp data into 3 columns in 1 matrix, called datamat.
+datamat = repmat((NaN), length(eyedata.lefteye),3);
 datamat(:,1)=eyedata.lefteye(:,12);
 datamat(:,2)=eyedata.righteye(:,12);
 datamat(:,3)=eyedata.timestamp;
 
-
-%plot the average of the left and right pupil
+% Plot the average of the left and right pupil
 plot((datamat(:,1)+(datamat(:,2)))/2);
 hold on
 
-
- 
-%plot the average of the left and right pupil
-plot((datamat(:,1)+(datamat(:,2)))/2);
-hold on
 
 %switch type
-    %case oddball
-        %find the trials where an oddball occurred
-        odd.sound=data(find(trialvec(1,:)==1));
-        
-        %draw a vertical line where a sound occurred
-        for ind=1:length(data);
-            for i=1:length(datamat);
+
+%% Oddball 
+    % case oddball
+    
+% Explanations %
+%%% tofindbins  = matrix in which all timestamps per column have been
+% subtracted by soundtime (in order to find the minimum)
+%%%  timebin = row # (bin) for each column (denoted by ind) that marks the
+% sound time 
+%%% chopmat_odd = matrix of chopped data per each sound trial (to be
+% layered.
+%%% normavg = matrix with columns containing chopped data from chopmat_odd
+% (for left eye currently) for normal sounds only
+%%% oddavg = same as normavg but for odd sounds.
+    
+    chopmat_odd = [];
+    normavg = [];
+    oddavg = [];
+     
+        % Find the trials where an oddball occurred
+        oddsoundvec = find(trialvec(1,:)==1);
+
+        % Find timebins where any sound occurred, including normal and odd. 
+        for ind=1:length(data); % 1:25
+            for i=1:length(datamat); %1:6499
                 tofindbins(i,ind)=data(ind).soundtime-datamat(i,3); 
                 
-                % find the bin with the least difference between soundtime and bintime.
+                % Find the timestamp bin corresponding time of sound
+                %stimulus.
                 [n timebin(ind)]=min(abs(tofindbins(:,ind)));
-                % find 1 second before, 2 seconds after normal sounds
-                chopmat_norm(:,ind+3)=datamat((timebin(ind)-60):(timebin(ind)+120),2);
-                % plot vertical lines
-                %line([timebin(ind) timebin(ind)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+                   
             end
+            
+             % Create matrix of chopped data - each column contains
+                % eye data from 60 bins (1 sec) before through 120 bins after the sound time 
+                % bin of that particular trial.
+            chopmat_odd(:,ind) = datamat((timebin(ind)-60):(timebin(ind)+120),1);
+            
+            % Figure out how to also plot right eye - why not just avg.
+            % chopmat_odd so bottom stays same
         end
         
-        for i=1:length(datamat);
-            % this will draw red vertical lines at oddball time points
-            for ind=1:length(odd.sound);
-        
-            oddbins(i,ind)=odd.sound(ind).soundtime-datamat(i,3);
+        % Plot vertical lines for normal (blue) vs. odd sounds (red).
+        for ind=1:length(data) % 1:25
+            if sum(ind == oddsoundvec) == 0 
+                
+            % plot vertical lines in blue for normal sound
+            line([timebin(ind) timebin(ind)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+            
+            % Also - define normavg as matrix with columns containing eye
+            %data from the trials with normal sound.
+            normavg(:,ind) = chopmat_odd(:,ind);
 
-        
-            [n oddbin(ind)]=min(abs(oddbins(:,ind)));
-            % find 1 second before, 2 seconds after oddball sounds
-            chopmat_odd(:,ind+3)=datamat((oddbin(ind)-60):(oddbin(ind)+120),2);
-            % plot vertical lines
-            %y = line([oddbin(ind) oddbin(ind)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
-            %set(y, 'Color', 'r');     
+            else % Plot vertical lines in red for oddball sound
+            y = line([timebin(ind) timebin(ind)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+            set(y, 'Color', 'r');
+            
+            % Also - define oddavg as matrix with columns containing eye
+            %data from the trials with odd sound.
+            oddavg(:,ind) = chopmat_odd(:,ind);
             end
         end
+     
+        % Average normal and oddball lefteye data and then plot on new figure   
         
-        % plot averaged normal trials and averaged oddball trials - take 1
-        % second before and 2 seconds after
+        normavg(normavg == 0) = NaN;
+        oddavg(oddavg == 0) = NaN;
         
-        
+        for i=1:length(normavg)
+            plot2odd(i,1) = nanmean(normavg(i,:));
+            plot2odd(i,2) = nanmean(oddavg(i,:));
+        end
         figure;
-        
+        plot(plot2odd);    
+ 
+%% Reversal Learning
     case revlearn
     
          for i=1:length(data);
@@ -110,58 +137,9 @@ for w=1:length(corpos);
     end
     end
 end
-        
-    case lightdark
-
-            [n oddbin(ind)]=min(abs(oddbins(:,ind)));
-            % find 1 second before, 2 seconds after oddball sounds
-            chopmat_odd(:,ind+3)=datamat((oddbin(ind)-60):(oddbin(ind)+120),2);
-            % plot vertical lines
-            %y = line([oddbin(ind) oddbin(ind)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
-            %set(y, 'Color', 'r');     
-            end
-        end
-        
-        % plot averaged normal trials and averaged oddball trials - take 1
-        % second before and 2 seconds after
-        
-        
-        figure;
-        
-       
-        %case revlearn
-
-        for i=1:length(data);
-            ctrials(i)=data(i).correct==1;
-            mtrials(i)=data(i).correct==0;
-      end
-
-mispos=find(mtrials==1);
-corpos=zeros(1,length(data));
-corpos(mispos)=1;
-
-for q=1:length(mispos);
-for z=1:length(datamat);
-ze(z,q)=data(mispos(q)).soundtime-datamat(z,3);
-end
-[num pos(q)]=min(abs(ze(:,q)));
-%revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
-end
-
-revlearnmat=datamat((pos(q)-60):(pos(q)+120),1); %%since the tracker takes stamps at a rate of 60Hz this finds a second before the stimulus onset and 2 seconds after
-
-for w=1:length(corpos);
-    for t=1:length(datamat);
-    if corpos(w)==0
-        qw(w,t)=data(w).soundtime-datamat(t,3);
-    else
-        qw(w,t)=NaN;
-    end
-    end
-end
-
-   % case lightdark
-
+ 
+%% Light Dark Test
+%case lightdark
     
         chopmat=[];
      
