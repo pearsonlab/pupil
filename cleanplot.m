@@ -8,8 +8,8 @@ function cleanplot(filename)
 %% 
 
 %figure out how to add path of file.
-load(filename);
-[pathstr, name] = fileparts(filename);
+%load(filename);
+%[pathstr, name] = fileparts(filename);
 
 
 %% Data Cleaning PreLims
@@ -70,9 +70,9 @@ if strfind(name,'oddball')
              % Create matrix of chopped data - each column contains
                 % eye data from 60 bins (1 sec) before through 120 bins after the sound time 
                 % bin of that particular trial.
-            chopmatl_odd(:,ind) = datamat((timebin(ind)-60):(timebin(ind)+120),1);
-            % Figure out how to also plot right eye - why not just avg.
-            % chopmat_odd so bottom stays same
+            chopmat_odd(:,ind) = datamat((timebin(ind)-60):(timebin(ind)+120),1);
+            % Figure out how to also plot right eye - plan to average right
+            % and left eyes into chopmat_odd
         end
        
         
