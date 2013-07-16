@@ -1,10 +1,15 @@
 %%%% Hello world! Little tiny plotting function. 
 % With Love, Annas
-function cleanplot(filename)
+function cleanplot(filename) 
 %% Explanations
 %%% datamat = 3-column matrix vertcatting lefteye(1), righteye(2), and
 % timestamp(3)
 
+%% 
+
+%figure out how to add path of file.
+load(filename);
+[pathstr, name] = fileparts(filename);
 
 
 %% Data Cleaning PreLims
@@ -25,15 +30,13 @@ datamat(:,1)=eyedata.lefteye(:,12);
 datamat(:,2)=eyedata.righteye(:,12);
 datamat(:,3)=eyedata.timestamp;
 
-% Plot the average of the left and right pupil
+% Plot the average of the left and right pupil - raw data.
 plot((datamat(:,1)+(datamat(:,2)))/2);
 hold on
 
 
-%switch type
-
 %% Oddball 
-    % case oddball
+if strfind(name,'oddball')
     
 % Explanations %
 %%% tofindbins  = matrix in which all timestamps per column have been
@@ -67,11 +70,11 @@ hold on
              % Create matrix of chopped data - each column contains
                 % eye data from 60 bins (1 sec) before through 120 bins after the sound time 
                 % bin of that particular trial.
-            chopmat_odd(:,ind) = datamat((timebin(ind)-60):(timebin(ind)+120),1);
-            
+            chopmatl_odd(:,ind) = datamat((timebin(ind)-60):(timebin(ind)+120),1);
             % Figure out how to also plot right eye - why not just avg.
             % chopmat_odd so bottom stays same
         end
+       
         
         % Plot vertical lines for normal (blue) vs. odd sounds (red).
         for ind=1:length(data) % 1:25
@@ -107,39 +110,45 @@ hold on
         plot(plot2odd);    
  
 %% Reversal Learning
-    case revlearn
+elseif strfind(name,'revlearn')
     
          for i=1:length(data);
             ctrials(i)=data(i).correct==1;
             mtrials(i)=data(i).correct==0;
-      end
+         end
+
+        for i=1:length(data);
+        mtrials(i)=data(i).correct==0;
+        end
 
 mispos=find(mtrials==1);
-corpos=zeros(1,length(data));
-corpos(mispos)=1;
+corpos=find(mtrials~=1)
 
 for q=1:length(mispos);
-for z=1:length(datamat);
-ze(z,q)=data(mispos(q)).soundtime-datamat(z,3);
-end
-[num pos(q)]=min(abs(ze(:,q)));
-%revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
+    for z=1:length(datamat);
+    ze(z,q)=data(mispos(q)).soundtime-datamat(z,3);
+    end
+    
+    [num pos(q)]=min(abs(ze(:,q)));
+    %revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
 end
 
 revlearnmat=datamat((pos(q)-60):(pos(q)+120),1); %%since the tracker takes stamps at a rate of 60Hz this finds a second before the stimulus onset and 2 seconds after
 
 for w=1:length(corpos);
-    for t=1:length(datamat);
-    if corpos(w)==0
-        qw(w,t)=data(w).soundtime-datamat(t,3);
-    else
-        qw(w,t)=NaN;
+    for z=1:length(datamat);
+    ze(z,w)=data(corpos(w)).soundtime-datamat(z,3);
     end
-    end
+
+[num correctpos(w)]=min(abs(ze(:,w)));
+
+%revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
 end
+
+revlearnmat(:,2)=datamat((correctpos(w)-60):(correctpos(w)+120),1);
  
 %% Light Dark Test
-%case lightdark
+elseif strfind(name,'darktest') | strfind(name,'lighttest')
     
         chopmat=[];
      
@@ -160,3 +169,4 @@ end
         chopmat(:,8)=(chopmat(:,2)+chopmat(:,5)/2);
         chopmat(:,9)=(chopmat(:,3)+chopmat(:,6)/2);
         plot(chopmat(:,7:9));
+end
