@@ -65,8 +65,7 @@ Calib.resize = 1; % To show a smaller windw
 	breakLoopFlag=0;
 	updateFrequencyInHz = 60;
 
-	tetio_init;
-    tetio_CONNECT;
+
     tetio_startTracking;
 
 	validLeftEyePos = 0;
@@ -117,5 +116,5 @@ Calib.resize = 1; % To show a smaller windw
 	end
 
 	close ALL;
-	tetio_stopTracking;
-    tetio_cleanUp;
+
+tetio_stopTracking;    
