@@ -111,42 +111,34 @@ if strfind(name,'oddball')
  
 %% Reversal Learning
 elseif strfind(name,'revlearn')
-    
-         for i=1:length(data);
-            ctrials(i)=data(i).correct==1;
-            mtrials(i)=data(i).correct==0;
-         end
-
-        for i=1:length(data);
+    for i=1:length(data); 
         mtrials(i)=data(i).correct==0;
-        end
+    end
 
 mispos=find(mtrials==1);
-corpos=find(mtrials~=1)
-
+corpos=find(mtrials~=1);
+%%fourth column in datamat is now average of left and right eye
+datamat(:,4)=(datamat(:,1)+(datamat(:,2)))/2;
+%%this finds the eyedata for the incorrect trials
 for q=1:length(mispos);
     for z=1:length(datamat);
     ze(z,q)=data(mispos(q)).soundtime-datamat(z,3);
-    end
-    
+    end    
     [num pos(q)]=min(abs(ze(:,q)));
-    %revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
 end
 
-revlearnmat=datamat((pos(q)-60):(pos(q)+120),1); %%since the tracker takes stamps at a rate of 60Hz this finds a second before the stimulus onset and 2 seconds after
+revlearnmat=datamat((pos(q)-120):(pos(q)+120),4); %%since the tracker takes stamps at a rate of 60Hz this finds a second before the stimulus onset and 2 seconds after
 
+%this plots the eye data for the trials that were correct
 for w=1:length(corpos);
     for z=1:length(datamat);
     ze(z,w)=data(corpos(w)).soundtime-datamat(z,3);
     end
-
 [num correctpos(w)]=min(abs(ze(:,w)));
-
-%revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
 end
-
-revlearnmat(:,2)=datamat((correctpos(w)-60):(correctpos(w)+120),1);
- 
+revlearnmat(:,2)=datamat((correctpos(w)-120):(correctpos(w)+120),4);
+plot(revlearnmat);
+hleg1 = legend('Incorrect Trials','Correct Trials'); 
 %% Light Dark Test
 elseif strfind(name,'darktest') | strfind(name,'lighttest')
     
