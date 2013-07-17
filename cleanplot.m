@@ -24,9 +24,9 @@ end
 testdata.lefteye(testdata.lefteye(:,13)~=0,12) = NaN;
 testdata.righteye(testdata.righteye(:,13)~=0,12) = NaN;
 
-% Get timestamp into a signed time so that it can be used
-testdata.timestamp=int64(testdata.timestamp);
-%eyedata.timestamp=(eyedata.timestamp-(datamat(1,3))/1000000
+%make into seconds
+testerdata.timestamp=(double(eyedata.timestamp))/1000000
+
 
 % Create a matrix the size of longest eyedata to combine left, right,
 % and timestamp data into 3 columns in 1 matrix, called datamat.
@@ -37,8 +37,8 @@ datamat(:,3)=testdata.timestamp;
 
 % Plot the average of the left and right pupil - raw data.
 a1=axes;
-pst=plot((datamat(:,1)+(datamat(:,2)))/2);
-linspace(0,duration,length(datamat));
+pst=plot((datamat(:,1)+(datamat(:,2)))/2, 'Color', 'g');
+%linspace(0,duration,length(datamat));
 xlabel('Time(sec)')
 ylabel('Pupil size(mm)') % is it in mm?
 
