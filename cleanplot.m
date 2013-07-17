@@ -65,15 +65,12 @@ hold on
         
        
         %case revlearn
-
-        for i=1:length(data);
-            ctrials(i)=data(i).correct==1;
-            mtrials(i)=data(i).correct==0;
-      end
+for i=1:length(data);
+    mtrials(i)=data(i).correct==0;
+end
 
 mispos=find(mtrials==1);
-corpos=zeros(1,length(data));
-corpos(mispos)=1;
+corpos=find(mtrials~=1)
 
 for q=1:length(mispos);
 for z=1:length(datamat);
@@ -86,15 +83,13 @@ end
 revlearnmat=datamat((pos(q)-60):(pos(q)+120),1); %%since the tracker takes stamps at a rate of 60Hz this finds a second before the stimulus onset and 2 seconds after
 
 for w=1:length(corpos);
-    for t=1:length(datamat);
-    if corpos(w)==0
-        qw(w,t)=data(w).soundtime-datamat(t,3);
-    else
-        qw(w,t)=NaN;
-    end
-    end
+for z=1:length(datamat);
+ze(z,w)=data(corpos(w)).soundtime-datamat(z,3);
 end
-
+[num correctpos(w)]=min(abs(ze(:,w)));
+%revlearnmat(:,q)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
+end
+revlearnmat(:,2)=datamat((correctpos(w)-60):(correctpos(w)+120),1);
    % case lightdark
     
         chopmat=[];
