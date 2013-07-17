@@ -13,30 +13,40 @@ function cleanplot(filename)
 
 
 %% Data Cleaning PreLims
+if ~exist('task')
+    testdata=data;
+else
+    testdata=eyedata;
+end
 
 % Replace bad eye data with NaN (Column 13 values of either -1 or 4 are
 %bad). 
-eyedata.lefteye(eyedata.lefteye(:,13)~=0,12) = NaN;
-eyedata.righteye(eyedata.righteye(:,13)~=0,12) = NaN;
+testdata.lefteye(testdata.lefteye(:,13)~=0,12) = NaN;
+testdata.righteye(testdata.righteye(:,13)~=0,12) = NaN;
 
-% Get timestamp into a signed time so that it can be used
-eyedata.timestamp=int64(eyedata.timestamp);
-%eyedata.timestamp=(eyedata.timestamp-(datamat(1,3))/1000000
+%make into seconds
+testerdata.timestamp=(double(eyedata.timestamp))/1000000
+
 
 % Create a matrix the size of longest eyedata to combine left, right,
 % and timestamp data into 3 columns in 1 matrix, called datamat.
-datamat = repmat((NaN), length(eyedata.lefteye),3);
-datamat(:,1)=eyedata.lefteye(:,12);
-datamat(:,2)=eyedata.righteye(:,12);
-datamat(:,3)=eyedata.timestamp;
+datamat = repmat((NaN), length(testdata.lefteye),3);
+datamat(:,1)=testdata.lefteye(:,12);
+datamat(:,2)=testdata.righteye(:,12);
+datamat(:,3)=testdata.timestamp;
 
 % Plot the average of the left and right pupil - raw data.
-plot((datamat(:,1)+(datamat(:,2)))/2);
-hold on
+a1=axes;
+pst=plot((datamat(:,1)+(datamat(:,2)))/2, 'Color', 'g');
+%linspace(0,duration,length(datamat));
+xlabel('Time(sec)')
+ylabel('Pupil size(mm)') % is it in mm?
+
+
 
 
 %% Oddball 
-if strfind(name,'oddball')
+
     
 % Explanations %
 %%% tofindbins  = matrix in which all timestamps per column have been
@@ -113,11 +123,10 @@ if strfind(name,'oddball')
         plot(plot2odd);    
  
 %% Reversal Learning
-elseif strfind(name,'revlearn')
+%elseif strfind(name,'revlearn')
     for i=1:length(data); 
         mtrials(i)=data(i).correct==0;
     end
-
 mispos=find(mtrials==1);
 corpos=find(mtrials~=1);
 %%fourth column in datamat is now average of left and right eye
@@ -165,4 +174,5 @@ elseif strfind(name,'darktest') | strfind(name,'lighttest')
         chopmat(:,8)=(chopmat(:,2)+chopmat(:,5)/2);
         chopmat(:,9)=(chopmat(:,3)+chopmat(:,6)/2);
         plot(chopmat(:,7:9));
+        hleg1 = legend('First Stimulus','Second Stimulus', 'Third Stimulus'); 
 end

@@ -123,14 +123,16 @@ while 1
             neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
             outfile = get_next_fname(subjdir,subjnum,stub);
-            revlearn(outfile,(strcmp(neworold,'n')), 'RevVectors', 'four');
+            revlearn(outfile,(strcmp(neworold,'n')), 'RevVectors', 'six');
+            %%%this needs to be fixed, right now generating a new vector
+            %%%isn't working =)
             continue
         case '5'
             stub = 'oddball';
             neworold=input('Would you like to generate a new vector? Y/N ','s');
             lower(neworold);
             outfile = get_next_fname(subjdir,subjnum,stub);
-            oddball(outfile,(strcmp(neworold,'n')),'OddballVectors', 'four')
+            oddball(outfile,(strcmp(neworold,'n')),'OddballVectors', 'six')
         case 'Q'
             break
     end
