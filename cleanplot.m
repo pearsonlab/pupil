@@ -55,6 +55,9 @@ if strfind(name,'oddball')
      
         % Find the trials where an oddball occurred
         oddsoundvec = find(trialvec(1,:)==1);
+        
+        % Fourth column in datamat is now average of left and right eye
+        datamat(:,4)=(datamat(:,1)+(datamat(:,2)))/2;
 
         % Find timebins where any sound occurred, including normal and odd. 
         for ind=1:length(data); % 1:25
@@ -138,7 +141,8 @@ for w=1:length(corpos);
 end
 revlearnmat(:,2)=datamat((correctpos(w)-120):(correctpos(w)+120),4);
 plot(revlearnmat);
-hleg1 = legend('Incorrect Trials','Correct Trials'); 
+hleg1 = legend('Incorrect Trials','Correct Trials');
+
 %% Light Dark Test
 elseif strfind(name,'darktest') | strfind(name,'lighttest')
     
