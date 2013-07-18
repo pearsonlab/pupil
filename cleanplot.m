@@ -24,8 +24,6 @@ end
 testdata.lefteye(testdata.lefteye(:,13)~=0,12) = NaN;
 testdata.righteye(testdata.righteye(:,13)~=0,12) = NaN;
 
-
-
 %make into seconds
 testerdata.timestamp=(double(eyedata.timestamp))/1000000
 
@@ -53,7 +51,6 @@ hold on
 
 
 %% Oddball
-
 
 % Explanations %
 %%% chopmat_odd = matrix of chopped data per each sound trial (to be
@@ -99,10 +96,10 @@ end
 % eye data from 60 bins (1 sec) before through 120 bins after the sound time
 % bin of that particular trial.
 
-% Use evtsplit as better way to make chopmat -
+% Use evtsplit as better way to make chopmat? -
 
 for ind = 1:length(data)
-    chopmat_odd(:,ind) = datamat((bb(ind)-60):(bb(ind)+120),1);
+    chopmat_odd(:,ind) = datamat((bb(ind)-60):(bb(ind)+120),4);
 end
 
 % Extract oddball data.
@@ -110,13 +107,13 @@ oddavg = chopmat_odd(:,logical(trialvec));
 normavg = chopmat_odd(:,(find(trialvec==0)));
 
 % Plot vertical lines for normal (blue) vs. odd sounds (red) on figure 1.
-for i = length(trialvec)
+
+for i = 1:length(trialvec)
     if trialvec(i) == 0
         line([bb(i) bb(i)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
-        hold on
     else
-        line([bb(i) timebin(i)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
-        set(y, 'Color', 'r');
+        y = line([bb(i) bb(i)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+        set(y, 'Color', 'r'); 
     end
 end
 
