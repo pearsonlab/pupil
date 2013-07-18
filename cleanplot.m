@@ -13,27 +13,7 @@ function cleanplot(filename)
 
 
 %% Data Cleaning PreLims
-if ~exist('task')
-    testdata=data;
-else
-    testdata=eyedata;
-end
-
-% Replace bad eye data with NaN (Column 13 values of either -1 or 4 are
-%bad).
-testdata.lefteye(testdata.lefteye(:,13)~=0,12) = NaN;
-testdata.righteye(testdata.righteye(:,13)~=0,12) = NaN;
-
-%make into seconds
-testerdata.timestamp=(double(eyedata.timestamp))/1000000
-
-
-% Create a matrix the size of longest eyedata to combine left, right,
-% and timestamp data into 3 columns in 1 matrix, called datamat.
-datamat = repmat((NaN), length(testdata.lefteye),3);
-datamat(:,1)=testdata.lefteye(:,12);
-datamat(:,2)=testdata.righteye(:,12);
-datamat(:,3)=testdata.timestamp;
+dataorg;
 
 % case pst
 
@@ -59,60 +39,36 @@ hold on
 % (for left eye currently) for normal sounds only
 %%% oddavg = same as normavg but for odd sounds.
 
-chopmat_odd = [];
 normavg = [];
 oddavg = [];
 
-% Fourth column in datamat is now average of left and right eye
-datamat(:,4)=(datamat(:,1)+(datamat(:,2)))/2;
-
 %%%%%%
 %
-%         % Find timebins where any sound occurred, including normal and odd.
-%         for ind=1:length(data); % 1:25
-%             for i=1:length(datamat); %1:6499
-%                 tofindbins(i,ind)=data(ind).soundtime-datamat(i,3);
-%
-%                 % Find the timestamp bin corresponding time of sound
-%                 %stimulus.
-%                 [n timebin(ind)]=min(abs(tofindbins(:,ind)));
-%
-%             end
-%         end
-%%%%%%
+        % Find timebins where any sound occurred, including normal and odd.
+        for ind=1:length(data); % 1:25
+            for i=1:length(datamat); %1:6499
+                tofindbins(i,ind)=data(ind).soundtime-datamat(i,3);
 
-% Find timebins where any sound occurred, including normal and odd.
-st = [data.soundtime];
-ts = eyedata.timestamp;
+                % Find the timestamp bin corresponding time of sound
+                %stimulus.
+                [n timebin(ind)]=min(abs(tofindbins(:,ind)));
 
-for i=1:length(st)
-    tt = st(i);
-    [~,bb(i)] = min(abs(uint64(tt)-uint64(ts)));
-end
-% Note - bb gives different bins than timebin by +1 bin.
-
-% Create matrix of chopped data - each column contains
-% eye data from 60 bins (1 sec) before through 120 bins after the sound time
-% bin of that particular trial.
-
-% Use evtsplit as better way to make chopmat? -
-
-for ind = 1:length(data)
-    chopmat_odd(:,ind) = datamat((bb(ind)-60):(bb(ind)+120),4);
-end
+            end
+        end
+%%%%%
 
 % Extract oddball data.
-oddavg = chopmat_odd(:,logical(trialvec));
-normavg = chopmat_odd(:,(find(trialvec==0)));
+oddavg = chopmat(:,logical(trialvec));
+normavg = chopmat(:,(find(trialvec==0)));
 
 % Plot vertical lines for normal (blue) vs. odd sounds (red) on figure 1.
 
 for i = 1:length(trialvec)
     if trialvec(i) == 0
-        line([bb(i) bb(i)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
+        line([bb(i) bb(i)],[[min(testdata.lefteye(:,12)-0.25) max(testdata.lefteye(:,12)+0.25)]);
     else
-        y = line([bb(i) bb(i)],[(min(eyedata.lefteye(:,12))-0.5) max(eyedata.lefteye(:,12)+0.5)]);
-        set(y, 'Color', 'r'); 
+        y = line([bb(i) bb(i)],[[min(testdata.lefteye(:,12)-0.25) max(testdata.lefteye(:,12)+0.25)]]);
+        set(y, 'Color', 'r');
     end
 end
 
@@ -161,28 +117,12 @@ hleg1 = legend('Incorrect Trials','Correct Trials');
 
 %% Light Dark Test
 % elseif strfind(name,'darktest') | strfind(name,'lighttest');
-    
-chopmat_odddl = [];
-
-st = [data.soundtime];
-ts = eyedata.timestamp;
-
-for i=1:length(st)
-    tt = st(i);
-    [~,bb(i)] = min(abs(uint64(tt)-uint64(ts)));
+for i = 1:length(bb)
+    line([bb(i) bb(i)],[min(testdata.lefteye(:,12)-0.25) max(testdata.lefteye(:,12)+0.25)]);
 end
+% hleg1 = legend('First Stimulus','Second Stimulus', 'Third Stimulus');
 
-% Fourth column in datamat is now average of left and right eye
-datamat(:,4)=(datamat(:,1)+(datamat(:,2)))/2;
+figure;
+plot(chopmat(:,1:2));
 
-
-for ind = 1:length(data)
-    chopmat_dl(:,ind) = datamat((bb(ind)-60):(bb(ind)+120),4);
-end
-      
-    chopmat(:,7)=(chopmat(:,1)+chopmat(:,4)/2); %these are the average of left and right eye
-    chopmat(:,8)=(chopmat(:,2)+chopmat(:,5)/2);
-    chopmat(:,9)=(chopmat(:,3)+chopmat(:,6)/2);
-    plot(chopmat(:,7:9));
-    hleg1 = legend('First Stimulus','Second Stimulus', 'Third Stimulus');
 end
