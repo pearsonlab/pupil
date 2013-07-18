@@ -91,7 +91,6 @@ for i=1:length(st)
 end
 % Note - bb gives different bins than timebin by +1 bin.
 
-
 % Create matrix of chopped data - each column contains
 % eye data from 60 bins (1 sec) before through 120 bins after the sound time
 % bin of that particular trial.
@@ -129,6 +128,7 @@ end
 figure;
 plot(plot2odd);
 
+
 %% Reversal Learning
 %elseif strfind(name,'revlearn')
 for i=1:length(data);
@@ -160,23 +160,26 @@ plot(revlearnmat);
 hleg1 = legend('Incorrect Trials','Correct Trials');
 
 %% Light Dark Test
-elseif strfind(name,'darktest') | strfind(name,'lighttest')
+% elseif strfind(name,'darktest') | strfind(name,'lighttest');
     
-    chopmat=[];
-    
-    %%this spits out the bins that contain the position of each onset of the
-    %%stimulus
-    for ind = 1:length(data);
-        for i=1:length(datamat);
-            differenceontime(i)=data(ind).ontime-(datamat(i,3));
-        end
-        [n onbin(ind)]=min(abs(differenceontime));
-        %%since the tracker takes stamps at a rate of 60Hz this finds a second before the stimulus onset and 2 seconds after
-        
-        chopmat(:,ind+3)=datamat((onbin(ind)-60):(onbin(ind)+120),2);
-    end
-    
-    
+chopmat_odddl = [];
+
+st = [data.soundtime];
+ts = eyedata.timestamp;
+
+for i=1:length(st)
+    tt = st(i);
+    [~,bb(i)] = min(abs(uint64(tt)-uint64(ts)));
+end
+
+% Fourth column in datamat is now average of left and right eye
+datamat(:,4)=(datamat(:,1)+(datamat(:,2)))/2;
+
+
+for ind = 1:length(data)
+    chopmat_dl(:,ind) = datamat((bb(ind)-60):(bb(ind)+120),4);
+end
+      
     chopmat(:,7)=(chopmat(:,1)+chopmat(:,4)/2); %these are the average of left and right eye
     chopmat(:,8)=(chopmat(:,2)+chopmat(:,5)/2);
     chopmat(:,9)=(chopmat(:,3)+chopmat(:,6)/2);
