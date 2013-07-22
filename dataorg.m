@@ -51,6 +51,10 @@ end
     % Evt split?
     for ind = 1:length(data)
         chopmat(:,ind) = datamat((bb(ind)-60):(bb(ind)+120),4);
+        % Normalize by subtracting out avg of 200ms before
+        chopmat(:,ind) = chopmat(:,ind)-(nanmean(datamat((bb(ind)-12):bb(ind),4)));
     end
+    
+    
     
 % end
