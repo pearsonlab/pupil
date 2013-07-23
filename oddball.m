@@ -75,13 +75,14 @@ txt = {['When you hear a sound, press the space bar.\n\n' ...
 display_instructions(win,txt);
 
 %display onscreen countdown
-countdown    
-    
+countdown;
+ListenChar(2);
+
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 tetio_startTracking;
 
 WaitSecs(2); %give subjects a delay before first trial
-fixcross;
+
 for ind=1:length(trialvec);
     
     %cue onset
@@ -118,7 +119,7 @@ eyedata.trig = trigSignal;
 save(outfile,'data','eyedata','task','pars','trialvec')
 
 shutdown_audio;
-
+ListenChar(0);
 % return the screen to dark
 Screen('FillRect',win,[0 0 0],[]);
 Screen('Flip',win);

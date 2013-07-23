@@ -16,7 +16,7 @@ BlankScreen = Screen('OpenOffScreenwindow', win,[0 0 0]);
 Screen('TextSize', BlankScreen, 20);
 
 for ind = 1:length(text)
-    DrawFormattedText(win, text{ind}, 'center', 'center', [255 255 255],'textbounds');
+    DrawFormattedText(win, text{ind}, 'center', 'center', [70 70 70],'textbounds');
     Screen('Flip',win);
     if ~nowait
         pause;

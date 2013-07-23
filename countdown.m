@@ -15,7 +15,7 @@ for i = 1:4
         txt = num2str(4-i);
     end
     Screen('TextSize', BlankScreen, 20);
-    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [255 255 255], [0 0 0], 1);
+    Screen('DrawText', BlankScreen, txt, floor(horz/2), floor(vert/2), [70 70 70], [0 0 0], 1);
     Screen('CopyWindow', BlankScreen, win);
     flipTime = Screen('Flip', win, when);
 end

@@ -63,12 +63,15 @@ display_instructions(win, instructions);
 txt = {'You will hear this for correct responses. \n (Press any key to continue)'};
 playsound(pahandle, rightsnd);
 display_instructions(win,txt);
-txt = {'And this for incorrect responses.'; 'Press any key when ready.'};
+txt = {'And this for incorrect responses. \n (Press any key to continue)'};
 playsound(pahandle, wrongsnd);
+display_instructions(win,txt);
+txt = {'Please make a choice as soon as the "+" appears'; 'Press any key when ready.'};
 display_instructions(win,txt);
 
 %display onscreen countdown
 countdown
+ListenChar(2);
 
 %%%%%%%% Start the Task %%%%%%%%%%%%%%%%%%%%%
 tetio_startTracking;
@@ -127,6 +130,7 @@ eyedata.trig = trigSignal;
 save(outfile,'data','eyedata','task','pars','trialvec')
 
 shutdown_audio;
+ListenChar(0);
 
 % return the screen to dark
 Screen('FillRect',win,[0 0 0],[]);

@@ -21,7 +21,7 @@ end
 figure1 = plotraw(datamat);
 
 % Find # bins before/after
-[npre,npost] = evtsplit(srtbins,1,2,60,task);
+[npre,npost] = evtsplit(srtbins,1,5,60,task);
 
 % Make matrix of chopped data.
 [chopmat] = chopmaker(datamat,npre,npost,srtbins);

@@ -47,10 +47,6 @@ while 1
     end
 end
 
-%%bring up the track pupil so partcipant can see their eyes and the
-%%experimenter can adjust the screen accordingly
-
-
 %% set up menus
 
 
