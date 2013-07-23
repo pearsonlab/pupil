@@ -1,7 +1,7 @@
 %%% make matrix of eye data, call it 'datamat'
 % 4 columns, same length: L, R, timestamp, avg. R and L
 % Columns contain entire set of vertcatted eye data / time data
-function datamat = makemat(testdata)
+function [datamat] = makemat(testdata)
 
 % Replace bad eye data with NaN (Column 13 values of either -1 or 4 are
     %bad).
