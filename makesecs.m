@@ -1,4 +1,4 @@
     % Convert timestamps into function 
-    function output = makesecs(datamat)
+    function [datamat] = makesecs(datamat)
     datamat(:,3)=(double(datamat(:,3)))/1000000;
     end

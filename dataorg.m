@@ -8,16 +8,22 @@ else
     testdata=eyedata;
 end
 
-[findevents;
+% Find either sound or onscreen stimuli onset bins.
+[~,srtbins] = findevents(testdata,data,task);
 
-makemat;
+% Make matrix of L, R, timestamp, avg. L and R
+[datamat] = makemat(testdata);
 
-makesec;
+% Convert datamat time --> seconds.
+[datamat] = makesecs(datamat);
 
-plotraw;
+% Plot raw data (avg. right and left eye)
+figure1 = plotraw(datamat);
 
-evtsplit;
+% Find # bins before/after
+[npre,npost] = evtsplit(srtbins,1,2,60,task);
 
-chopmaker;
+% Make matrix of chopped data.
+[chopmat] = chopmaker(datamat,npre,npost,srtbins);
 
 % end
