@@ -1,4 +1,4 @@
-function [outdat,time] = evtsplit(evt,pretime,posttime,sr,starttime)
+function [outdat,time] = evtsplit(evt,pretime,posttime,sr,task,starttime)
 %splits the time series data in data with sampling rate sr into a matrix of
 %snippets with one row for each event timestamp in evt; pretime and
 %posttime are the times prior to and following evt to grab; time is a list
@@ -25,10 +25,13 @@ npost = ceil(posttime*sr); %number of bins to grab after
 %kdata=data;
 evtrel = evt - starttime;
 
+if strcmp(task, 'darklight')==1;
 for ind = 1:numevt
     bins_to_grab= evt(ind)+(-npre:npost) 
     outdat(:,ind)=bins_to_grab
 end
+end
+
 
 time = (-npre:npost)*dt;
 
