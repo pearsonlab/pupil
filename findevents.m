@@ -1,5 +1,6 @@
 %%%finding vectors of events
-ts = eyedata.timestamp;
+function [timestamp, srtbins,correctspots]=findevents(eyedata,data,task)
+timestamp = eyedata.timestamp;
 
 if strcmp(task, 'revlearn')==1 | strcmp(task, 'oddball')==1;
     stimon=[data.soundtime];
@@ -14,6 +15,7 @@ end
 
 for i=1:length(stimon)
     % find bins corresponding to sound or screen stimulus onset.
-    [~,srtbins(i)] = min(abs(uint64(stimon(i))-uint64(ts)));
+    [~,srtbins(i)] = min(abs(uint64(stimon(i))-uint64(timestamp)));
     %[~,stpbins(i)] = min(abs(uint64(stimoff(i))-uint64(ts)));
 end
+
