@@ -42,8 +42,8 @@ PTBprelims
 
 %%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
 setup_audio
-[wrongsnd,popF]=wavread('buzz.wav');
-[rightsnd,cashF]=wavread('dinga.wav');
+[wrongsnd,buzzF]=wavread('buzz1.wav');
+[rightsnd,dingF]=wavread('ding3.wav')
 
 %%%%%%%%%%%%%% Task Parameters %%%%%%%%%%%%%
 iti_mean = 3;
