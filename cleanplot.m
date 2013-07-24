@@ -24,17 +24,17 @@ hold on
 % (for left eye currently) for normal sounds only
 %%% oddavg = same as normavg but for odd sounds.
 
-oddplot = plotoddrev(chopmat,trialvec,srtbins,testdata);
+oddplot = plotoddrev(outdat,trialvec,srtbins,testdata);
 
 
 %% Reversal Learning
 %elseif strfind(name,'revlearn')
 
 trialvec = [data.correct];
-revplot = plotoddrev(chopmat,trialvec,srtbins,testdata);
+revplot = plotoddrev(outdat,trialvec,srtbins,testdata);
 
 %% Light Dark Test
 % elseif strfind(name,'darktest') | strfind(name,'lighttest');
-plotlightdark(srtbins,testdata,chopmat);
+plotlightdark(srtbins,testdata,outdat);
 
 end

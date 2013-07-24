@@ -20,10 +20,7 @@ end
 % Plot raw data (avg. right and left eye)
 figure1 = plotraw(datamat);
 
-% Find # bins before/after
-[npre,npost,nnorm] = evtsplit(srtbins,1,2,60,task,0.2);
-
-% Make matrix of chopped data.
-[chopmat] = chopmaker(datamat,npre,npost,srtbins,nnorm);
+% Find # bins before/after, make matrix of chopped data called 'outdat'
+[npre,npost,nnorm,outdat] = evtsplit(srtbins,1,2,60,task,0.2,datamat);
 
 % end
