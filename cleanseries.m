@@ -1,7 +1,9 @@
 function out = cleanseries(data)
 % performs data cleaning (replacing bad/missing data with nan) for tobii
 % gaze data
-data = data(:); %columnify
+%data = data(:); %columnify
+
+data=[data.lefteye(:,12);data.righteye(:,12)] %
 
 N = length(data);
 bad = (data == -1); %points with invalid data
