@@ -1,4 +1,6 @@
+
 function [npre,npost,nnorm] = evtsplit(evt,pretime,posttime,sr,task,normtime,starttime)
+
 %splits the time series data in data with sampling rate sr into a matrix of
 %snippets with one row for each event timestamp in evt; pretime and
 %posttime are the times prior to and following evt to grab; time is a list
