@@ -1,4 +1,4 @@
-function [npre,npost] = evtsplit(evt,pretime,posttime,sr,task,starttime)
+function [npre,npost,nnorm] = evtsplit(evt,pretime,posttime,sr,task,normtime,starttime)
 %splits the time series data in data with sampling rate sr into a matrix of
 %snippets with one row for each event timestamp in evt; pretime and
 %posttime are the times prior to and following evt to grab; time is a list
@@ -21,6 +21,7 @@ numevt=numel(evt); %number of event timestamps
 dt = 1/sr; %time bin size
 npre = ceil(pretime*sr); %number of bins to grab before
 npost = ceil(posttime*sr); %number of bins to grab after
+nnorm = ceil(normtime*sr); %number of bins to normalize over
 
 %kdata=data;
 evtrel = evt - starttime;

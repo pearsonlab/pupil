@@ -31,7 +31,6 @@ oddplot = plotoddrev(chopmat,trialvec,srtbins,testdata);
 %elseif strfind(name,'revlearn')
 
 trialvec = [data.correct];
-
 revplot = plotoddrev(chopmat,trialvec,srtbins,testdata);
 
 %% Light Dark Test
