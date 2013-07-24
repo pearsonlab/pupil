@@ -1,4 +1,4 @@
-function oddrevplot = plotoddrev(chopmat,trialvec,srtbins,testdata,task)
+function plotoddrev(chopmat,trialvec,srtbins,testdata,task)
 
 
 % Extract oddball data.
