@@ -1,4 +1,4 @@
-function oddrevplot = plotoddrev(chopmat,trialvec,srtbins,testdata,task)
+function plotoddrev(chopmat,trialvec,srtbins,testdata,task)
 
 
 % Extract oddball data.
@@ -26,13 +26,15 @@ oddavg(oddavg == 0) = NaN;
 for i=1:length(normavg)
     plot2odd(i,1) = nanmean(normavg(i,:));
     plot2odd(i,2) = nanmean(oddavg(i,:));
-    plot2odd(i,3) = nanstd(normavg(i,:))/sizen(2);
-    plot2odd(i,4) = nanstd(oddavg(i,:))/sizeo(2);
+    plot2odd(i,3) = plot2odd(i,1)-nanstd(normavg(i,:))/sizen(2);
+    plot2odd(i,4) = plot2odd(i,1)+nanstd(normavg(i,:))/sizen(2);
+    plot2odd(i,5) = plot2odd(i,2)-nanstd(oddavg(i,:))/sizeo(2);
+    plot2odd(i,6) = plot2odd(i,2)+nanstd(oddavg(i,:))/sizeo(2);
 end
 
 figure;
 plot(plot2odd(:,1:2));
 hold on
-plot(plot2odd(:,3:4),'--');
+plot(plot2odd(:,3:6),'--','Color','r');
 
 end
