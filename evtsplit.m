@@ -40,15 +40,17 @@ elseif bins_to_grab(end) > length(datamat) %if we're at the end...
     bins_to_grab = bins_to_grab(bins_to_grab <= length(data)); %truncate
     outdat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,4);
 else
-    outdat(ind,:) = datamat(bins_to_grab,4);
+    outdat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,4);
 end
 
-outdat = outdat'
 
+end
+
+outdat = outdat';
+
+for ind = 1:length(evt)
 outdat(:,ind) = outdat(:,ind)-(nanmean(datamat((evt(ind)-nnorm):evt(ind),4)));
-
 end
-
 
 
 time = (-npre:npost)*dt;

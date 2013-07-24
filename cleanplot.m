@@ -1,21 +1,15 @@
 %%%% Hello world! Little tiny plotting function.
 % With Love, Annas
-function cleanplot(filename)
+function cleanplot(task)
 
 %% Data PreLims
-dataorg;
 
-% case pst
+dataorg(data,eyedata,task,trialvec);
 
-% Plot the average of the left and right pupil - raw data.
-a1=axes;
-pst=plot((datamat(:,1)+(datamat(:,2)))/2, 'Color', 'g');
-%linspace(0,duration,length(datamat));
-xlabel('Time(sec)')
-ylabel('Pupil size(mm)') % is it in mm?
-hold on
 
 %% Oddball
+
+if strcmp(task,'oddball')==1
 
 % Explanations %
 %%% chopmat_odd = matrix of chopped data per each sound trial (to be
@@ -28,13 +22,14 @@ oddplot = plotoddrev(outdat,trialvec,srtbins,testdata);
 
 
 %% Reversal Learning
-%elseif strfind(name,'revlearn')
+elseif strcmp(task,'revlearn')==1
 
 trialvec = [data.correct];
 revplot = plotoddrev(outdat,trialvec,srtbins,testdata);
 
 %% Light Dark Test
-% elseif strfind(name,'darktest') | strfind(name,'lighttest');
+elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
 plotlightdark(srtbins,testdata,outdat);
 
+end
 end

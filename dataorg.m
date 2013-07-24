@@ -1,12 +1,6 @@
 %%%%% This function organizes data.
 
-% function dataorg(filename)
-
-if ~exist('task')
-    testdata=data;
-else
-    testdata=eyedata;
-end
+function dataorg(data,eyedata,task,trialvec)
 
 % Find either sound or onscreen stimuli onset bins.
 [~,srtbins] = findevents(testdata,data,task);
@@ -23,4 +17,4 @@ figure1 = plotraw(datamat);
 % Find # bins before/after, make matrix of chopped data called 'outdat'
 [npre,npost,nnorm,outdat] = evtsplit(srtbins,1,2,60,task,0.2,datamat);
 
-% end
+end
