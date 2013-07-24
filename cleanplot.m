@@ -1,5 +1,7 @@
 %%%% Hello world! Little tiny plotting function.
 % With Love, Annas
+
+% Plots graph of averaged raw data 
 function cleanplot(filename)
 
 load(filename);

@@ -15,6 +15,6 @@ function [outdat,trialvec,srtbins,testdata] = dataorg(data,testdata,task,trialve
 figure1 = plotraw(datamat);
 
 % Find # bins before/after, make matrix of chopped data called 'outdat'
-[npre,npost,nnorm,outdat] = evtsplit(srtbins,1,2,60,task,0.2,datamat);
+[npre,npost,nnorm,outdat] = evtsplit(srtbins,1,2,60,task,0.2,datamat,1,1);
 
 end
