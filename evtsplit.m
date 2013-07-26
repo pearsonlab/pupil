@@ -1,5 +1,5 @@
 
-function [npre,npost,nnorm,outdat,outdat2] = evtsplit(evt,pretime,posttime,sr,task,normtime,datamat,whicheye,twoeye,starttime)
+function [npre,npost,nnorm,outdat,outdat2] = evtsplit(evt,pretime,posttime,sr,task,normtime,datamat,whicheye,starttime)
 
 %splits the time series data in data with sampling rate sr into a matrix of
 %snippets with one row for each event timestamp in evt; pretime and
