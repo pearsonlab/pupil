@@ -1,36 +1,28 @@
 
-function [npre,npost,nnorm,outdat,outdat2] = evtsplit(evt,pretime,posttime,sr,task,normtime,datamat,whicheye,starttime)
+function [outdat,outdat2,whicheye] = evtsplit(evt,task,datamat,whicheye,twoeye,norm)
 
-%splits the time series data in data with sampling rate sr into a matrix of
-%snippets with one row for each event timestamp in evt; pretime and
-%posttime are the times prior to and following evt to grab; time is a list
+%splits the time series data into a matrix of snippets with one row for 
+%each event timestamp in evt;  time is a list
 %of times for each bin relative to the entries in evt
-%starttime is the timestamp of the first bin in data
+%whicheye allows for choice of which eyes to plot: 1(left eye), 2(right
+%eye),4(avg of 2 eyes). 
+%to plot both insert optional argument twoeye 
+%to normalize insert optional argument norm
 
+[npre,npost,nnorm,numevt,dt] = defbin(evt,1,2,60,task,0.2,1);
 
-
-%define frequency if it isn't supplied
-if ~exist('sr','var')
-    sr = 1;
-end
-
-if ~exist('starttime','var')
-    starttime = 0;
-end
-
-
-numevt=numel(evt); %number of event timestamps
-dt = 1/sr; %time bin size
-npre = ceil(pretime*sr); %number of bins to grab before
-npost = ceil(posttime*sr); %number of bins to grab after
-nnorm = ceil(normtime*sr); %number of bins to normalize over
+weye=whicheye;
 
 % evtrel = evt - starttime;
-if exist('twoeye') % If we want two eyes
+if twoeye==1 % If we want two eyes
     outdat2= nan(numevt,npre+npost+1); 
+    whicheye=1;
+else
+    outdat2=[];
 end
 
 outdat = nan(numevt,npre+npost+1); %npre+npost+0 bin
+
 for ind = 1:numevt
     bins_to_grab = (-npre:npost) + evt(ind);
 
@@ -38,19 +30,19 @@ for ind = 1:numevt
 if bins_to_grab(1) < 1  %if we're at the start of series...
     bins_to_grab = bins_to_grab(bins_to_grab >= 1); %truncate
     outdat(ind,(end-length(bins_to_grab)+1):end) = datamat(bins_to_grab,whicheye);
-if exist('twoeye') % If we want two eyes
+if twoeye==1 % If we want two eyes
     outdat2(ind,(end-length(bins_to_grab)+1):end) = datamat(bins_to_grab,whicheye+1);
 end
 
 elseif bins_to_grab(end) > length(datamat) %if we're at the end...
-    bins_to_grab = bins_to_grab(bins_to_grab <= length(data)); %truncate
+    bins_to_grab = bins_to_grab(bins_to_grab <= length(datamat)); %truncate
     outdat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye);
-if exist('twoeye') % If we want two eyes
+if twoeye==1 % If we want two eyes
     outdat2(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye+1);
 end
 else
     outdat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye);
-    if exist('twoeye')
+    if twoeye==1
     outdat2(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye+1);
     end
 end
@@ -59,11 +51,22 @@ end
 end
 
 outdat = outdat';
-
-for ind = 1:length(evt)
-outdat(:,ind) = outdat(:,ind)-(nanmean(datamat((evt(ind)-nnorm):evt(ind),whicheye)));
+if twoeye==1
+    outdat2=outdat2';
 end
 
+if norm==1
+% normalize with 
+for ind = 1:length(evt)
+outdat(:,ind) = outdat(:,ind)-(nanmean(datamat((evt(ind)-nnorm):evt(ind),whicheye)));
+if twoeye==1
+ outdat2(:,ind) = outdat2(:,ind)-(nanmean(datamat((evt(ind)-nnorm):evt(ind),whicheye+1)));   
+end
+end
+
+whicheye=weye;
+
+end
 
 time = (-npre:npost)*dt;
 
