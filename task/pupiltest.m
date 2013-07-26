@@ -14,6 +14,7 @@ else
     addpath('/Applications/tobiiSDK/matlab/EyeTrackingSample/functions');
     addpath('/Applications/tobiiSDK/matlab/tetio');
     addpath('/matlab/pupil');
+    addpath('/matlab/pupil/task');
 end
 
 %% End where we begin
