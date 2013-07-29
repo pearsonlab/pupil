@@ -16,7 +16,8 @@ end
 % Right now we have to define twoeye, whicheye, and norm prior to running
 % dataorg.
 
-% twoeye = 1: plots both right and left eye
+% twoeye = 1(plots both right and left eye); 0(plots only whatever we input
+% in whicheye)
 % whicheye = 1(left eye), 2(right eye), 4(avg.)
 % norm = 1: normalizes. 
 
@@ -43,7 +44,7 @@ elseif strcmp(task,'revlearn')==1
     
     %% Light Dark Test
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
-    plotlightdark(srtbins,testdata,outdat);
+    plotlightdark(srtbins,testdata,outdat,outdat2,task,twoeye);
     
 end
 end

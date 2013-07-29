@@ -7,6 +7,6 @@ if twoeye==1
     plot(datamat(:,2),'Color','b');
 end
 
-plot(datamat(:,4),'Color','r');
+plot(datamat(:,whicheye),'Color','r');
 
 end
