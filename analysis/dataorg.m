@@ -1,6 +1,6 @@
 %%%%% This function organizes data.
 
-function [outdat,outdat2,trialvec,srtbins,testdata,whicheye] = dataorg(data,testdata,task,trialvec,whicheye,twoeye,norm)
+function [outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,testdata,task,trialvec,whicheye,twoeye,norm)
 
 % Find either sound or onscreen stimuli onset bins.
 [~,srtbins] = findevents(testdata,data,task);

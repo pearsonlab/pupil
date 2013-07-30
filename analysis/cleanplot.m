@@ -21,19 +21,19 @@ end
 % whicheye = 1(left eye), 2(right eye), 4(avg.)
 % norm = 1: normalizes. 
 
-twoeye=1;
+twoeye=0;
 whicheye=4;
 norm=1;
 
 %% Data PreLims
-[outdat,outdat2,trialvec,srtbins,testdata,whicheye] = dataorg(data,eyedata,task,trialvec,whicheye,twoeye,norm);
-
+[outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,eyedata,task,trialvec,whicheye,twoeye,norm);
+hold on
 
 %% Oddball
 
 if strcmp(task,'oddball')==1
     
-    plotoddrev(outdat,trialvec,srtbins,testdata);
+    plotoddrev(outdat,outdat2,trialvec,srtbins,testdata,task,twoeye);
     
 %% Reversal Learning
     
@@ -44,7 +44,7 @@ elseif strcmp(task,'revlearn')==1
     
     %% Light Dark Test
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
-    plotlightdark(srtbins,testdata,outdat,outdat2,task,twoeye);
+    plotlightdark(srtbins,testdata,outdat,outdat2,task,twoeye,datamat);
     
 end
 end
