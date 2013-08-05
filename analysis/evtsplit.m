@@ -1,6 +1,6 @@
 %%this function is going to create a chopped structure that has the left eye, right
 %%eye and average of both
-function [outdat] = evtsplit2(evt,task,datamat)
+function [outdat] = evtsplit(evt,task,datamat)
 
 % Define bins to grab before/after
 [npre,npost,numevt,dt] = defbin(evt,1,2,60,task,1);

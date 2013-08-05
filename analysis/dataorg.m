@@ -17,7 +17,7 @@ function [outdat,trialvec,srtbins,testdata,datamat] = dataorg(data,testdata,task
 [datamat] = makesecs(datamat);
 
 % Make struct of chopped data called 'outdat'.
-[outdat] = evtsplit2(srtbins,task,datamat);
+[outdat] = evtsplit(srtbins,task,datamat);
 
 % Normalize data to create normalized data within struct.
 [outdat] = normdat(srtbins,0.2,60,outdat,datamat);

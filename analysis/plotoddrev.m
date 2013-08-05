@@ -1,4 +1,4 @@
-function plotoddrev(outdat,trialvec,srtbins,eyedata,task,twoeye,plotwhat)
+function plotoddrev(outdat,trialvec,srtbins,eyedata,task,plotwhat)
 % Plots for either oddball or revlearn data.
 % plotwhat is which data we want to plot from outdat (ex. 'average', 'averagenorm',
 % etc.)
@@ -12,7 +12,7 @@ sizen = size(normavg);
 % Plot vertical event lines: for oddball or incorrect choice
 for i = 1:length(trialvec)
     if trialvec(i) == 0
-        %line([srtbins(i) srtbins(i)],[min(eyedata.lefteye(:,12)-0.25) max(eyedata.lefteye(:,12)+0.25)]);
+        %line([srtbins(i) srtbins(i)],[min(outdat.average(:)-0.25) max(outdat.average(:)+0.25)]);
     else
         y = line([srtbins(i) srtbins(i)],[min(outdat.average(:)-0.25) max(outdat.average(:)+0.25)],'Color', 'k','linewidth',2);
     end

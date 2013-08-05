@@ -1,9 +1,14 @@
 %%%% Hello world! Little tiny plotting function.
 % With Love, Annas
 
-function cleanplot(filename)
-% Input filename such as: '0.2.oddball.pupiltest.mat' (include quotes)
+function cleanplot(filename,plotwhat)
+% 
 % This function is skeleton function for plotting graphs of data.
+% Input filename such as: '0.2.oddball.pupiltest.mat' (include quotes)
+% Input plotwhat as
+% 'left','right','average','leftnorm','rightnorm','averagenorm' (include
+% quotes). plotwhat tells cleanplot which chopped data to plot in the
+% overlaid graph.
 
 load(filename);
 
@@ -22,25 +27,22 @@ end
 hold on
 
 %% Plot Raw Data Sequentially
-% Plot raw data (avg. right and left eye)
-% twoeye = 1(plots both right and left eye); 0(plots only whatever we input
-% in whicheye)
-% whicheye = 1(left), 2(right), 4(average of left and right)
-twoeye=0;
-whicheye=4;
-plotraw(datamat,whicheye,twoeye);
+% Plot raw data (which data depends on your plotwhat)
+twoeye=1;
+plotraw(datamat,plotwhat);
 
 %% Plot Overlaid Data
 % Case Oddball or Reversal Learning
 
 if strcmp(task,'oddball')==1 | strcmp(task,'revlearn')==1
     
-    plotoddrev(outdat,trialvec,srtbins,testdata,task,twoeye,'averagenorm');
+    plotoddrev(outdat,trialvec,srtbins,testdata,task,plotwhat);
     
     
 % Case Light Dark Test
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
-    plotlightdark(srtbins,testdata,outdat,task,twoeye,datamat,'averagenorm');
+    plotlightdark(srtbins,testdata,outdat,task,twoeyedatamat,plotwhat);
     
 end
+
 end
