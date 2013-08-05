@@ -1,6 +1,6 @@
 %%%%% This function organizes data.
 
-function [outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,testdata,task,trialvec,whicheye,twoeye,norm)
+function [outdat,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,testdata,task,trialvec,whicheye,twoeye)
 
 % Find either sound or onscreen stimuli onset bins.
 [~,srtbins] = findevents(testdata,data,task);
@@ -12,7 +12,11 @@ function [outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(d
 [datamat] = makesecs(datamat);
 
 % Find # bins before/after, make matrix of chopped data called 'outdat'
-[outdat,outdat2,whicheye] = evtsplit(srtbins,task,datamat,whicheye,twoeye,norm);
+%[outdat,outdat2,whicheye] = evtsplit(srtbins,task,datamat,whicheye,twoeye,norm);
+[outdat] = evtsplit2(srtbins,task,datamat);
+
+% Normalize 
+ [outdat] = normdat(srtbins,0.2,60,outdat,datamat);
 
 % Plot raw data (avg. right and left eye)
 plotraw(datamat,whicheye,twoeye);

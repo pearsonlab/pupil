@@ -9,6 +9,9 @@ load(filename);
 %% Adjust for cases
 if strcmp(task,'revlearn')==1
     trialvec = [data.correct];
+    % Organize trialvec so it 1 corresponds with incorrect response
+    trialvec=trialvec-1;
+    trialvec(find(trialvec==-1))=1;   
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1
     trialvec=[];
 end
@@ -23,17 +26,17 @@ end
 
 twoeye=0;
 whicheye=4;
-norm=1;
 
 %% Data PreLims
-[outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,eyedata,task,trialvec,whicheye,twoeye,norm);
+%[outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,eyedata,task,trialvec,whicheye,twoeye,norm);
+[outdat,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,eyedata,task,trialvec,whicheye,twoeye);
 hold on
 
 %% Oddball
 
 if strcmp(task,'oddball')==1
     
-    plotoddrev(outdat,outdat2,trialvec,srtbins,testdata,task,twoeye);
+    plotoddrev(outdat,trialvec,srtbins,testdata,task,twoeye,'averagenorm');
     
 %% Reversal Learning
     

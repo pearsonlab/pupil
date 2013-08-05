@@ -1,4 +1,4 @@
-function [npre,npost,nnorm,numevt,dt] = defbin(evt,pretime,posttime,sr,task,normtime,starttime)
+function [npre,npost,numevt,dt] = defbin(evt,pretime,posttime,sr,task,starttime)
 
 % defines bins to take before and after event; defines normalization period
 % pretime and posttime are the times prior to and following evt to grab;
@@ -18,6 +18,5 @@ numevt=numel(evt); %number of event timestamps
 dt = 1/sr; %time bin size
 npre = ceil(pretime*sr); %number of bins to grab before
 npost = ceil(posttime*sr); %number of bins to grab after
-nnorm = ceil(normtime*sr); %number of bins to normalize over
 
 end
