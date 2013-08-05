@@ -1,15 +1,16 @@
+%%% Defines bins to take before and after event
+% Pretime and posttime are the times prior to and following evt to grab;
+% Starttime is the timestamp of the first bin in data;
+% Sampling rate sr (frequency = 60)
+
 function [npre,npost,numevt,dt] = defbin(evt,pretime,posttime,sr,task,starttime)
 
-% defines bins to take before and after event; defines normalization period
-% pretime and posttime are the times prior to and following evt to grab;
-% starttime is the timestamp of the first bin in data;
-% sampling rate sr
-
-%define frequency if it isn't supplied
+% Define frequency if not supplied
 if ~exist('sr','var')
     sr = 1;
 end
 
+% Define starttime if not supplied
 if ~exist('starttime','var')
     starttime = 0;
 end

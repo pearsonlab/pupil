@@ -17,6 +17,7 @@ for i = 1:length(trialvec)
         y = line([srtbins(i) srtbins(i)],[min(outdat.average(:)-0.25) max(outdat.average(:)+0.25)],'Color', 'k','linewidth',2);
     end
 end
+ylim([min(outdat.average(:)-0.25) max(outdat.average(:)+0.25)]);
 
 % Average normal and oddball lefteye data and then plot on new figure
 

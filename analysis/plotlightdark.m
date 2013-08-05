@@ -1,4 +1,4 @@
-function plotlightdark(srtbins,testdata,outdat,outdat2,task,twoeye,datamat)
+function plotlightdark(srtbins,testdata,outdat,task,twoeye,datamat,plotwhat)
 
 for i = 1:length(srtbins)
     line([srtbins(i) srtbins(i)],[min(datamat(:,4)-0.25) max(datamat(:,4)+0.25)],'Color','k','linewidth',2);
@@ -6,31 +6,24 @@ end
 
 % hleg1 = legend('First Stimulus','Second Stimulus', 'Third Stimulus');
 
+sizeout = size(outdat.(plotwhat));
+
 figure;
 
-if strcmp(task, 'darktest')==1
-plot(outdat(:,1:3),'linewidth',2);
-line([60 60],[-1 1],'Color','k','linewidth',2);
+plot(outdat.(plotwhat)(:,1:sizeout(2)),'linewidth',2);
+line([60 60],[min(outdat.(plotwhat)(:)-0.25) max(outdat.(plotwhat)(:)+0.25)],'Color','k','linewidth',2);
 
+ylim([min(outdat.(plotwhat)(:)-0.25) max(outdat.(plotwhat)(:)+0.25)]);
 set(gca,'XTick',0:60:length(outdat));
 set(gca,'XTickLabel',{'-1','0','1','2','3'});
 set(gca,'FontSize',14);
 
 if twoeye==1
     hold on
-    plot(outdat2(:,1:3),'Color','g','linewidth',2);
+    plot(outdat.leftnorm(:,1:3),'Color','g','linewidth',2);
+    hold on
+    plot(outdat.rightnorm(:,1:3),'Color','b','linewidth',2);
 end
-else
-    plot(outdat(:,1:4),'linewidth',2);
-    set(gca,'XTick',0:60:length(outdat));
-    set(gca,'XTickLabel',{'-1','0','1','2','3'});
-    set(gca,'FontSize',14);
-    line([60 60],[-2.5 1],'Color','k','linewidth',2);
 
-    
-    if twoeye==1
-        hold on
-        plot(outdat2(:,1:4),'Color','g','linewidth',2);
-    end
   
 end

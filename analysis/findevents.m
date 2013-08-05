@@ -1,4 +1,6 @@
-%%%finding vectors of events
+%%%Finding vectors of events
+% Creates vector "srtbins" containing bin # corresponding to stimulus event
+
 function [timestamp, srtbins,correctspots]=findevents(eyedata,data,task)
 timestamp = eyedata.timestamp;
 

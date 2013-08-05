@@ -1,22 +1,19 @@
 %%this function is going to create a chopped structure that has the left eye, right
 %%eye and average of both
-function [outdat]=evtsplit2(evt,task,datamat)
+function [outdat] = evtsplit2(evt,task,datamat)
 
+% Define bins to grab before/after
 [npre,npost,numevt,dt] = defbin(evt,1,2,60,task,1);
-
-
 
 %%we want to grab from column 1,2 and 4, I'm sure there's a nicer way to do
 %%this but this is what I thought of at the moment and it appears to work
 index=[1 2 4];
 
-
 for i=index(1):index(end);
     
     chopmat = nan(numevt,npre+npost+1); %npre+npost+0 bin
     
-    for ind = 1:numevt
-            
+    for ind = 1:numevt 
         bins_to_grab = (-npre:npost) + evt(ind);
         
         %now take care of ends of time series
@@ -28,12 +25,12 @@ for i=index(1):index(end);
             chopmat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,i);
         else
             chopmat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,i);
-        end
-            
+        end     
     end
     
-    chopmat = chopmat';
+    chopmat = chopmat'; % Rows become columns
     
+    % Create struct of chopped data corresponding to R, L, and avg. 
     if i==1
         outdat.left=chopmat;
     elseif i==2
@@ -41,8 +38,8 @@ for i=index(1):index(end);
     elseif i==4
         outdat.average=chopmat;
     end
+    
 end
-
 
 end
 
