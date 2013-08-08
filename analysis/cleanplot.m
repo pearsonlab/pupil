@@ -8,15 +8,17 @@ function cleanplot(filename,plotwhat)
 % Input plotwhat as
 % 'left','right','average','leftnorm','rightnorm','averagenorm' (include
 % quotes). plotwhat tells cleanplot which chopped data to plot in the
-% overlaid graph.
+% overlaid graph. It also controls what raw data is plotted. 
 
 load(filename);
 
+%% Case PST
 if ~exist('task')
-    task = 'pst' 
-    eyedata = data
-end
-
+    testdata = data;
+    [datamat] = makemat(testdata);
+    twoeye=0;
+    plotraw(datamat,plotwhat);
+else
 %% Adjust for cases
 if strcmp(task,'revlearn')==1
     trialvec = [data.correct];
@@ -48,6 +50,7 @@ if strcmp(task,'oddball')==1 | strcmp(task,'revlearn')==1
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
     plotlightdark(srtbins,testdata,outdat,task,twoeye,datamat,plotwhat);
     
+end
 end
 
 end
