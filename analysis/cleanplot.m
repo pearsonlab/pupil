@@ -12,13 +12,18 @@ function cleanplot(filename,plotwhat)
 
 load(filename);
 
+if ~exist('task')
+    task = 'pst' 
+    eyedata = data
+end
+
 %% Adjust for cases
 if strcmp(task,'revlearn')==1
     trialvec = [data.correct];
     % Organize trialvec so it 1 corresponds with incorrect response
     trialvec=trialvec-1;
     trialvec(find(trialvec==-1))=1;
-elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1
+elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1 | strcmp(task,'pst')==1
     trialvec=[];
 end
 
@@ -28,7 +33,7 @@ hold on
 
 %% Plot Raw Data Sequentially
 % Plot raw data (which data depends on your plotwhat)
-twoeye=1;
+twoeye=0;
 plotraw(datamat,plotwhat);
 
 %% Plot Overlaid Data
@@ -41,7 +46,7 @@ if strcmp(task,'oddball')==1 | strcmp(task,'revlearn')==1
     
 % Case Light Dark Test
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
-    plotlightdark(srtbins,testdata,outdat,task,twoeyedatamat,plotwhat);
+    plotlightdark(srtbins,testdata,outdat,task,twoeye,datamat,plotwhat);
     
 end
 
