@@ -121,6 +121,42 @@ tstatus.m is a function similar to check_status.m but instead it prints to the c
 the actual state of laptop to tobii connection. Run this file to check what exact state of connection
 tobii is in. Whether it is connecting, connnected, calibrating, etc.
 
+
 ANALYSIS FOLDER - 
+
+cleanplot.m is a "skeleton file' function that plots graphs for the whatever data file name is in the input.
+The second input controls which eye data is plotted. With the exception of pupillary sleep test 
+(output is one graph), thetwo graphs generated will be (1) of the raw data and (2) of overlaid pupillary 
+response to stimuli. 
+
+dataorg.m is a "skeleton file" function that organizes data into separate matrix and struct. The matrix is a four 
+column matrix "datamat" that contains all eye data in one file. The struct "outdat" contains data chopped
+to certain seconds before and after the stimulus event. 
+
+findevents.m is a function that finds the timestamp bins corresponding to either sound or onscreen stimuli.
+
+makemat.m is a function that makes "datamat", a matrix with four columns of data corresponding to left eye,
+right eye, timestamp, and average of left and right eye from the whole task.
+
+makesecs.m is a function that converts the timestamps in datamat into seconds.
+
+evtsplit.m is a function that makes the "outdat," a struct containing eye data chopped into pieces from 
+a certain number of seconds before to after the stimulus. The struct contains left, right, and averaged 
+data.
+
+defbin.m is a function that is called in evtsplit to define number of bins to grab before and after the
+stimulus event in the data. 
+
+normdat.m is a function that adds normalized versions of left, right, and averaged right eye data to 
+the outdat struct. Currently normalizes with the average of 200ms before the stimulus.
+
+plotraw.m is a generic function that plots the raw data for the length of the task from datamat.
+
+plotlightdark.m is a function that plots the stimuli times on the raw plot and creates a second plot 
+with the overlaid pupillary response to stimuli data.
+
+plotoddrev.m a function that plots the stimuli times on the raw plot and creates a second plot 
+with the average pupillary response to stimuli data for odd vs. normal sounds or correct vs. incorrect
+responses.
 
 
