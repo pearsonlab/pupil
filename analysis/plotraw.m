@@ -1,15 +1,20 @@
-function figure1 = plotraw(datamat,whicheye,twoeye)
-figure1 = figure
+% Plot raw data (non-chopped) depending upon what plotwhat is.
 
-if twoeye==1
+function figure1 = plotraw(datamat,plotwhat)
+figure;
+hold on
+
+if strcmp(plotwhat,'left') | strcmp(plotwhat,'leftnorm')==1
     plot(datamat(:,1),'Color','g');
-    hold on
+    
+elseif strcmp(plotwhat,'right') | strcmp(plotwhat,'rightnorm')==1
     plot(datamat(:,2),'Color','b');
-end
- 
-plot(datamat(:,whicheye),'Color','r','linewidth',2);
-set(gca,'XTick',0:360:length(datamat));
-set(gca,'XTickLabel',{'0','3','6','9','12','15','18','21','24','27','30','33','36','39','42','45','48','51','54','57','60','63','66','69','72','75'});
-set(gca,'FontSize',10);
-
+    
+elseif strcmp(plotwhat,'average') | strcmp(plotwhat,'averagenorm')==1
+    plot(datamat(:,4),'Color','r','linewidth',2);
+    
+    set(gca,'XTick',0:360:length(datamat));
+    set(gca,'XTickLabel',{0:6:200});
+    set(gca,'FontSize',10);
+    
 end

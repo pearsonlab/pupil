@@ -1,50 +1,56 @@
 %%%% Hello world! Little tiny plotting function.
 % With Love, Annas
 
-% Plots graph of averaged raw data 
-function cleanplot(filename)
+function cleanplot(filename,plotwhat)
+% 
+% This function is skeleton function for plotting graphs of data.
+% Input filename such as: '0.2.oddball.pupiltest.mat' (include quotes)
+% Input plotwhat as
+% 'left','right','average','leftnorm','rightnorm','averagenorm' (include
+% quotes). plotwhat tells cleanplot which chopped data to plot in the
+% overlaid graph. It also controls what raw data is plotted. 
 
 load(filename);
 
+%% Case PST
+if ~exist('task')
+    testdata = data;
+    [datamat] = makemat(testdata);
+    twoeye=0;
+    plotraw(datamat,plotwhat);
+else
 %% Adjust for cases
 if strcmp(task,'revlearn')==1
     trialvec = [data.correct];
-elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1
+    % Organize trialvec so it 1 corresponds with incorrect response
+    trialvec=trialvec-1;
+    trialvec(find(trialvec==-1))=1;
+elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1 | strcmp(task,'pst')==1
     trialvec=[];
 end
-    
-% Right now we have to define twoeye, whicheye, and norm prior to running
-% dataorg.
-
-% twoeye = 1(plots both right and left eye); 0(plots only whatever we input
-% in whicheye)
-% whicheye = 1(left eye), 2(right eye), 4(avg.)
-% norm = 1: normalizes. 
-
-twoeye=0;
-whicheye=4;
-norm=1;
 
 %% Data PreLims
-[outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,eyedata,task,trialvec,whicheye,twoeye,norm);
+[outdat,trialvec,srtbins,testdata,datamat] = dataorg(data,eyedata,task,trialvec);
 hold on
 
-%% Oddball
+%% Plot Raw Data Sequentially
+% Plot raw data (which data depends on your plotwhat)
+twoeye=0;
+plotraw(datamat,plotwhat);
 
-if strcmp(task,'oddball')==1
+%% Plot Overlaid Data
+% Case Oddball or Reversal Learning
+
+if strcmp(task,'oddball')==1 | strcmp(task,'revlearn')==1
     
-    plotoddrev(outdat,outdat2,trialvec,srtbins,testdata,task,twoeye);
-    
-%% Reversal Learning
+    plotoddrev(outdat,trialvec,srtbins,testdata,task,plotwhat);
     
     
-elseif strcmp(task,'revlearn')==1
-    
-    plotoddrev(outdat,trialvec,srtbins,testdata);
-    
-    %% Light Dark Test
+% Case Light Dark Test
 elseif strcmp(task, 'darktest') | strcmp(task, 'lighttest')==1;
-    plotlightdark(srtbins,testdata,outdat,outdat2,task,twoeye,datamat);
+    plotlightdark(srtbins,testdata,outdat,task,twoeye,datamat,plotwhat);
     
 end
+end
+
 end

@@ -1,72 +1,46 @@
+%%this function is going to create a chopped structure that has the left eye, right
+%%eye and average of both
+function [outdat] = evtsplit(evt,task,datamat)
 
-function [outdat,outdat2,whicheye] = evtsplit(evt,task,datamat,whicheye,twoeye,norm)
+% Define bins to grab before/after
+[npre,npost,numevt,dt] = defbin(evt,1,2,60,task,1);
 
-%splits the time series data into a matrix of snippets with one row for 
-%each event timestamp in evt;  time is a list
-%of times for each bin relative to the entries in evt
-%whicheye allows for choice of which eyes to plot: 1(left eye), 2(right
-%eye),4(avg of 2 eyes). 
-%to plot both insert optional argument twoeye 
-%to normalize insert optional argument norm
+%%we want to grab from column 1,2 and 4, I'm sure there's a nicer way to do
+%%this but this is what I thought of at the moment and it appears to work
+index=[1 2 4];
 
-[npre,npost,nnorm,numevt,dt] = defbin(evt,1,2,60,task,0.2,1);
-
-weye=whicheye;
-
-% evtrel = evt - starttime;
-if twoeye==1 % If we want two eyes
-    outdat2= nan(numevt,npre+npost+1); 
-    whicheye=1;
-else
-    outdat2=[];
-end
-
-outdat = nan(numevt,npre+npost+1); %npre+npost+0 bin
-
-for ind = 1:numevt
-    bins_to_grab = (-npre:npost) + evt(ind);
-
-%now take care of ends of time series
-if bins_to_grab(1) < 1  %if we're at the start of series...
-    bins_to_grab = bins_to_grab(bins_to_grab >= 1); %truncate
-    outdat(ind,(end-length(bins_to_grab)+1):end) = datamat(bins_to_grab,whicheye);
-if twoeye==1 % If we want two eyes
-    outdat2(ind,(end-length(bins_to_grab)+1):end) = datamat(bins_to_grab,whicheye+1);
-end
-
-elseif bins_to_grab(end) > length(datamat) %if we're at the end...
-    bins_to_grab = bins_to_grab(bins_to_grab <= length(datamat)); %truncate
-    outdat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye);
-if twoeye==1 % If we want two eyes
-    outdat2(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye+1);
-end
-else
-    outdat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye);
-    if twoeye==1
-    outdat2(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,whicheye+1);
+for i=index(1):index(end);
+    
+    chopmat = nan(numevt,npre+npost+1); %npre+npost+0 bin
+    
+    for ind = 1:numevt 
+        bins_to_grab = (-npre:npost) + evt(ind);
+        
+        %now take care of ends of time series
+        if bins_to_grab(1) < 1  %if we're at the start of series...
+            bins_to_grab = bins_to_grab(bins_to_grab >= 1); %truncate
+            chopmat(ind,(end-length(bins_to_grab)+1):end) = datamat(bins_to_grab,i);
+        elseif bins_to_grab(end) > length(datamat) %if we're at the end...
+            bins_to_grab = bins_to_grab(bins_to_grab <= length(datamat)); %truncate
+            chopmat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,i);
+        else
+            chopmat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,i);
+        end     
     end
+    
+    chopmat = chopmat'; % Rows become columns
+    
+    % Create struct of chopped data corresponding to R, L, and avg. 
+    if i==1
+        outdat.left=chopmat;
+    elseif i==2
+        outdat.right=chopmat;
+    elseif i==4
+        outdat.average=chopmat;
+    end
+    
 end
-
-
-end
-
-outdat = outdat';
-if twoeye==1
-    outdat2=outdat2';
-end
-
-if norm==1
-% normalize with 
-for ind = 1:length(evt)
-outdat(:,ind) = outdat(:,ind)-(nanmean(datamat((evt(ind)-nnorm):evt(ind),whicheye)));
-if twoeye==1
- outdat2(:,ind) = outdat2(:,ind)-(nanmean(datamat((evt(ind)-nnorm):evt(ind),whicheye+1)));   
-end
-end
-
-whicheye=weye;
 
 end
 
-time = (-npre:npost)*dt;
-
+% time = (-npre:npost)*dt;

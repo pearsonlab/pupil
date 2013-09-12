@@ -1,6 +1,11 @@
-%%%%% This function organizes data.
+%%%%% This function organizes data.%%%%%
+% Output "outdat" is a struct containing left, right, average, leftnorm,
+% rightnorm, and averagenorm.
+% Output "datamat" is matrix containing 4 columns of data sequentially 
+% concatenated: lefteye, righteye, timestamp, and average.
+% Output "srtbins" finds bin # containing event.
 
-function [outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(data,testdata,task,trialvec,whicheye,twoeye,norm)
+function [outdat,trialvec,srtbins,testdata,datamat] = dataorg(data,testdata,task,trialvec)
 
 % Find either sound or onscreen stimuli onset bins.
 [~,srtbins] = findevents(testdata,data,task);
@@ -11,10 +16,10 @@ function [outdat,outdat2,trialvec,srtbins,testdata,whicheye,datamat] = dataorg(d
 % Convert datamat time --> seconds.
 [datamat] = makesecs(datamat);
 
-% Find # bins before/after, make matrix of chopped data called 'outdat'
-[outdat,outdat2,whicheye] = evtsplit(srtbins,task,datamat,whicheye,twoeye,norm);
+% Make struct of chopped data called 'outdat'.
+[outdat] = evtsplit(srtbins,task,datamat);
 
-% Plot raw data (avg. right and left eye)
-plotraw(datamat,whicheye,twoeye);
+% Normalize data to create normalized data within struct.
+[outdat] = normdat(srtbins,0.2,60,outdat,datamat);
 
 end
