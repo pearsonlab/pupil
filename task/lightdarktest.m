@@ -51,8 +51,8 @@ for ind=1:numtrials
     WaitSecs(2);
     
     % Convert to correct RBG for lumens we want.
-    [RBGconv] = convertlums(stim_mat(numtrials,1));
-    stim_mat(numtrials,:)=[RBGconv];
+    %[RBGconv] = convertlums(stim_mat(numtrials,1));
+    %stim_mat(numtrials,:)=[RBGconv];
     
     %paint light stimulus onscreen
     Screen('FillRect',win,stim_mat(ind,:),[]);

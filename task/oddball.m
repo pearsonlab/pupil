@@ -49,7 +49,7 @@ PTBprelims
 %%%%%%%%%%%%%% Sound Parameters %%%%%%%%%%%%%
 setup_audio
 [lowsnd,lowF]=wavread('500.wav');
-[highsnd,highF]=wavread('1000a.wav');
+[highsnd,highF]=wavread('1000.wav');
 
 %%%%%%%%%%%%%% Task Parameters %%%%%%%%%%%%%
 iti_mean = 3;

@@ -61,6 +61,7 @@ menustr = sprintf(strcat('Please select an option:\n', ...
     '5) Oddball\n', ...
     '6) Surprise\n', ...
     '7) Run All\n', ...
+    'C) Check Calibration\n', ...
     'Q) Quit\n\n', ...
     'Choice:\t'));
 
@@ -81,7 +82,6 @@ while 1
     display_instructions(win,'Relax. The task will begin shortly.',1);
     
     choice = input(menustr,'s');
-    TrackPupil; %%this is here to make sure that the person doesn't move in between tests and then we lose their eyes and then the last 3 tests record no data at all, ya know, for example
     switch choice
         case '0'
             stub = 'calibrate';
@@ -130,6 +130,8 @@ while 1
             lower(neworold);
             outfile = get_next_fname(subjdir,subjnum,stub);
             oddball(outfile,(strcmp(neworold,'n')),'OddballVectors', 'six')
+        case 'C'
+            TrackStatus;
         case 'Q'
             break
     end
