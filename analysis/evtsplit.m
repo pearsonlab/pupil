@@ -1,46 +1,44 @@
-%%this function is going to create a chopped structure that has the left eye, right
-%%eye and average of both
-function [outdat] = evtsplit(evt,task,datamat)
+function [outdat,time] = evtsplit(data,evt,startT,endT,sr,starttime)
+% splits the time series data in data with sampling rate sr into a matrix of
+% snippets with one row for each event timestamp in evt; startT and
+% endT are the times relative to evt to grab; time is a list
+% of times for each bin relative to the entries in evt
+% starttime is the timestamp of the first bin in data
 
-% Define bins to grab before/after
-[npre,npost,numevt,dt] = defbin(evt,1,2,60,task,1);
+% define frequency if it isn't supplied
+if ~exist('sr','var')
+    sr = 1;
+end
 
-%%we want to grab from column 1,2 and 4, I'm sure there's a nicer way to do
-%%this but this is what I thought of at the moment and it appears to work
-index=[1 2 4];
+% if start time isn't specified, assume it's 0
+if ~exist('starttime','var')
+    starttime = 0;
+end
 
-for i=index(1):index(end);
+numevt=numel(evt); %number of event timestamps
+dt = 1/sr; %time bin size
+nstart = ceil(startT*sr); %number of bins to grab before
+nend = ceil(endT*sr); %number of bins to grab after
+
+evtrel = evt - starttime; %relative event time
+
+% preallocate output matrix
+outdat = nan(numevt,abs(nstart)+abs(nend)+1); %npre+npost+0 bin
+for ind = 1:numevt
+    bins_to_grab = (nstart:nend) + round( evtrel(ind)/dt );
     
-    chopmat = nan(numevt,npre+npost+1); %npre+npost+0 bin
-    
-    for ind = 1:numevt 
-        bins_to_grab = (-npre:npost) + evt(ind);
-        
-        %now take care of ends of time series
-        if bins_to_grab(1) < 1  %if we're at the start of series...
-            bins_to_grab = bins_to_grab(bins_to_grab >= 1); %truncate
-            chopmat(ind,(end-length(bins_to_grab)+1):end) = datamat(bins_to_grab,i);
-        elseif bins_to_grab(end) > length(datamat) %if we're at the end...
-            bins_to_grab = bins_to_grab(bins_to_grab <= length(datamat)); %truncate
-            chopmat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,i);
-        else
-            chopmat(ind,1:length(bins_to_grab)) = datamat(bins_to_grab,i);
-        end     
-    end
-    
-    chopmat = chopmat'; % Rows become columns
-    
-    % Create struct of chopped data corresponding to R, L, and avg. 
-    if i==1
-        outdat.left=chopmat;
-    elseif i==2
-        outdat.right=chopmat;
-    elseif i==4
-        outdat.average=chopmat;
+    %now take care of ends of time series
+    if bins_to_grab(1) < 1  %if we're at the start of series...
+        bins_to_grab = bins_to_grab(bins_to_grab >= 1); %truncate
+        outdat(ind,(end-length(bins_to_grab)+1):end) = data(bins_to_grab);
+    elseif bins_to_grab(end) > length(data) %if we're at the end...
+        bins_to_grab = bins_to_grab(bins_to_grab <= length(data)); %truncate
+        outdat(ind,1:length(bins_to_grab)) = data(bins_to_grab);
+    else
+        outdat(ind,:) = data(bins_to_grab);
     end
     
 end
 
-end
+time = (nstart:nend)*dt;
 
-% time = (-npre:npost)*dt;
