@@ -24,4 +24,6 @@ switch task
         analyze_lighttest
     case 'revlearn'
         analyze_revlearn
+    case 'oddball'
+        analyze_oddball
 end
