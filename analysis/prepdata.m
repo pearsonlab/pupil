@@ -5,12 +5,20 @@
 load(fullfile(newdir, dfile))
 
 % munge data
-lpup = cleanseries(eyedata.lefteye(:, 12));
-rpup = cleanseries(eyedata.righteye(:, 12));
+try
+    lpup = cleanseries(eyedata.lefteye(:, 12));
+    rpup = cleanseries(eyedata.righteye(:, 12));
+    
+    % get initial timestamp, convert microseconds to seconds
+    t0 = min(eyedata.timestamp);
+    taxis = us2secs(eyedata.timestamp, t0);
+catch
+    lpup = cleanseries(data.lefteye(:, 12));
+    rpup = cleanseries(data.righteye(:, 12));
+    t0 = min(data.timestamp);
+    taxis = us2secs(data.timestamp, t0);
+end
 mpup = nanmean([lpup; rpup]);
 pupil = mpup;
 
-% get timestamps: convert microseconds to seconds
-t0 = min(eyedata.timestamp);
-taxis = us2secs(eyedata.timestamp, t0);
 sr = 60;  % sampling rate of Tobii = 60 Hz

@@ -26,4 +26,6 @@ switch task
         analyze_revlearn
     case 'oddball'
         analyze_oddball
+    case 'pst'
+        analyze_pst
 end
