@@ -16,6 +16,12 @@ else
     warning('You must select a valid file!');
 end
 
+%% run task-specific analysis
+switch task
+    case 'darktest'
+        analyze_darktest
+end
+
 %% try some plotting
 offtimes = us2secs([data.offtime], t0);
 
