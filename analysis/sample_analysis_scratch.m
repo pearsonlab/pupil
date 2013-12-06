@@ -2,34 +2,29 @@
 
 %% setup paths
 addpath('~/code/pupil/analysis')
+addpath('~/code/pupil/analysis/utils')
 addpath('~/code/electrophysiology')
-ddir = '~/Dropbox/pupil/data';
+ddir = '~/Dropbox/pupil/data/';
 
 %% load data
-dfile = '0.2.lighttest.pupiltest.mat';
-load(fullfile(ddir, dfile))
+[dfile, newdir, was_success] = uigetfile([ddir '*.mat']);
 
-%% munge data
-lpup = cleanseries(eyedata.lefteye(:, 12));
-rpup = cleanseries(eyedata.righteye(:, 12));
-mpup = nanmean([lpup; rpup]);
-pupil = mpup;
-
-% get timestamps: convert microseconds to seconds
-t0 = min(eyedata.timestamp);
-taxis = (eyedata.timestamp - t0)/1e6;  
-sr = 60;  % sampling rate of Tobii = 60 Hz
+%% prepare data
+if was_success
+    prepdata
+else
+    warning('You must select a valid file!');
+end
 
 %% try some plotting
-offtimes = double(uint64([data.offtime]) - t0)/1e6;
+offtimes = us2secs([data.offtime], t0);
+
 tpre = -0.3;
 tpost = 8;
 [pmat, binT] = evtsplit(pupil, offtimes, tpre, tpost, sr);
 
 % baseline normalize
-zbin = find(binT == 0);
-normalizer = nanmean(pmat(:, 1:(zbin - 1)), 2);
-pmat = bsxfun(@minus, pmat, normalizer);
+pmat = basenorm(pmat, binT, [-inf 0]);
 
 plot(binT, pmat', 'linewidth', 2.0)
 xlim([tpre tpost])
