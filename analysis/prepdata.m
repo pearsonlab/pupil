@@ -18,7 +18,7 @@ catch
     t0 = min(data.timestamp);
     taxis = us2secs(data.timestamp, t0);
 end
-mpup = nanmean([lpup; rpup]);
+mpup = nanmean([lpup rpup], 2);
 pupil = mpup;
 
 sr = 60;  % sampling rate of Tobii = 60 Hz

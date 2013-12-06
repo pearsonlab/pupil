@@ -23,7 +23,6 @@ ylabel('Power (dB/Hz)', 'fontsize', 16, 'fontweight', 'bold')
 legend({'Left eye', 'Right eye'})
 hold off
 
-
 %% now try time-frequency plots
 freqs = 1:30; % transform takes longer, so use log-spaced frequencies
 

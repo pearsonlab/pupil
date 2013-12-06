@@ -29,7 +29,15 @@ newdat(allbad) = NaN; %remove data
 
 %now interpolate
 goodinds = find(~isnan(newdat));
-out = interp1(goodinds, newdat(~isnan(newdat)), 1:N,'linear','extrap');
+if isempty(goodinds)
+    warning('Not enough good data to clean. Aborting.')
+    out = nan(size(data));
+else
+    out = interp1(goodinds, newdat(~isnan(newdat)), 1:N,'linear','extrap');
+end
+
+% for definiteness, return a column vector
+out = out(:);
 
 
 
