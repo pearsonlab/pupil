@@ -2,7 +2,14 @@
 % loads data in from file and munges it
 % makes left and right eye data, mean of the two, and time axis
 
+clear task  % since not all files contain this variable, and we may need to infer from scratch
+
 load(fullfile(newdir, dfile))
+
+if ~exist('task','var')
+    splitstr = regexp(dfile,'\.','split');
+    task = splitstr{3};
+end
 
 % munge data
 try
