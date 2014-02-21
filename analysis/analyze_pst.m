@@ -26,7 +26,7 @@ hold off
 %% now try time-frequency plots
 freqs = 1:30; % transform takes longer, so use log-spaced frequencies
 
-P = timefreq(lpup, freqs, sr);
+P = timefreq(lpup', freqs, sr);
 
 % plot
 figure(2)
