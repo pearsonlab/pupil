@@ -4,7 +4,7 @@
 addpath('~/code/pupil/analysis')
 addpath('~/code/pupil/analysis/utils')
 addpath('~/code/electrophysiology')
-ddir = '~/Dropbox/pupil/data/';
+ddir = '~/data/pupil';
 
 %% load data
 [dfile, newdir, was_success] = uigetfile([ddir '*.mat']);
