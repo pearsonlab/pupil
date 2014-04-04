@@ -10,9 +10,9 @@ tpost = 8;
 pcorr = basenorm(pmat(wasodd, :), binT, [-inf 0], normtype);
 pinc = basenorm(pmat(~wasodd, :), binT, [-inf 0], normtype);
 
-type = 1;
-plot_with_sem(pcorr, 0, 1/sr, type, binT, [0 1 0])
-plot_with_sem(pinc, 0, 1/sr, type, binT, [1 0 0])
+plottype = 1;  % plot with shaded patches
+plot_with_sem(pcorr, 0, 1/sr, plottype, binT, [0 1 0])
+plot_with_sem(pinc, 0, 1/sr, plottype, binT, [1 0 0])
 
 %plot(binT, pmat', 'linewidth', 2.0)
 xlim([tpre tpost])
