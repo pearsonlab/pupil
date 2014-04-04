@@ -10,7 +10,6 @@ tpost = 8;
 pcorr = basenorm(pmat(wascorr, :), binT, [-inf 0], normtype);
 pinc = basenorm(pmat(~wascorr, :), binT, [-inf 0], normtype);
 
-plottype = 1;  % use shaded patches
 plot_with_sem(pcorr, 0, 1/sr, plottype, binT, [0 1 0])
 plot_with_sem(pinc, 0, 1/sr, plottype, binT, [1 0 0])
 
@@ -19,4 +18,12 @@ xlim([tpre tpost])
 title('Pupillary response to negative feedback','fontsize', 20, 'fontweight', 'bold')
 xlabel('Time from buzzer (seconds)', 'fontsize', 16, 'fontweight', 'bold')
 ylabel('Normalized pupil size (arb units)', 'fontsize', 16, 'fontweight', 'bold')
-legend({'Correct', '', 'Incorrect', ''}, 'location', 'southeast')
+
+switch plottype
+    case 0
+        legend({'Correct', 'Incorrect'}, 'location', 'southeast')
+    case 1
+        legend({'Correct', '', 'Incorrect', ''}, 'location', 'southeast')
+    case 2
+        legend({'Correct', '', 'Incorrect', ''}, 'location', 'southeast')
+end

@@ -19,6 +19,7 @@ end
 %% set options
 normtype = 1;
 overplot = 1;
+plottype = 0;  % 0 for no sem, 1 for error shading, 2 for dotted lines
 
 %% run task-specific analysis
 if ~overplot
