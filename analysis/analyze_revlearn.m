@@ -1,6 +1,9 @@
 % analyze_revlearn.m
 % scratch code for analysis of reversal learning
 
+corr_color = [0 1 0];
+inc_color = [1 0 0];
+
 etimes = us2secs([data.soundtime], t0);
 wascorr = logical([data.correct]);
 tpre = -0.3;
@@ -10,8 +13,8 @@ tpost = 8;
 pcorr = basenorm(pmat(wascorr, :), binT, [-inf 0], normtype);
 pinc = basenorm(pmat(~wascorr, :), binT, [-inf 0], normtype);
 
-plot_with_sem(pcorr, 0, 1/sr, plottype, binT, [0 1 0])
-plot_with_sem(pinc, 0, 1/sr, plottype, binT, [1 0 0])
+plot_with_sem(pcorr, 0, 1/sr, plottype, binT, corr_color)
+plot_with_sem(pinc, 0, 1/sr, plottype, binT, inc_color)
 
 %plot(binT, pmat', 'linewidth', 2.0)
 xlim([tpre tpost])
@@ -27,3 +30,4 @@ switch plottype
     case 2
         legend({'Correct', '', 'Incorrect', ''}, 'location', 'southeast')
 end
+
