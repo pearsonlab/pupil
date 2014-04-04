@@ -17,9 +17,9 @@ else
 end
 
 %% set options
-normtype = 1;
-overplot = 1;
-plottype = 0;  % 0 for no sem, 1 for error shading, 2 for dotted lines
+normtype = 0;  % 0 for subtractive, 1 for divisive
+overplot = 0;  % 0 produces a new plot, 1 plots into existing axes
+plottype = 1;  % 0 for no sem, 1 for error shading, 2 for dotted lines
 
 %% run task-specific analysis
 if ~overplot
