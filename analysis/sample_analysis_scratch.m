@@ -18,8 +18,13 @@ end
 
 %% set options
 normtype = 1;
+overplot = 1;
 
 %% run task-specific analysis
+if ~overplot
+    figure
+end
+
 switch task
     case 'darktest'
         analyze_darktest
