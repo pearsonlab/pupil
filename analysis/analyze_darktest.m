@@ -9,7 +9,7 @@ tpost = 8;
 [pmat, binT] = evtsplit(pupil, offtimes, tpre, tpost, sr);
 
 % baseline normalize
-pmat = basenorm(pmat, binT, [-inf 0]);
+pmat = basenorm(pmat, binT, [-inf 0], normtype);
 
 plot(binT, pmat', 'linewidth', 2.0)
 xlim([tpre tpost])

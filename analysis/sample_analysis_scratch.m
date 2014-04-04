@@ -16,6 +16,9 @@ else
     warning('You must select a valid file!');
 end
 
+%% set options
+normtype = 1;
+
 %% run task-specific analysis
 switch task
     case 'darktest'

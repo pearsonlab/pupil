@@ -7,8 +7,8 @@ tpre = -0.3;
 tpost = 8;
 [pmat, binT] = evtsplit(pupil, etimes, tpre, tpost, sr);
 
-pcorr = basenorm(pmat(wasodd, :), binT, [-inf 0]);
-pinc = basenorm(pmat(~wasodd, :), binT, [-inf 0]);
+pcorr = basenorm(pmat(wasodd, :), binT, [-inf 0], normtype);
+pinc = basenorm(pmat(~wasodd, :), binT, [-inf 0], normtype);
 
 type = 1;
 plot_with_sem(pcorr, 0, 1/sr, type, binT, [0 1 0])
