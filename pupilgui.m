@@ -61,6 +61,8 @@ addpath('~/code/pupil/analysis/utils')
 addpath('~/code/electrophysiology')
 handles.ddir = '~/data/pupil/';
 
+handles.normtype = 0;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -105,7 +107,7 @@ newdir = handles.curr_data_dir;
 prepdata
 
 % set options
-normtype = handles.normtype;  % 0 for subtractive, 1 for divisive
+normtype = handles.normtype;
 overplot = 0;  % 0 produces a new plot, 1 plots into existing axes
 plottype = 1;  % 0 for no sem, 1 for error shading, 2 for dotted lines
 include_tonic = 1;
@@ -156,3 +158,4 @@ switch buttonName
 end
 
 guidata(hObject, handles)
+do_analysis(hObject, eventdata, handles)
