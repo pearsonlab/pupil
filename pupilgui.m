@@ -22,7 +22,7 @@ function varargout = pupilgui(varargin)
 
 % Edit the above text to modify the response to help pupilgui
 
-% Last Modified by GUIDE v2.5 04-Apr-2014 16:08:36
+% Last Modified by GUIDE v2.5 06-Apr-2014 14:05:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -105,7 +105,7 @@ newdir = handles.curr_data_dir;
 prepdata
 
 % set options
-normtype = 0;  % 0 for subtractive, 1 for divisive
+normtype = handles.normtype;  % 0 for subtractive, 1 for divisive
 overplot = 0;  % 0 produces a new plot, 1 plots into existing axes
 plottype = 1;  % 0 for no sem, 1 for error shading, 2 for dotted lines
 include_tonic = 1;
@@ -139,3 +139,20 @@ switch task
     case 'pst'
         analyze_pst
 end
+
+function uipanel1_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in uipanel1 
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+buttonName = get(eventdata.NewValue, 'string');
+switch buttonName
+    case 'Subtractive'
+        handles.normtype = 0;
+    case 'Divisive'
+        handles.normtype = 1;
+end
+
+guidata(hObject, handles)
