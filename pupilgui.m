@@ -22,7 +22,7 @@ function varargout = pupilgui(varargin)
 
 % Edit the above text to modify the response to help pupilgui
 
-% Last Modified by GUIDE v2.5 06-Apr-2014 14:05:36
+% Last Modified by GUIDE v2.5 06-Apr-2014 14:32:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,6 +62,9 @@ addpath('~/code/electrophysiology')
 handles.ddir = '~/data/pupil/';
 
 handles.normtype = 0;
+handles.overplot = 0;
+handles.include_tonic = 0;
+handles.plottype = 1;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -93,12 +96,16 @@ else
     [dfile, curr_data_dir, was_success] = uigetfile([handles.ddir '*.mat']);
 end
 
-handles.dfile = dfile;
-handles.curr_data_dir = curr_data_dir;
+if was_success
+    handles.dfile = dfile;
+    handles.curr_data_dir = curr_data_dir;
+end
 
 guidata(hObject, handles);
 
-do_analysis(hObject, eventdata, handles)
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
 
 function do_analysis(hObject, eventdata, handles)
 dfile = handles.dfile;
@@ -108,9 +115,9 @@ prepdata
 
 % set options
 normtype = handles.normtype;
-overplot = 0;  % 0 produces a new plot, 1 plots into existing axes
-plottype = 1;  % 0 for no sem, 1 for error shading, 2 for dotted lines
-include_tonic = 1;
+overplot = handles.overplot; 
+plottype = handles.plottype; 
+include_tonic = handles.include_tonic;
 
 % run task-specific analysis
 if ~overplot
@@ -158,4 +165,58 @@ switch buttonName
 end
 
 guidata(hObject, handles)
-do_analysis(hObject, eventdata, handles)
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
+
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.overplot = get(hObject,'Value');
+guidata(hObject, handles);
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
+
+% --- Executes on button press in checkbox2.
+function checkbox2_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.include_tonic = get(hObject,'Value');
+guidata(hObject, handles);
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
+
+
+% --- Executes on selection change in popupmenu2.
+function popupmenu2_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu2 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu2
+handles.plottype = get(hObject, 'Value') - 1;
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+set(hObject,'String',{'None';'Shading';'Lines'}, 'Value', 2);
