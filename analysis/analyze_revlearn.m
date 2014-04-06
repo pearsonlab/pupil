@@ -24,10 +24,16 @@ ylabel('Normalized pupil size (arb units)', 'fontsize', 16, 'fontweight', 'bold'
 
 switch plottype
     case 0
-        legend({'Correct', 'Incorrect'}, 'location', 'southeast')
+        legend_str = {'Correct', 'Incorrect'};
     case 1
-        legend({'Correct', '', 'Incorrect', ''}, 'location', 'southeast')
+        legend_str = {'Correct', '', 'Incorrect', ''};
     case 2
-        legend({'Correct', '', 'Incorrect', ''}, 'location', 'southeast')
+        legend_str = {'Correct', '', 'Incorrect', ''};
 end
 
+if diffwave
+    plot_with_sem(nanmean(pinc) - nanmean(pcorr), 0, 1/sr, 0, binT, [0 0 0]);
+    legend_str{end + 1} = 'Difference';
+end
+
+legend(legend_str, 'location', 'southeast')

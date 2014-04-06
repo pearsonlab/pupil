@@ -22,7 +22,7 @@ function varargout = pupilgui(varargin)
 
 % Edit the above text to modify the response to help pupilgui
 
-% Last Modified by GUIDE v2.5 06-Apr-2014 14:32:15
+% Last Modified by GUIDE v2.5 06-Apr-2014 15:41:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -65,6 +65,7 @@ handles.normtype = 0;
 handles.overplot = 0;
 handles.include_tonic = 0;
 handles.plottype = 1;
+handles.diffwave = 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -118,6 +119,7 @@ normtype = handles.normtype;
 overplot = handles.overplot; 
 plottype = handles.plottype; 
 include_tonic = handles.include_tonic;
+diffwave = handles.diffwave;
 
 % run task-specific analysis
 if ~overplot
@@ -147,26 +149,6 @@ switch task
         analyze_oddball
     case 'pst'
         analyze_pst
-end
-
-function uipanel1_SelectionChangeFcn(hObject, eventdata, handles)
-% hObject    handle to the selected object in uipanel1 
-% eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty
-%	NewValue: handle of the currently selected object
-% handles    structure with handles and user data (see GUIDATA)
-buttonName = get(eventdata.NewValue, 'string');
-switch buttonName
-    case 'Subtractive'
-        handles.normtype = 0;
-    case 'Divisive'
-        handles.normtype = 1;
-end
-
-guidata(hObject, handles)
-if isfield(handles, 'dfile')
-    do_analysis(hObject, eventdata, handles)
 end
 
 % --- Executes on button press in checkbox1.
@@ -203,6 +185,7 @@ function popupmenu2_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu2 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu2
 handles.plottype = get(hObject, 'Value') - 1;
+guidata(hObject, handles)
 if isfield(handles, 'dfile')
     do_analysis(hObject, eventdata, handles)
 end
@@ -220,3 +203,46 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 set(hObject,'String',{'None';'Shading';'Lines'}, 'Value', 2);
+
+
+% --- Executes on button press in checkbox3.
+function checkbox3_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox3
+handles.diffwave = get(hObject, 'Value');
+guidata(hObject, handles)
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
+
+
+% --- Executes on selection change in popupmenu4.
+function popupmenu4_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu4 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu4
+handles.normtype = get(hObject, 'Value') - 1;
+guidata(hObject, handles)
+if isfield(handles, 'dfile')
+    do_analysis(hObject, eventdata, handles)
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu4_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+set(hObject,'String',{'Subtractive';'Divisive'}, 'Value', 1);

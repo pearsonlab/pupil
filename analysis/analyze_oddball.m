@@ -21,9 +21,16 @@ ylabel('Normalized pupil size (arb units)', 'fontsize', 16, 'fontweight', 'bold'
 
 switch plottype
     case 0
-        legend({'Oddball', 'Standard'}, 'location', 'southeast')
+        legend_str = {'Oddball', 'Standard'};
     case 1
-        legend({'Oddball', '', 'Standard', ''}, 'location', 'southeast')
+        legend_str = {'Oddball', '', 'Standard', ''};
     case 2
-        legend({'Oddball', '', 'Standard', ''}, 'location', 'southeast')
+        legend_str = {'Oddball', '', 'Standard', ''};
 end
+
+if diffwave
+    plot_with_sem(nanmean(pinc) - nanmean(pcorr), 0, 1/sr, 0, binT, [0 0 0]);
+    legend_str{end + 1} = 'Difference';
+end
+
+legend(legend_str, 'location', 'southeast')
