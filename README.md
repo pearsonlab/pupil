@@ -26,3 +26,15 @@ Other functions inside the folder are either resources for the tasks (wav files)
 
 - `analyze_*.m` are analysis files called by the above, each for a particular task.
 - `utils/` contains helper functions needed to convert timestamps and clean and interpolate raw data.
+
+### Gui
+
+The files `pupilgui.m` and `pupilgui.fig` contain code for the graphical user interface for data analysis. Options include:
+
+- The **Open** button selects a file to analyze. The task will be determined from the file name.
+- **Plot raw data?** plots the raw pupil trace (mean across both eyes) in a second set of axes when checked.
+- **Difference?** plots the difference between pupil responses for the task conditions for Oddball and Reversal Learning. 
+- **Plot style**: *None* plots lines only. *Shading* includes shading around the means for standard errors. *Lines* plots dotted lines for standard errors.
+- **Normalization**: *Subtractive* normalization subtracts the baseline from the raw pupil measure. *Divisive* normalization divides it.
+
+**N.B.:** Currently, all plots open a new window. All changes in preferences also replot the data in a new window.
