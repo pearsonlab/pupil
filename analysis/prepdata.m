@@ -8,6 +8,8 @@ load(fullfile(newdir, dfile))
 
 if ~exist('task','var')
     splitstr = regexp(dfile,'\.','split');
+    subj = splitstr{1};
+    version = splitstr{2};
     task = splitstr{3};
 end
 
