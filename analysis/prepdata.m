@@ -3,6 +3,7 @@
 % makes left and right eye data, mean of the two, and time axis
 
 clear task  % since not all files contain this variable, and we may need to infer from scratch
+clear pupil slowpupil eyedata data
 
 fname = fullfile(newdir, dfile);
 load(fname)
@@ -10,7 +11,7 @@ load(fname)
 if ~exist('task','var')
     splitstr = regexp(dfile,'\.','split');
     subj = splitstr{1};
-    dataset = splitstr{2};
+    dset = splitstr{2};
     task = splitstr{3};
 end
 

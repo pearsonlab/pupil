@@ -17,7 +17,7 @@ function out = traverse(directory, result)
             prepdata;
             thisdata.filename = fname;
             thisdata.subject = subj;
-            thisdata.dataset = dataset;
+            thisdata.dataset = dset;
             thisdata.task = task;
             thisdata.pupil = pupil;
             thisdata.baseline = slowpupil;
