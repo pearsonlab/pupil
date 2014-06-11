@@ -2,7 +2,7 @@
 % all subdirectories
 % for each file, it calculates a table of baseline pupil measures
 
-data_dir = uigetdir([start_dir '*.mat'], 'Select a directory to search for data');
+data_dir = uigetdir([pwd '*.mat'], 'Select a directory to search for data');
 
 pupildata = traverse(data_dir);
 
@@ -16,6 +16,8 @@ for ind = 1:length(pupildata)
     pupildata(ind).std = nanstd(baseline);
     pupildata(ind).cv = nanstd(baseline) / nanmean(baseline);
     pupildata(ind).range = max(baseline) - min(baseline);
+    pupildata(ind).max = max(baseline);
+    pupildata(ind).min = min(baseline);
 end
 
 uisave({'pupildata'})
