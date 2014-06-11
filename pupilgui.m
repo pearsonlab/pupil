@@ -130,9 +130,13 @@ if ~overplot
         set(fig_handle, 'position', pos);
         
         subplot(2, 1, 2);
+        hold on
         plot(taxis, pupil, 'color', 'k', 'linewidth', 2)
+        plot(taxis, slowpupil, 'color', 'r', 'linewidth', 2)
+        hold off
         xlabel('Time (seconds)', 'fontsize', 16, 'fontweight', 'bold')
-        ylabel('Raw pupil size (arb units)', 'fontsize', 16, 'fontweight', 'bold')
+        ylabel('Raw and smoothed pupil size (arb units)', 'fontsize', 16, ...
+            'fontweight', 'bold')
 
         subplot(2, 1, 1);
     end

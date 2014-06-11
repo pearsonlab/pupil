@@ -29,3 +29,5 @@ mpup = nanmean([lpup rpup], 2);
 pupil = mpup;
 
 sr = 60;  % sampling rate of Tobii = 60 Hz
+Tsmooth = 10;
+slowpupil = smooth(pupil, Tsmooth * sr);
