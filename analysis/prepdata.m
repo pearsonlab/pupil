@@ -4,12 +4,13 @@
 
 clear task  % since not all files contain this variable, and we may need to infer from scratch
 
-load(fullfile(newdir, dfile))
+fname = fullfile(newdir, dfile);
+load(fname)
 
 if ~exist('task','var')
     splitstr = regexp(dfile,'\.','split');
     subj = splitstr{1};
-    version = splitstr{2};
+    dataset = splitstr{2};
     task = splitstr{3};
 end
 
