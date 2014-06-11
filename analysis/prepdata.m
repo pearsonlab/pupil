@@ -3,6 +3,7 @@
 % makes left and right eye data, mean of the two, and time axis
 
 clear task  % since not all files contain this variable, and we may need to infer from scratch
+clear pupil slowpupil eyedata data
 
 load(fullfile(newdir, dfile))
 
