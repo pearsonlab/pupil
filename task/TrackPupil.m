@@ -75,6 +75,10 @@ Calib.resize = 1; % To show a smaller windw
 		
 		pause(1/updateFrequencyInHz);
 		
+		if KbCheck()
+			breakLoopFlag = 1;
+		end
+		
 		[lefteye, righteye, timestamp, trigSignal] = tetio_readGazeData;
 
 		if isempty(lefteye)
