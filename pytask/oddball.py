@@ -27,14 +27,10 @@ def oddball(outfile,flag,*args):
 	# display instructions
 	display.text_keypress(testWin, 'In this task, you will listen to some sounds. \n Press any key to continue')
 	# play sound samples
-	display.text_keypress(testWin, 'Some sounds are low... \n Press any key to continue')
-	core.wait(0.5)
 	lowsnd.play()
-	core.wait(1.0)
-	display.text_keypress(testWin, '...and some are high. \n Press any key to continue')
-	core.wait(0.5)
+	display.text_keypress(testWin, 'Some sounds are low... \n Press any key to continue')
 	highsnd.play()
-	core.wait(1.0)
+	display.text_keypress(testWin, '...and some are high. \n Press any key to continue')
 
 	display.text_keypress(testWin, 'When you hear a sound, press the space bar.\n\nPress any key when ready.')
 	display.countdown(testWin,4)

@@ -31,3 +31,12 @@ def text_keypress(win, text):
 	display_text.draw()
 	win.flip()
 	event.waitKeys()
+
+def cross(win):
+	cross= visual.TextStim(win, text='+', 
+        font='Helvetica', alignHoriz='center', alignVert='center', units='norm', 
+        pos=(0, 0), height=0.3, color=[255, 255, 255], colorSpace='rgb255', 
+        wrapWidth=2)
+	cross.draw()
+	win.flip()
+
