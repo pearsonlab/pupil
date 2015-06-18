@@ -11,7 +11,7 @@ def countdown(win, time):
                                      font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
                                      pos=(0, 0), height=0.2, color=[178, 34, 34], colorSpace='rgb255',
                                      wrapWidth=2)
-    for i in range(4):
+    for i in range(count_time):
         countdown_text.text = str(count_time)
         countdown_text.draw()
         win.flip()
@@ -22,7 +22,7 @@ def countdown(win, time):
 
 def fill_screen(win, window_color):
     # set rect to fill window with color
-    rect = visual.Rect(win, 2, 2, units='norm', fillColor=window_color)
+    rect = visual.Rect(win, 2, 2, units='norm', fillColor=window_color, lineColor=None)
     rect.draw()
     win.flip()
 

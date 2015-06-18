@@ -43,12 +43,12 @@ def oddball(outfile, flag, *args):
         testWin, 'When you hear a sound, press the space bar.\n\nPress any key when ready.')
     display.countdown(testWin, 4)
 
-    # start eye tracking
+    # START EYE TRACKING
 
     core.wait(2.0)  # give small wait time before starting trial
 
     for isHigh in trialvec:
-        # record timestamp for sound play
+        # RECORD TIMESTAMP FOR SOUND PLAY
 
         if isHigh:
             highsnd.play()  # play high sound if oddball
@@ -60,18 +60,18 @@ def oddball(outfile, flag, *args):
         if keypress[0] == 'q':
             break
         elif keypress[0] == 'space':
-            # record timestamp for key press
+            # RECORD TIMESTAMP FOR KEY PRESS
             1 + 1
 
         iti = iti_mean + iti_range * (2 * np.random.random() - 1)
 
         core.wait(iti)
 
-        # save data for each trial (i.e. timestamps and task and parameters)
+        # SAVE DATA FOR EACH TRIAL (I.E. TIMESTAMPS AND TASK AND PARAMETERS)
 
-    # stop eye tracking
+    # STOP EYE TRACKING
 
-    # read eye data and save
+    # READ EYE DATA AND SAVE
 
 
 def makeoddballs(noddballs, minrun, maxrun, seed):
