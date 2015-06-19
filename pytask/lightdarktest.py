@@ -4,14 +4,15 @@ Code for light/dark test orginally coded in Matlab.
 from psychopy import visual, core
 import numpy as np
 import display
-
+TESTSCREEN = 1
+EXPERIMENTSCREEN = 0
 
 # mode = 0 (dark test) or 1 (light test), outfile is the file that data is
 # saved to
 def lightdarktest(mode, outfile):
     # Create window to display test
     testWin = visual.Window(
-        size=(640, 400), monitor="testMonitor", units="pix")
+        size=(1280, 1024), monitor="tobiiMonitor", units="pix", screen = TESTSCREEN, fullscr = True)
     if mode == 0:  # dark test
         task = 'darktest'
         numtrials = 3  # number of light/dark cycles

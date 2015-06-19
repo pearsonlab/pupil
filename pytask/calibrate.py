@@ -4,12 +4,15 @@ from psychopy import visual, core
 import display
 import math
 import TobiiControllerP
+import cPickle as pickle
+TESTSCREEN = 1
+EXPERIMENTSCREEN = 0
 
 
 def calibrate(numpts, outfile): # creates and returns a calibrated tobii controller
     errcode = 0  # error code to be set to 1 if calibration fails
     testWin = visual.Window(
-        size=(640, 400), monitor="testMonitor", units="pix")
+        size=(1280, 1024), monitor="tobiiMonitor", units="pix", screen = TESTSCREEN, fullscr = True)
 
     # CONNECT TO EYE TRACKER
     tobii_cont = TobiiControllerP.TobiiController(testWin)
@@ -52,8 +55,10 @@ def calibrate(numpts, outfile): # creates and returns a calibrated tobii control
         elif ret == 'abort':
             tobii_cont.destroy()
             return
-    # ***Check format of this and figure out how to save into the outfile provided
-    tobii_cont.eyetracker.GetCalibration()
+    # saves calibration into pickle file that can be loaded
+    calib_object = tobii_cont.eyetracker.GetCalibration()
+#    pickle.dump(calib_object, outfile))
+    testWin.flip()
     return tobii_cont
 
     # # ----old code replaced by TobiiControllerP code-----
@@ -100,4 +105,5 @@ def point(win, totTime, position):
 
 
 if __name__ == '__main__':
-    calibrate(4, None)
+    tobii_cont = calibrate(4, None) # send in 'calibration.p' as outfile
+    print "done"

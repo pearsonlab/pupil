@@ -6,11 +6,16 @@
 # - Tobii SDK 3.0 is required
 # - no guarantee
 #
+import os, sys
+
+PSYCHOPYPATH = os.path.dirname(sys.executable)
+TOBIIPATH = os.path.join(PSYCHOPYPATH, 'tobii', 'Modules')
+sys.path.append(TOBIIPATH)
 
 #MODIFIED: tobii.sdk -> tobii.eye_tracking_io
 from tobii.eye_tracking_io.basic import EyetrackerException
 
-import os
+
 import datetime
 import time
 
@@ -112,13 +117,14 @@ class TobiiController:
         self.calout = psychopy.visual.Circle(self.win,radius=64,lineColor=(0.0,1.0,0.0))
         self.calresult = psychopy.visual.SimpleImageStim(self.win,img)
         self.calresultmsg = psychopy.visual.TextStim(self.win,pos=(0,-self.win.size[1]/4))
+        self.prompt = psychopy.visual.TextStim(self.win,pos=(0,-self.win.size[1]/4))
+        self.prompt.setText('Press space bar when ready to calibrate.\nMake Sure to focus your eyes on the center of the circles that appear')
         
         self.initcalibration_completed = False
         print "StartCalibration"
         self.eyetracker.StartCalibration(self.on_calib_start)
         while not self.initcalibration_completed:
             time.sleep(0.01)
-        
         waitkey = True
         while waitkey:
             for key in psychopy.event.getKeys():
@@ -127,6 +133,7 @@ class TobiiController:
             
             self.calout.draw()
             self.calin.draw()
+            self.prompt.draw()
             self.win.flip()
         
         clock = psychopy.core.Clock()
@@ -181,7 +188,7 @@ class TobiiController:
                 points[data.true_point] = {'left':data.left, 'right':data.right}
             
             if len(points) == 0:
-                self.calresultmsg.setText('No ture calibration data (Retry:r/Abort:ESC)')
+                self.calresultmsg.setText('No true calibration data (Retry:r/Abort:ESC)')
             
             else:
                 for p,d in points.iteritems():
@@ -370,44 +377,44 @@ class TobiiController:
 ############################################################################
 # run following codes if this file is executed directly 
 ############################################################################
-
-if __name__ == "__main__":
-    import sys
-    
-    win = psychopy.visual.Window(size=(1280,1024),fullscr=True,units='pix')
-    controller = TobiiController(win)
-    controller.setDataFile('testdata.tsv')
-    
-    controller.waitForFindEyeTracker()
-    controller.activate(controller.eyetrackers.keys()[0])
-    
-    while True:
-        ret = controller.doCalibration([(0.1,0.1), (0.9,0.1) , (0.5,0.5), (0.1,0.9), (0.9,0.9)])
-        if ret == 'accept':
-            break
-        elif ret == 'abort':
-            controller.destroy()
-            sys.exit()
-    
-    marker = psychopy.visual.Rect(win,width=5,height=5)
-    
-    controller.startTracking()
-    
-    waitkey = True
-    while waitkey:
-        currentGazePosition = controller.getCurrentGazePosition()
-        if not None in currentGazePosition:
-            marker.setPos(currentGazePosition[0:2])
-        for key in psychopy.event.getKeys():
-            if key=='space':
-                waitkey = False
-            elif key=='w':
-                controller.recordEvent('w key')
-        
-        marker.draw()
-        win.flip()
-    
-    controller.stopTracking()
-    win.close()
-    controller.closeDataFile()
-    controller.destroy()
+#
+#if __name__ == "__main__":
+#    import sys
+#    
+#    win = psychopy.visual.Window(size=(1280,1024),fullscr=True,units='pix')
+#    controller = TobiiController(win)
+#    controller.setDataFile('testdata.tsv')
+#    
+#    controller.waitForFindEyeTracker()
+#    controller.activate(controller.eyetrackers.keys()[0])
+#    
+#    while True:
+#        ret = controller.doCalibration([(0.1,0.1), (0.9,0.1) , (0.5,0.5), (0.1,0.9), (0.9,0.9)])
+#        if ret == 'accept':
+#            break
+#        elif ret == 'abort':
+#            controller.destroy()
+#            sys.exit()
+#    
+#    marker = psychopy.visual.Rect(win,width=5,height=5)
+#    
+#    controller.startTracking()
+#    
+#    waitkey = True
+#    while waitkey:
+#        currentGazePosition = controller.getCurrentGazePosition()
+#        if not None in currentGazePosition:
+#            marker.setPos(currentGazePosition[0:2])
+#        for key in psychopy.event.getKeys():
+#            if key=='space':
+#                waitkey = False
+#            elif key=='w':
+#                controller.recordEvent('w key')
+#        
+#        marker.draw()
+#        win.flip()
+#    
+#    controller.stopTracking()
+#    win.close()
+#    controller.closeDataFile()
+#    controller.destroy()
