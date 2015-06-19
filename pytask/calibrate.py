@@ -3,25 +3,30 @@ import numpy as np
 from psychopy import visual, core
 import display
 import math
+import TobiiControllerP
 
 
-def calibrate(numpts, outfile):
+def calibrate(numpts, outfile): # creates and returns a calibrated tobii controller
     errcode = 0  # error code to be set to 1 if calibration fails
     testWin = visual.Window(
         size=(640, 400), monitor="testMonitor", units="pix")
 
     # CONNECT TO EYE TRACKER
+    tobii_cont = TobiiControllerP.TobiiController(testWin)
+
+    tobii_cont.waitForFindEyeTracker()
+    tobii_cont.activate(tobii_cont.eyetrackers.keys()[0])
 
     # set all possible calibration points
-    pos = np.array([(-0.5, 0.5),
-                    (0, 0.5),
+    pos = np.array([(0.1, 0.1),
+                    (0.5, 0.1),
+                    (0.9, 0.1),
+                    (0.1, 0.5),
                     (0.5, 0.5),
-                    (-0.5, 0),
-                    (0, 0),
-                    (0.5, 0),
-                    (-0.5, -0.5),
-                    (0, -0.5),
-                    (0.5, -0.5)])
+                    (0.9, 0.5),
+                    (0.1, 0.9),
+                    (0.5, 0.9),
+                    (0.9, 0.9)])
 
     # define which points to use based on numpts
     if numpts == 1 or numpts == 2 or numpts == 3:
@@ -38,32 +43,45 @@ def calibrate(numpts, outfile):
     np.random.shuffle(idx)  # shuffles points to be in a random order
     pos = pos[idx]  # set pos to only contain the points needed
 
-    display.countdown(testWin, 1)  # countdown from 4
+    display.countdown(testWin, 4)  # countdown from 4
 
-    # Start Calibration
-    totTime = 2  # total display time for point during calibration
-    calibdone = 0
+    while True:
+        ret = tobii_cont.doCalibration(pos)
+        if ret == 'accept':
+            break
+        elif ret == 'abort':
+            tobii_cont.destroy()
+            return
+    # ***Check format of this and figure out how to save into the outfile provided
+    tobii_cont.eyetracker.GetCalibration()
+    return tobii_cont
 
-    while not calibdone:
-        # START EYE TRACKER CALIBRATION
+    # # ----old code replaced by TobiiControllerP code-----
+    # # Start Calibration
+    # totTime = 2  # total display time for point during calibration
+    # calibdone = 0
 
-        core.wait(0.5)
+    # # while not calibdone:
+    # #     # START EYE TRACKER CALIBRATION
 
-        # loop over calibration points
-        for i in range(numpts):
-            position = pos[i]
-            when0 = core.getTime()
-            point(testWin, totTime, position)
+    #     core.wait(0.5)
 
-        # blank screen
-        display.fill_screen(testWin, (0, 0, 0))
+    #     # loop over calibration points
+    #     for i in range(numpts):
+    #         position = pos[i]
+    #         when0 = core.getTime()
+    #         point(testWin, totTime, position)
+    #         # ADD CALIBRATION POINT
 
-        core.wait(1)  # give tobii time to catch up
+    #     # blank screen
+    #     display.fill_screen(testWin, (0, 0, 0))
 
-        # TRY TO COMPUTE CALIBRATION
-        # CHECK QUALITY OF THE CALIBRATION
-        # ASK IF CALIBRATION WAS GOOD
-        calibdone = 1
+    #     core.wait(1)  # give tobii time to catch up
+
+    #     # TRY TO COMPUTE CALIBRATION
+    #     # CHECK QUALITY OF THE CALIBRATION
+    #     # ASK IF CALIBRATION WAS GOOD
+    #     calibdone = 1
     # SAVE DATA
 
 
@@ -79,8 +97,6 @@ def point(win, totTime, position):
         circle.draw()
         cross.draw()
         win.flip()
-
-    decr = 1
 
 
 if __name__ == '__main__':
