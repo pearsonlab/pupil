@@ -5,6 +5,20 @@ Functions to display certain recurring instances throughout the different tests
 from psychopy import visual, core, event
 
 
+def getWindows(controller):
+    if controller.testing:
+        experWin = visual.Window(
+            size=(640, 400), monitor="testMonitor", units="pix", pos=(0, 50))
+        testWin = visual.Window(
+            size=(640, 400), monitor="testMonitor", units="pix", pos=(640, 50))
+    else:  # not testing (i.e. working on tobii tracker)
+        testWin = visual.Window(
+            size=(1280, 1024), monitor="tobiiMonitor", units="pix", screen=1, fullscr = True)
+        experWin = visual.Window(
+            size=(640, 400), monitor="testMonitor", units="pix", screen=0)
+    return testWin, experWin
+
+
 def countdown(win, time):
     count_time = time  # countdown time in seconds
     countdown_text = visual.TextStim(win, text=str(count_time),
@@ -22,7 +36,8 @@ def countdown(win, time):
 
 def fill_screen(win, window_color):
     # set rect to fill window with color
-    rect = visual.Rect(win, 2, 2, units='norm', fillColor=window_color, lineColor=None)
+    rect = visual.Rect(
+        win, 2, 2, units='norm', fillColor=window_color, lineColor=None)
     rect.draw()
     win.flip()
 
@@ -36,6 +51,13 @@ def text_keypress(win, text):
     win.flip()
     event.waitKeys()
 
+def text(win, text):
+    display_text = visual.TextStim(win, text=text,
+                                   font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
+                                   pos=(0, 0), height=0.2, color=[0, 255, 0], colorSpace='rgb255',
+                                   wrapWidth=2)
+    display_text.draw()
+    win.flip()
 
 def cross(win):
     cross = visual.TextStim(win, text='+',

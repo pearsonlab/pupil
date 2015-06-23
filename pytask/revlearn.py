@@ -1,26 +1,47 @@
 import numpy as np
 from psychopy import prefs
 prefs.general['audioLib'] = ['pyo']
-from psychopy import visual, core, sound, event
+from psychopy import visual, core, sound, event, gui
 import display
+import os
 
 
-def revlearn(outfile, flag, *args):
-    # create new switch file
-    if flag == 0:
-        numswitches = args[0]
-        minbetween = args[1]
-        maxbetween = args[2]
-        trialvec = makeswitches(
-            numswitches, minbetween, maxbetween, np.random.randint(1, 9999))
-    # loads from previously created switch file
-    elif flag == 1:
-        trialvec = np.genfromtxt('RevVectors.csv', delimiter=',')
+def revSettings(controller):
+    vector_path = os.path.join(controller.settings_path, 'RevVectors.csv')
+    # checks if previous vector file exists
+    if os.path.isfile(vector_path):
+        generateDlg = gui.Dlg(title="Reversal Learning")
+        generateDlg.addField('Load previous (0) or Generate (1) Vectors', 0)
+        generateDlg.show()
+        if generateDlg.OK:
+            response = generateDlg.data[0]
+            if response == 0:
+                return np.genfromtxt(vector_path, delimiter=',')
+        else:
+            return [-999]
 
+    settingsDlg = gui.Dlg(title="Reversal Learning")
+    settingsDlg.addText('Set Parameters')
+    settingsDlg.addField('Number of Switches', 5)
+    settingsDlg.addField('Minimum Between', 3)
+    settingsDlg.addField('Maximum Between', 7)
+    settingsDlg.show()  # show dialog and wait for OK or Cancel
+    if settingsDlg.OK:
+        response = settingsDlg.data
+        return makeswitches(
+            vector_path, response[0], response[1], response[2], np.random.randint(1, 9999))
+    else:
+        return [-999]
+
+
+def revlearn(controller, outfile, flag, *args):
+    trialvec = revSettings(controller)
+    if trialvec[0] == -999:
+        return
+    display.text(controller.experWin, 'Running Reversal Learning')
     # set up window
     # Create window to display test
-    testWin = visual.Window(
-        size=(640, 400), monitor="testMonitor", units="pix")
+    testWin = controller.testWin
 
     # load sounds
     resource_path = '../task/'
@@ -52,6 +73,9 @@ def revlearn(outfile, flag, *args):
     display.countdown(testWin, 4)
 
     # start eye tracking
+    if not controller.testing:
+        controller.tobii_cont.setDataFile(outfile)
+        controller.tobii_cont.startTracking()
 
     core.wait(2)
 
@@ -64,12 +88,16 @@ def revlearn(outfile, flag, *args):
             break
         elif (keypress[0] == 'left' and not isTrue) or (keypress[0] == 'right' and isTrue):
             # record timestamp for key press
+            if not controller.testing:
+                # RECORD TIMESTAMP FOR CORRECT PRESS
+                controller.tobii_cont.recordEvent('Correct Press')
             rightsnd.play()
-            correct = 1
         else:
             # record timestamp for key press
+            if not controller.testing:
+                # RECORD TIMESTAMP FOR INCORRECT PRESS
+                controller.tobii_cont.recordEvent('Incorrect Press')
             wrongsnd.play()
-            correct = 0
         # outcome period
         core.wait(1.0)
         # clear screen
@@ -78,15 +106,13 @@ def revlearn(outfile, flag, *args):
         iti = iti_mean + iti_range * (2 * np.random.random() - 1)
         core.wait(iti)
 
-        # save data for each trial (i.e. timestamps, choice, correctness, task
-        # and parameters)
-
-    # stop eye tracking
-
-    # read eye data and save
+    # stop eye tracking and save data
+    if not controller.testing:
+        controller.tobii_cont.stopTracking()
+        controller.tobii_cont.closeDataFile()
 
 
-def makeswitches(nswitch, minrun, maxrun, seed):
+def makeswitches(path, nswitch, minrun, maxrun, seed):
     # set the seed
     np.random.seed(seed)
 
@@ -106,7 +132,7 @@ def makeswitches(nswitch, minrun, maxrun, seed):
     for i in range(len(trials)):
         trials[i] = vals[whichval[i]]
 
-    np.savetxt('RevVectors.csv', trials, delimiter=",")
+    np.savetxt(path, trials, delimiter=",")
     return trials
 
 if __name__ == '__main__':

@@ -3,23 +3,14 @@ import numpy as np
 from psychopy import visual, core
 import display
 import math
-import TobiiControllerP
 import cPickle as pickle
 TESTSCREEN = 1
 EXPERIMENTSCREEN = 0
 
 
-def calibrate(numpts, outfile): # creates and returns a calibrated tobii controller
+def calibrate(controller, numpts, outfile): # creates and returns a calibrated tobii controller
     errcode = 0  # error code to be set to 1 if calibration fails
-    testWin = visual.Window(
-        size=(1280, 1024), monitor="tobiiMonitor", units="pix", screen = TESTSCREEN, fullscr = True)
-
-    # CONNECT TO EYE TRACKER
-    tobii_cont = TobiiControllerP.TobiiController(testWin)
-
-    tobii_cont.waitForFindEyeTracker()
-    tobii_cont.activate(tobii_cont.eyetrackers.keys()[0])
-
+    testWin = controller.testWin
     # set all possible calibration points
     pos = np.array([(0.1, 0.1),
                     (0.5, 0.1),
@@ -46,8 +37,6 @@ def calibrate(numpts, outfile): # creates and returns a calibrated tobii control
     np.random.shuffle(idx)  # shuffles points to be in a random order
     pos = pos[idx]  # set pos to only contain the points needed
 
-    display.countdown(testWin, 4)  # countdown from 4
-
     while True:
         ret = tobii_cont.doCalibration(pos)
         if ret == 'accept':
@@ -57,7 +46,7 @@ def calibrate(numpts, outfile): # creates and returns a calibrated tobii control
             return
     # saves calibration into pickle file that can be loaded
     calib_object = tobii_cont.eyetracker.GetCalibration()
-#    pickle.dump(calib_object, outfile))
+    pickle.dump(calib_object, outfile)
     testWin.flip()
     return tobii_cont
 

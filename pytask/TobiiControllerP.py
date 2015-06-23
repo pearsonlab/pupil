@@ -3,13 +3,18 @@
 # Tobii controller for PsychoPy
 # author: Hiroyuki Sogo
 #         Modified by Soyogu Matsushita
+#         Modified further by Shariq Iqbal (2015)
 # - Tobii SDK 3.0 is required
 # - no guarantee
 #
 import os, sys
 
 PSYCHOPYPATH = os.path.dirname(sys.executable)
-TOBIIPATH = os.path.join(PSYCHOPYPATH, 'tobii', 'Modules')
+if PSYCHOPYPATH[-5:] != 'MacOS': # If Windows (Linux not tested!)
+    TOBIIPATH = os.path.join(PSYCHOPYPATH, 'tobii', 'Modules')
+else: # If Mac (since install configuration is slightly different)
+    PSYCHOPYPATH = os.path.dirname(PSYCHOPYPATH)
+    TOBIIPATH = os.path.join(PSYCHOPYPATH, 'tobii', 'modules')
 sys.path.append(TOBIIPATH)
 
 #MODIFIED: tobii.sdk -> tobii.eye_tracking_io
@@ -35,10 +40,11 @@ import Image
 import ImageDraw
 
 class TobiiController:
-    def __init__(self, win):
+    def __init__(self, testWin, experWin):
         self.eyetracker = None
         self.eyetrackers = {}
-        self.win = win
+        self.testWin = testWin
+        self.experWin = experWin
         self.gazeData = []
         self.eventData = []
         self.datafile = None
@@ -110,15 +116,17 @@ class TobiiController:
         self.points = calibrationPoints
         self.point_index = -1
         
-        img = Image.new('RGB',self.win.size)
+        img = Image.new('RGB',self.experWin.size)
         draw = ImageDraw.Draw(img)
         
-        self.calin = psychopy.visual.Circle(self.win,radius=2,fillColor=(0.0,0.0,0.0))
-        self.calout = psychopy.visual.Circle(self.win,radius=64,lineColor=(0.0,1.0,0.0))
-        self.calresult = psychopy.visual.SimpleImageStim(self.win,img)
-        self.calresultmsg = psychopy.visual.TextStim(self.win,pos=(0,-self.win.size[1]/4))
-        self.prompt = psychopy.visual.TextStim(self.win,pos=(0,-self.win.size[1]/4))
-        self.prompt.setText('Press space bar when ready to calibrate.\nMake Sure to focus your eyes on the center of the circles that appear')
+        self.calin = psychopy.visual.Circle(self.testWin,radius=2,fillColor=(0.0,0.0,0.0))
+        self.calout = psychopy.visual.Circle(self.testWin,radius=64,lineColor=(0.0,1.0,0.0))
+        self.calresult = psychopy.visual.SimpleImageStim(self.experWin,img)
+        self.calresultmsg = psychopy.visual.TextStim(self.experWin,pos=(0,-self.experWin.size[1]/4))
+        self.promptone = psychopy.visual.TextStim(self.experWin,pos=(0,-self.experWin.size[1]/4))
+        self.promptone.setText('Press space bar when ready to calibrate.')
+        self.prompttwo = psychopy.visual.TextStim(self.testWin,pos=(0,-self.testWin.size[1]/4))
+        self.prompttwo.setText('Focus your eyes on the center of the circles that appear.')
         
         self.initcalibration_completed = False
         print "StartCalibration"
@@ -133,15 +141,17 @@ class TobiiController:
             
             self.calout.draw()
             self.calin.draw()
-            self.prompt.draw()
-            self.win.flip()
+            self.promptone.draw()
+            self.prompttwo.draw()
+            self.testWin.flip()
+            self.experWin.flip()
         
         clock = psychopy.core.Clock()
         for self.point_index in range(len(self.points)):
             p = Point2D()
             p.x, p.y = self.points[self.point_index]
-            self.calin.setPos(((p.x-0.5)*self.win.size[0],(0.5-p.y)*self.win.size[1]))
-            self.calout.setPos(((p.x-0.5)*self.win.size[0],(0.5-p.y)*self.win.size[1]))
+            self.calin.setPos(((p.x-0.5)*self.testWin.size[0],(0.5-p.y)*self.testWin.size[1]))
+            self.calout.setPos(((p.x-0.5)*self.testWin.size[0],(0.5-p.y)*self.testWin.size[1]))
             
             clock.reset()
             currentTime = clock.getTime()
@@ -150,7 +160,7 @@ class TobiiController:
                 psychopy.event.getKeys()
                 self.calout.draw()
                 self.calin.draw()
-                self.win.flip()
+                self.testWin.flip()
                 currentTime = clock.getTime()
             self.add_point_completed = False
             self.eyetracker.AddCalibrationPoint(p, self.on_add_completed)
@@ -158,7 +168,7 @@ class TobiiController:
                 psychopy.event.getKeys()
                 self.calout.draw()
                 self.calin.draw()
-                self.win.flip()
+                self.testWin.flip()
          
         self.computeCalibration_completed = False
         self.computeCalibration_succeeded = False
@@ -167,14 +177,15 @@ class TobiiController:
             time.sleep(0.01)
         self.eyetracker.StopCalibration(None)
         
-        self.win.flip()
+        self.testWin.flip()
+        self.experWin.flip()
         
         self.getcalibration_completed = False
         self.calib = self.eyetracker.GetCalibration(self.on_calib_response)
         while not self.getcalibration_completed:
             time.sleep(0.01)
         
-        draw.rectangle(((0,0),tuple(self.win.size)),fill=(128,128,128))
+        draw.rectangle(((0,0),tuple(self.experWin.size)),fill=(128,128,128))
         if not self.computeCalibration_succeeded:
             #computeCalibration failed.
             self.calresultmsg.setText('Not enough data was collected (Retry:r/Abort:ESC)')
@@ -194,16 +205,16 @@ class TobiiController:
                 for p,d in points.iteritems():
                     # MODIFIED: validity -> status
                     if d['left'].status == 1:
-                        draw.line(((p.x*self.win.size[0],p.y*self.win.size[1]),
-                                   (d['left'].map_point.x*self.win.size[0],
-                                    d['left'].map_point.y*self.win.size[1])),fill=(255,0,0))
+                        draw.line(((p.x*self.experWin.size[0],p.y*experWin.win.size[1]),
+                                   (d['left'].map_point.x*self.experWin.size[0],
+                                    d['left'].map_point.y*self.experWin.size[1])),fill=(255,0,0))
                     # MODIFIED: validity -> status
                     if d['right'].status == 1:
-                        draw.line(((p.x*self.win.size[0],p.y*self.win.size[1]),
-                                   (d['right'].map_point.x*self.win.size[0],
-                                    d['right'].map_point.y*self.win.size[1])),fill=(0,255,0))
-                    draw.ellipse(((p.x*self.win.size[0]-10,p.y*self.win.size[1]-10),
-                                  (p.x*self.win.size[0]+10,p.y*self.win.size[1]+10)),
+                        draw.line(((p.x*self.experWin.size[0],p.y*self.experWin.size[1]),
+                                   (d['right'].map_point.x*self.experWin.size[0],
+                                    d['right'].map_point.y*self.experWin.size[1])),fill=(0,255,0))
+                    draw.ellipse(((p.x*self.experWin.size[0]-10,p.y*self.experWin.size[1]-10),
+                                  (p.x*self.experWin.size[0]+10,p.y*self.experWin.size[1]+10)),
                                  outline=(0,0,0))
                 self.calresultmsg.setText('Accept calibration results (Accept:a/Retry:r/Abort:ESC)')
                 
@@ -223,7 +234,7 @@ class TobiiController:
                     waitkey = False
             self.calresult.draw()
             self.calresultmsg.draw()
-            self.win.flip()
+            self.experWin.flip()
         
         return retval
     
@@ -297,10 +308,10 @@ class TobiiController:
         self.gazeData.append(gaze)
     
     def getGazePosition(self,gaze):
-        return ((gaze.LeftGazePoint2D.x-0.5)*self.win.size[0],
-                (0.5-gaze.LeftGazePoint2D.y)*self.win.size[1],
-                (gaze.RightGazePoint2D.x-0.5)*self.win.size[0],
-                (0.5-gaze.RightGazePoint2D.y)*self.win.size[1])
+        return ((gaze.LeftGazePoint2D.x-0.5)*self.testWin.size[0],
+                (0.5-gaze.LeftGazePoint2D.y)*self.testWin.size[1],
+                (gaze.RightGazePoint2D.x-0.5)*self.testWin.size[0],
+                (0.5-gaze.RightGazePoint2D.y)*self.testWin.size[1])
     
     def getCurrentGazePosition(self):
         if len(self.gazeData)==0:
@@ -308,18 +319,15 @@ class TobiiController:
         else:
             return self.getGazePosition(self.gazeData[-1])
     
-    def setDataFile(self,filename):
-        print 'set datafile ' + filename
-        self.datafile = open(filename,'w')
+    def setDataFile(self, openfile): # altered to take open file instead of filename
+        self.datafile = openfile
         self.datafile.write('Recording date:\t'+datetime.datetime.now().strftime('%Y/%m/%d')+'\n')
         self.datafile.write('Recording time:\t'+datetime.datetime.now().strftime('%H:%M:%S')+'\n')
-        self.datafile.write('Recording resolution\t%d x %d\n\n' % tuple(self.win.size))
+        self.datafile.write('Recording resolution\t%d x %d\n\n' % tuple(self.testWin.size))
         
-    def closeDataFile(self):
-        print 'datafile closed'
+    def closeDataFile(self): # altered to simply flush data, but not close file
         if self.datafile != None:
             self.flushData()
-            self.datafile.close()
         
         self.datafile = None
     
@@ -349,11 +357,11 @@ class TobiiController:
         for g in self.gazeData:
             self.datafile.write('%.1f\t%.4f\t%.4f\t%d\t%.4f\t%.4f\t%d'%(
                                 (g.Timestamp-timeStampStart)/1000.0,
-                                g.LeftGazePoint2D.x*self.win.size[0] if g.LeftValidity!=4 else -1.0,
-                                g.LeftGazePoint2D.y*self.win.size[1] if g.LeftValidity!=4 else -1.0,
+                                g.LeftGazePoint2D.x*self.testWin.size[0] if g.LeftValidity!=4 else -1.0,
+                                g.LeftGazePoint2D.y*self.testWin.size[1] if g.LeftValidity!=4 else -1.0,
                                 g.LeftValidity,
-                                g.RightGazePoint2D.x*self.win.size[0] if g.RightValidity!=4 else -1.0,
-                                g.RightGazePoint2D.y*self.win.size[1] if g.RightValidity!=4 else -1.0,
+                                g.RightGazePoint2D.x*self.testWin.size[0] if g.RightValidity!=4 else -1.0,
+                                g.RightGazePoint2D.y*self.testWin.size[1] if g.RightValidity!=4 else -1.0,
                                 g.RightValidity))
             if g.LeftValidity == 4 and g.RightValidity == 4: #not detected
                 ave = (-1.0,-1.0)
