@@ -205,7 +205,7 @@ class TobiiController:
                 for p,d in points.iteritems():
                     # MODIFIED: validity -> status
                     if d['left'].status == 1:
-                        draw.line(((p.x*self.experWin.size[0],p.y*experWin.win.size[1]),
+                        draw.line(((p.x*self.experWin.size[0],p.y*self.experWin.size[1]),
                                    (d['left'].map_point.x*self.experWin.size[0],
                                     d['left'].map_point.y*self.experWin.size[1])),fill=(255,0,0))
                     # MODIFIED: validity -> status
@@ -346,22 +346,26 @@ class TobiiController:
         self.datafile.write('\t'.join(['TimeStamp',
                                        'GazePointXLeft',
                                        'GazePointYLeft',
+                                       'PupilLeft', # added
                                        'ValidityLeft',
                                        'GazePointXRight',
                                        'GazePointYRight',
+                                       'PupilRight', # added
                                        'ValidityRight',
                                        'GazePointX',
                                        'GazePointY',
                                        'Event'])+'\n')
         timeStampStart = self.gazeData[0].Timestamp
         for g in self.gazeData:
-            self.datafile.write('%.1f\t%.4f\t%.4f\t%d\t%.4f\t%.4f\t%d'%(
+            self.datafile.write('%.1f\t%.4f\t%.4f\t%.2f\t%d\t%.4f\t%.4f\t%.2f\t%d'%(
                                 (g.Timestamp-timeStampStart)/1000.0,
                                 g.LeftGazePoint2D.x*self.testWin.size[0] if g.LeftValidity!=4 else -1.0,
                                 g.LeftGazePoint2D.y*self.testWin.size[1] if g.LeftValidity!=4 else -1.0,
+                                g.LeftPupil if g.LeftValidity!=4 else -1.0, # added
                                 g.LeftValidity,
                                 g.RightGazePoint2D.x*self.testWin.size[0] if g.RightValidity!=4 else -1.0,
                                 g.RightGazePoint2D.y*self.testWin.size[1] if g.RightValidity!=4 else -1.0,
+                                g.RightPupil if g.RightValidity!=4 else -1.0, # added
                                 g.RightValidity))
             if g.LeftValidity == 4 and g.RightValidity == 4: #not detected
                 ave = (-1.0,-1.0)
@@ -376,7 +380,7 @@ class TobiiController:
             self.datafile.write('\t%.4f\t%.4f\t'%ave)
             self.datafile.write('\n')
         
-        formatstr = '%.1f'+'\t'*9+'%s\n'
+        formatstr = '%.1f'+'\t'*11+'%s\n'
         for e in self.eventData:
             self.datafile.write(formatstr % ((e[0]-timeStampStart)/1000.0,e[1]))
         

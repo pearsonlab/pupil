@@ -4,7 +4,7 @@ import sys
 import json
 import time
 import datetime
-TESTING = 1
+TESTING = 0
 if not TESTING:
     import TobiiControllerP
 import lightdarktest
@@ -24,10 +24,6 @@ class TaskController:
         self.testWin, self.experWin = display.getWindows(self)
         self.actions = [
             '1) Calibrate',
-            '2) Light Test',
-            '3) Dark Test',
-            '4) Oddball',
-            '5) RevLearn',
             '0) Quit']
         self.subject = 0
         # CONNECT TO EYE TRACKER
@@ -35,6 +31,9 @@ class TaskController:
             self.tobii_cont = TobiiControllerP.TobiiController(self.testWin, self.experWin)
             self.tobii_cont.waitForFindEyeTracker()
             self.tobii_cont.activate(self.tobii_cont.eyetrackers.keys()[0])
+            self.calib_complete = False
+        else:
+            self.calib_complete = True
 
     # Takes number as input and executes corresponding task.  Also manages data files.
     def execute(self, action):
@@ -45,6 +44,7 @@ class TaskController:
         if action == '0':
             self.testWin.close()
             self.experWin.close()
+            self.tobii_cont.destroy()
             return False
         elif action == '2':
             data_filepath = os.path.join(
@@ -117,17 +117,30 @@ class TaskController:
 
         # DlgFromDict not working properly.  It clashes with the PsychoPy
         # visual module
-
-        actionDlg = gui.Dlg(title="Select Action")
-        actionDlg.addText('Choose Action from:')
-        for action in self.actions:
-            actionDlg.addText(action)
-        actionDlg.addField('Action:', '1')
-        actionDlg.addField('Subject ID:', self.subject)
-        actionDlg.show()  # show dialog and wait for OK or Cancel
-        if actionDlg.OK:
-            response = actionDlg.data
-            self.subject = response[1]
-            return response[0]
+        if not self.calib_complete:
+            actionDlg = gui.Dlg(title="Select Action")
+            actionDlg.addText('Choose Action from:')
+            for action in self.actions:
+                actionDlg.addText(action)
+            actionDlg.addField('Action:', '1')
+            actionDlg.addField('Subject ID:', self.subject)
+            actionDlg.show()  # show dialog and wait for OK or Cancel
+            if actionDlg.OK:
+                response = actionDlg.data
+                self.subject = response[1]
+                return response[0]
+            else:
+                return '0'
         else:
-            return '0'
+            actionDlg = gui.Dlg(title="Select Action")
+            actionDlg.addText('Choose Action from:')
+            for action in self.actions:
+                actionDlg.addText(action)
+            actionDlg.addField('Action:', '1')
+            actionDlg.addText('Subject ID:' + str(self.subject))
+            actionDlg.show()  # show dialog and wait for OK or Cancel
+            if actionDlg.OK:
+                response = actionDlg.data
+                return response[0]
+            else:
+                return '0'

@@ -38,17 +38,25 @@ def calibrate(controller, numpts, outfile): # creates and returns a calibrated t
     pos = pos[idx]  # set pos to only contain the points needed
 
     while True:
-        ret = tobii_cont.doCalibration(pos)
+        ret = controller.tobii_cont.doCalibration(pos)
         if ret == 'accept':
             break
         elif ret == 'abort':
-            tobii_cont.destroy()
             return
     # saves calibration into pickle file that can be loaded
-    calib_object = tobii_cont.eyetracker.GetCalibration()
+    calib_object = controller.tobii_cont.eyetracker.GetCalibration()
     pickle.dump(calib_object, outfile)
     testWin.flip()
-    return tobii_cont
+    # marks calibration as complete and opens up other actions
+    controller.calib_complete = True
+    controller.actions = [
+            '1) Re-Calibrate',
+            '2) Light Test',
+            '3) Dark Test',
+            '4) Oddball',
+            '5) RevLearn',
+            '0) Quit']
+    return
 
     # # ----old code replaced by TobiiControllerP code-----
     # # Start Calibration
