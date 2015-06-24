@@ -43,15 +43,11 @@ The other files are simply ports of the MATLAB versions.  They are called from T
 
 #### Python Setup and Notes
 
+##### Setup
+
 1. Go into Monitor Center on PsychoPy and make sure there are two monitors present.  The names should be 'testMonitor' and 'tobiiMonitor'.  If these do not exist, go ahead and create them.
 
-2. Download the tobii SDK and copy the 'python27' folder into your PsychoPy install directory.
-
-On Windows, this is under 'ProgramFiles(x86)\PsychoPy2'. 
-
-On MacOS, this is accessed by finding PsychoPy2 in your Applications folder, right-clicking, and clicking 'open package contents'. The directory you want to copy to is called 'Contents'.
-
-Rename the 'python27' folder to 'tobii'.  This will allow the PsychoPy version of Python to import the tobii SDK functions.
+2. Download the tobii SDK and copy the 'python27' folder into your PsychoPy install directory. On Windows, this is under 'ProgramFiles(x86)\PsychoPy2'. On MacOS, this is accessed by finding PsychoPy2 in your Applications folder, right-clicking, and clicking 'open package contents'. The directory you want to copy to is called 'Contents'. Rename the 'python27' folder to 'tobii'.  This will allow the PsychoPy version of Python to import the tobii SDK functions.
 
 3. If you are running for the first time, create a folder in a convenient location that you will want to store your data and preferences.  The Task Controller will ask, upon starting, the location of this working directory.  In the future, the Task Controller will load your settings from here as long as you select the same folder.  Your data will also be stored here, organized by subject ID numbers that you will be prompted for and the type of task.
 
@@ -59,6 +55,8 @@ Rename the 'python27' folder to 'tobii'.  This will allow the PsychoPy version o
 
 5. The 'TESTING' variable at the top of 'TaskController.py' should be set to 0 for data collection purposes.  It is used for testing on non-Tobii connected computers.
 
-NOTES
+##### Notes
 
-Data files are named based on the timestamp from the time the test was started.
+- Data files are named based on the timestamp from the time the test was started.
+
+- Settings can be changed on a per trial basis without affecting the global settings.  Simply run a trial and change the values in the dialogue box.  If you want to change the defaults that show up in these dialogue boxes, go into settings from the main menu and edit there.  The original settings can be reloaded by entering 'r' on the main menu.
