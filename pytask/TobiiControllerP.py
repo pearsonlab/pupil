@@ -308,10 +308,10 @@ class TobiiController:
         self.gazeData.append(gaze)
     
     def getGazePosition(self,gaze): # modified to return relative coordinates rather than pixel coordinates
-        return ((gaze.LeftGazePoint2D.x-0.5),
-                (0.5-gaze.LeftGazePoint2D.y),
-                (gaze.RightGazePoint2D.x-0.5),
-                (0.5-gaze.RightGazePoint2D.y))
+        return ((gaze.LeftGazePoint2D.x-0.5)*2,
+                (0.5-gaze.LeftGazePoint2D.y)*2,
+                (gaze.RightGazePoint2D.x-0.5)*2,
+                (0.5-gaze.RightGazePoint2D.y)*2)
     
     def getCurrentGazePosition(self):
         if len(self.gazeData)==0:
@@ -368,12 +368,12 @@ class TobiiController:
         for g in self.gazeData:
             self.datafile.write('%.1f\t%.4f\t%.4f\t%.2f\t%d\t%.4f\t%.4f\t%.2f\t%d'%(
                                 (g.Timestamp-timeStampStart)/1000.0,
-                                g.LeftGazePoint2D.x if g.LeftValidity!=4 else -1.0, # modified to save relative coordinates rather than pixel coordinates
-                                g.LeftGazePoint2D.y if g.LeftValidity!=4 else -1.0,
+                                (g.LeftGazePoint2D.x-0.5)*2 if g.LeftValidity!=4 else -1.0, # modified to save relative coordinates rather than pixel coordinates
+                                (0.5-g.LeftGazePoint2D.y)*2 if g.LeftValidity!=4 else -1.0,
                                 g.LeftPupil if g.LeftValidity!=4 else -1.0, # added
                                 g.LeftValidity,
-                                g.RightGazePoint2D.x if g.RightValidity!=4 else -1.0,
-                                g.RightGazePoint2D.y if g.RightValidity!=4 else -1.0,
+                                (g.RightGazePoint2D.x-0.5)*2 if g.RightValidity!=4 else -1.0,
+                                (0.5-g.RightGazePoint2D.y)*2 if g.RightValidity!=4 else -1.0,
                                 g.RightPupil if g.RightValidity!=4 else -1.0, # added
                                 g.RightValidity))
             if g.LeftValidity == 4 and g.RightValidity == 4: #not detected

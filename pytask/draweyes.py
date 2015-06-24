@@ -11,12 +11,12 @@ def show_eyes(controller):
     controller.tobii_cont.startTracking()
 
     # set up figures to draw
-    left_eye = visual.Circle(controller.experWin, radius=0.05, units='norm', colorSpace='rgb255')
-    right_eye = visual.Circle(controller.experWin, radius=0.05, units='norm', colorSpace='rgb255')
-    left_eye_test = visual.Circle(controller.testWin, radius=0.05, units='norm', colorSpace='rgb255')
-    right_eye_test = visual.Circle(controller.testWin, radius=0.05, units='norm', colorSpace='rgb255')
-    left_text = visual.TextStim(controller.experWin, height=0.1, pos=(-0.3,-0.4), units='norm')
-    right_text = visual.TextStim(controller.experWin, height=0.1, pos=(0.3,-0.4), units='norm')
+    left_eye = visual.Circle(controller.experWin, radius=0.025, units='norm')
+    right_eye = visual.Circle(controller.experWin, radius=0.025, units='norm')
+    left_eye_test = visual.Circle(controller.testWin, radius=0.025, units='norm')
+    right_eye_test = visual.Circle(controller.testWin, radius=0.025, units='norm')
+    left_text = visual.TextStim(controller.experWin, height=0.1, pos=(-0.6,-0.8), units='norm')
+    right_text = visual.TextStim(controller.experWin, height=0.1, pos=(0.6,-0.8), units='norm')
     press_text = visual.TextStim(controller.experWin, height=0.1, pos=(0,-0.3), text='Press any button to quit', units='norm')
 
     # run while key is not pressed
@@ -39,36 +39,36 @@ def show_eyes(controller):
 
         # set colors based on validities
         if left_validity == 0:
-            left_eye.color = [0, 255, 0]
-            left_eye_test.color = [0, 255, 0]
+            left_eye.lineColor = [-1, 1, -1]
+            left_eye_test.lineColor = [-1, 1, -1]
         elif left_validity == 1:
-            left_eye.color = [64, 192, 0]
-            left_eye_test.color = [64, 192, 0]
+            left_eye.lineColor = [-0.5, 0.5, -1]
+            left_eye_test.lineColor = [-0.5, 0.5, -1]
         elif left_validity == 2:
-            left_eye.color = [128, 128, 0]
-            left_eye_test.color = [128, 128, 0]
+            left_eye.lineColor = [0, 0, -1]
+            left_eye_test.lineColor = [0, 0, -1]
         elif left_validity == 3:
-            left_eye.color = [192, 64, 0]
-            left_eye_test.color = [192, 64, 0]
+            left_eye.lineColor = [0.5, -0.5, -1]
+            left_eye_test.lineColor = [0.5, -0.5, -1]
         else:
-            left_eye.color = [255, 0, 0]
-            left_eye_test.color = [255, 0, 0]
+            left_eye.lineColor = [1, -1, -1]
+            left_eye_test.lineColor = [1, -1, -1]
 
         if right_validity == 0:
-            right_eye.color = [0, 255, 0]
-            right_eye_test.color = [0, 255, 0]
+            right_eye.lineColor = [-1, 1, -1]
+            right_eye_test.lineColor = [-1, 1, -1]
         elif right_validity == 1:
-            right_eye.color = [64, 192, 0]
-            right_eye_test.color = [64, 192, 0]
+            right_eye.lineColor = [-0.5, 0.5, -1]
+            right_eye_test.lineColor = [-0.5, 0.5, -1]
         elif right_validity == 2:
-            right_eye.color = [128, 128, 0]
-            right_eye_test.color = [128, 128, 0]
+            right_eye.lineColor = [0, 0, -1]
+            right_eye_test.lineColor = [0, 0, -1]
         elif right_validity == 3:
-            right_eye.color = [192, 64, 0]
-            right_eye_test.color = [192, 64, 0]
+            right_eye.lineColor = [0.5, -0.5, -1]
+            right_eye_test.lineColor = [0.5, -0.5, -1]
         else:
-            right_eye.color = [255, 0, 0]
-            right_eye_test.color = [255, 0, 0]
+            right_eye.lineColor = [1, -1, -1]
+            right_eye_test.lineColor = [1, -1, -1]
 
         # draw appropriate figures to visualize gaze on experimenter's screen
         if left_validity < 4:

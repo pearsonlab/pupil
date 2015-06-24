@@ -121,7 +121,7 @@ class TaskController:
                 pst.pst(self, pst_file)
             return True
         elif action == '0' and not self.testing:
-            draweyes.show_eyes()
+            draweyes.show_eyes(self)
             return True
         elif action == 's':
             # open settings box

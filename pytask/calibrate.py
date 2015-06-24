@@ -7,10 +7,10 @@ import cPickle as pickle
 TESTSCREEN = 1
 EXPERIMENTSCREEN = 0
 
-def calibSettings():
+def calibSettings(controller):
     settingsDlg = gui.Dlg(title="Calibration")
     settingsDlg.addText('Set Parameters')
-    settingsDlg.addField('Number of Calibration Points (4-9)', 5)
+    settingsDlg.addField('Number of Calibration Points (4-9)', controller.settings['Calibration Points'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         response = settingsDlg.data
@@ -20,7 +20,7 @@ def calibSettings():
 
 def calibrate(controller, outfile): # creates and returns a calibrated tobii controller
     testWin = controller.testWin
-    numpts = calibSettings()
+    numpts = calibSettings(controller)
     if numpts == -1:
         print "Calibration Cancelled"
         return
