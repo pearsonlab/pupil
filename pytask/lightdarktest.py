@@ -39,7 +39,7 @@ def lightdarktest(controller, mode, outfile):
     # time for recovery between stimuli
     recover_dur = 8 * np.ones((1, numtrials))
     stim_dur = stim_time * np.ones((1, numtrials))  # duration of each stimulus
-    display.countdown(testWin, 4)  # display countdown before task
+    display.countdown(controller)  # display countdown before task
 
     # habituation
     display.fill_screen(testWin, habit_mat)

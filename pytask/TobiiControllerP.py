@@ -307,17 +307,26 @@ class TobiiController:
     def on_gazedata(self,error,gaze):
         self.gazeData.append(gaze)
     
-    def getGazePosition(self,gaze):
-        return ((gaze.LeftGazePoint2D.x-0.5)*self.testWin.size[0],
-                (0.5-gaze.LeftGazePoint2D.y)*self.testWin.size[1],
-                (gaze.RightGazePoint2D.x-0.5)*self.testWin.size[0],
-                (0.5-gaze.RightGazePoint2D.y)*self.testWin.size[1])
+    def getGazePosition(self,gaze): # modified to return relative coordinates rather than pixel coordinates
+        return ((gaze.LeftGazePoint2D.x-0.5),
+                (0.5-gaze.LeftGazePoint2D.y),
+                (gaze.RightGazePoint2D.x-0.5),
+                (0.5-gaze.RightGazePoint2D.y))
     
     def getCurrentGazePosition(self):
         if len(self.gazeData)==0:
             return (None,None,None,None)
         else:
             return self.getGazePosition(self.gazeData[-1])
+
+    def getCurrentPupilsandValidity(self): # added
+        if len(self.gazeData)==0:
+            return(None,None,None,None)
+        else:
+            return self.getPupilsandValidity(self.gazeData[-1])
+
+    def getPupilsandValidity(self, gaze): # added
+        return (gaze.LeftPupil, gaze.LeftValidity, gaze.RightPupil, gaze.RightValidity)
     
     def setDataFile(self, openfile): # altered to take open file instead of filename
         self.datafile = openfile
@@ -359,12 +368,12 @@ class TobiiController:
         for g in self.gazeData:
             self.datafile.write('%.1f\t%.4f\t%.4f\t%.2f\t%d\t%.4f\t%.4f\t%.2f\t%d'%(
                                 (g.Timestamp-timeStampStart)/1000.0,
-                                g.LeftGazePoint2D.x*self.testWin.size[0] if g.LeftValidity!=4 else -1.0,
-                                g.LeftGazePoint2D.y*self.testWin.size[1] if g.LeftValidity!=4 else -1.0,
+                                g.LeftGazePoint2D.x if g.LeftValidity!=4 else -1.0, # modified to save relative coordinates rather than pixel coordinates
+                                g.LeftGazePoint2D.y if g.LeftValidity!=4 else -1.0,
                                 g.LeftPupil if g.LeftValidity!=4 else -1.0, # added
                                 g.LeftValidity,
-                                g.RightGazePoint2D.x*self.testWin.size[0] if g.RightValidity!=4 else -1.0,
-                                g.RightGazePoint2D.y*self.testWin.size[1] if g.RightValidity!=4 else -1.0,
+                                g.RightGazePoint2D.x if g.RightValidity!=4 else -1.0,
+                                g.RightGazePoint2D.y if g.RightValidity!=4 else -1.0,
                                 g.RightPupil if g.RightValidity!=4 else -1.0, # added
                                 g.RightValidity))
             if g.LeftValidity == 4 and g.RightValidity == 4: #not detected

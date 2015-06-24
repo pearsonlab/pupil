@@ -19,8 +19,9 @@ def getWindows(controller):
     return testWin, experWin
 
 
-def countdown(win, time):
-    count_time = time  # countdown time in seconds
+def countdown(controller):
+    count_time = controller.settings['Countdown Time']  # countdown time in seconds
+    win = controller.testWin
     countdown_text = visual.TextStim(win, text=str(count_time),
                                      font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
                                      pos=(0, 0), height=0.2, color=[178, 34, 34], colorSpace='rgb255',

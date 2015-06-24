@@ -12,7 +12,7 @@ def oddSettings(controller):
     if os.path.isfile(vector_path):
         generateDlg = gui.Dlg(title="Oddball")
         generateDlg.addField(
-            'Load previous (0) or Generate (1) Oddball Vectors', 0)
+            'Load existing (0) or Generate (1) Oddball Vectors', 0)
         generateDlg.show()
         if generateDlg.OK:
             response = generateDlg.data[0]
@@ -23,9 +23,9 @@ def oddSettings(controller):
 
     settingsDlg = gui.Dlg(title="Oddball")
     settingsDlg.addText('Set Parameters')
-    settingsDlg.addField('Number of Oddballs', 5)
-    settingsDlg.addField('Minimum Between', 3)
-    settingsDlg.addField('Maximum Between', 7)
+    settingsDlg.addField('Number of Oddballs', controller.settings['Oddball: Count'])
+    settingsDlg.addField('Minimum Between', controller.settings['Oddball: Minimum Between'])
+    settingsDlg.addField('Maximum Between', controller.settings['Oddball: Maximum Between'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         response = settingsDlg.data
@@ -35,7 +35,7 @@ def oddSettings(controller):
         return [-999]
 
 
-def oddball(controller, outfile, flag, *args):
+def oddball(controller, outfile):
     trialvec = oddSettings(controller)
     if trialvec[0] == -999:
         return
@@ -63,7 +63,8 @@ def oddball(controller, outfile, flag, *args):
 
     display.text_keypress(
         testWin, 'When you hear a sound, press the space bar.\n\nPress any key when ready.')
-    display.countdown(testWin, 4)
+
+    display.countdown(controller)
 
     # START EYE TRACKING
     if not controller.testing:

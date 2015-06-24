@@ -1,16 +1,29 @@
 from __future__ import division
 import numpy as np
-from psychopy import visual, core
+from psychopy import visual, core, gui
 import display
 import math
 import cPickle as pickle
 TESTSCREEN = 1
 EXPERIMENTSCREEN = 0
 
+def calibSettings():
+    settingsDlg = gui.Dlg(title="Calibration")
+    settingsDlg.addText('Set Parameters')
+    settingsDlg.addField('Number of Calibration Points (4-9)', 5)
+    settingsDlg.show()  # show dialog and wait for OK or Cancel
+    if settingsDlg.OK:
+        response = settingsDlg.data
+        return response[0]
+    else:
+        return -1
 
-def calibrate(controller, numpts, outfile): # creates and returns a calibrated tobii controller
-    errcode = 0  # error code to be set to 1 if calibration fails
+def calibrate(controller, outfile): # creates and returns a calibrated tobii controller
     testWin = controller.testWin
+    numpts = calibSettings()
+    if numpts == -1:
+        print "Calibration Cancelled"
+        return
     # set all possible calibration points
     pos = np.array([(0.1, 0.1),
                     (0.5, 0.1),
@@ -49,13 +62,7 @@ def calibrate(controller, numpts, outfile): # creates and returns a calibrated t
     testWin.flip()
     # marks calibration as complete and opens up other actions
     controller.calib_complete = True
-    controller.actions = [
-            '1) Re-Calibrate',
-            '2) Light Test',
-            '3) Dark Test',
-            '4) Oddball',
-            '5) RevLearn',
-            '0) Quit']
+    controller.actions = controller.full_actions
     return
 
     # # ----old code replaced by TobiiControllerP code-----

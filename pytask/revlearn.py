@@ -22,9 +22,9 @@ def revSettings(controller):
 
     settingsDlg = gui.Dlg(title="Reversal Learning")
     settingsDlg.addText('Set Parameters')
-    settingsDlg.addField('Number of Switches', 5)
-    settingsDlg.addField('Minimum Between', 3)
-    settingsDlg.addField('Maximum Between', 7)
+    settingsDlg.addField('Number of Switches', controller.settings['RevLearn: Number of Switches'])
+    settingsDlg.addField('Minimum Between', controller.settings['RevLearn: Minimum Between'])
+    settingsDlg.addField('Maximum Between', controller.settings['RevLearn: Maximum Between'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         response = settingsDlg.data
@@ -34,7 +34,7 @@ def revSettings(controller):
         return [-999]
 
 
-def revlearn(controller, outfile, flag, *args):
+def revlearn(controller, outfile):
     trialvec = revSettings(controller)
     if trialvec[0] == -999:
         return
@@ -70,7 +70,7 @@ def revlearn(controller, outfile, flag, *args):
         testWin,  'Please make a choice as soon as the "+" appears\n(Press any key when ready)')
 
     # display countdown
-    display.countdown(testWin, 4)
+    display.countdown(controller)
 
     # start eye tracking
     if not controller.testing:
