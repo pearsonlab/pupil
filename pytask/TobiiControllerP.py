@@ -376,7 +376,7 @@ class TobiiController:
         self.eventData[param] = [value]
 
     def setEventsAndParams(self, events): # creates columns for events and params
-        self.event = events
+        self.events = events
         for event in events:
             self.eventData[event] = []
 
@@ -389,7 +389,7 @@ class TobiiController:
         if len(self.gazeData) == 0:
             return
 
-        self.datafile.write(','.join(['Timestamp',
+        self.datafile.write('\t'.join(['Timestamp',
                                       'LeftEyePosition3D',  # left eye
                                       'LeftEyePosition3DRelative',
                                       'LeftGazePoint3D',
@@ -401,15 +401,14 @@ class TobiiController:
                                       'RightGazePoint3D',
                                       'RightGazePoint2D',
                                       'RightPupil',
-                                      'RightValidity',
-                                      'TrigSignal']) + '\n')
-        for event in self.events: # adds columns for events and params
-            self.datafile.write(',' + str(event))
+                                      'RightValidity']))
+        self.datafile.write('\t')
+        self.datafile.write('\t'.join(self.events))
 
         self.datafile.write('\n')
         i = 0
         for g in self.gazeData:
-            self.datafile.write('%.1f,%s,%s,%s,%s,%.2f,%d,%s,%s,%s,%s,%.2f,%d,%d' % (
+            self.datafile.write('%.1f\t%s\t%s\t%s\t%s\t%.2f\t%d\t%s\t%s\t%s\t%s\t%.2f\t%d' % (
                                 g.Timestamp,
                                 g.LeftEyePosition3D if g.LeftValidity != 4 else -1.0,
                                 g.LeftEyePosition3DRelative if g.LeftValidity != 4 else -1.0,
@@ -422,15 +421,14 @@ class TobiiController:
                                 g.RightGazePoint3D if g.RightValidity != 4 else -1.0,
                                 g.RightGazePoint2D if g.RightValidity != 4 else -1.0,
                                 g.RightPupil if g.RightValidity != 4 else -1.0,
-                                g.RightValidity,
-                                g.TrigSignal))
+                                g.RightValidity))
             
             for event in self.events:
                 thisData = self.eventData[event]
                 if i<len(thisData):
-                    self.datafile.write(',' + str(thisData[i]))
+                    self.datafile.write('\t' + str(thisData[i]))
                 else:
-                    self.datafile.write('')
+                    self.datafile.write('\t')
 
             self.datafile.write('\n')
             i += 1

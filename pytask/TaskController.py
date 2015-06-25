@@ -63,7 +63,7 @@ class TaskController:
     # Takes number as input and executes corresponding task.  Also manages data files.
     def execute(self, action):
         data_filename = datetime.datetime.fromtimestamp(
-            time.time()).strftime('%H_%M_%Son%m-%d-%Y.csv')
+            time.time()).strftime('%H_%M_%Son%m-%d-%Y.tsv')
         data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':
