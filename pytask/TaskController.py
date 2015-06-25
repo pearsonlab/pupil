@@ -50,7 +50,7 @@ class TaskController:
             'q) Quit']
         if self.testing:
             self.actions = self.full_actions
-        self.subject = 0
+        self.subject = '0'
         # CONNECT TO EYE TRACKER
         if not self.testing:
             self.tobii_cont = TobiiControllerP.TobiiController(self.testWin, self.experWin)
@@ -63,7 +63,7 @@ class TaskController:
     # Takes number as input and executes corresponding task.  Also manages data files.
     def execute(self, action):
         data_filename = datetime.datetime.fromtimestamp(
-            time.time()).strftime('%H_%M_%Son%m-%d-%Y.tsv')
+            time.time()).strftime('%H_%M_%Son%m-%d-%Y.csv')
         data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':

@@ -70,19 +70,21 @@ def oddball(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
+        controller.tobii_cont.setEventsAndParams(['task','soundtime','presstime','iti_mean','iti_range','trialvec'])
+        controller.tobii_cont.setParam('task', 'oddball')
+        controller.tobii_cont.setParam('iti_mean', iti_mean)
+        controller.tobii_cont.setParam('iti_range', iti_range)
+        controller.tobii_cont.setParam('trialvec', trialvec)
 
     core.wait(2.0)  # give small wait time before starting trial
 
     for isHigh in trialvec:
-        if isHigh:
-            if not controller.testing:
-                # RECORD TIMESTAMP FOR SOUND PLAY
-                controller.tobii_cont.recordEvent('Odd Sound')
+        # RECORD TIMESTAMP FOR SOUND PLAY
+        if not controller.testing:
+            controller.tobii_cont.recordEvent('soundtime')
+        if isHigh:   
             highsnd.play()  # play high sound if oddball
         else:
-            if not controller.testing:
-                # RECORD TIMESTAMP FOR SOUND PLAY
-                controller.tobii_cont.recordEvent('Normal Sound')
             lowsnd.play()  # otherwise play low sound
 
         # wait for space bar
@@ -92,7 +94,7 @@ def oddball(controller, outfile):
         elif keypress[0] == 'space':
             if not controller.testing:
                 # RECORD TIMESTAMP FOR KEY PRESS
-                controller.tobii_cont.recordEvent('Key Press')
+                controller.tobii_cont.recordEvent('presstime')
 
         iti = iti_mean + iti_range * (2 * np.random.random() - 1)
 

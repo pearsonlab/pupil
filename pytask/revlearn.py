@@ -76,28 +76,37 @@ def revlearn(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
-
+        controller.tobii_cont.setEventsAndParams(['task','soundtime','presstime','cuetime','correct','choice' 'iti_mean','iti_range','trialvec'])
+        controller.tobii_cont.setParam('task', 'revlearn')
+        controller.tobii_cont.setParam('iti_mean', iti_mean)
+        controller.tobii_cont.setParam('iti_range', iti_range)
+        controller.tobii_cont.setParam('trialvec', trialvec)
     core.wait(2)
 
     for isTrue in trialvec:
         # display cross
         display.cross(testWin)
+        if not controller.testing:
+            controller.tobii_cont.recordEvent('cuetime')
 
         keypress = event.waitKeys(keyList=['left', 'right', 'q'])
+        if not controller.testing:
+            controller.tobii_cont.recordEvent('presstime')
+            controller.tobii_cont.addParam('choice', keypress[0])
         if keypress[0] == 'q':
             break
         elif (keypress[0] == 'left' and not isTrue) or (keypress[0] == 'right' and isTrue):
-            # record timestamp for key press
             if not controller.testing:
-                # RECORD TIMESTAMP FOR CORRECT PRESS
-                controller.tobii_cont.recordEvent('Correct Press')
+                controller.tobii_cont.recordEvent('soundtime')
             rightsnd.play()
+            correct = 1
         else:
-            # record timestamp for key press
             if not controller.testing:
-                # RECORD TIMESTAMP FOR INCORRECT PRESS
-                controller.tobii_cont.recordEvent('Incorrect Press')
+                controller.tobii_cont.recordEvent('soundtime')
             wrongsnd.play()
+            correct = 0
+        if not controller.testing:
+            controller.tobii_cont.addParam('correct', correct)
         # outcome period
         core.wait(1.0)
         # clear screen

@@ -49,6 +49,8 @@ def lightdarktest(controller, mode, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
+        controller.tobii_cont.setEventsAndParams(['ontime', 'offtime', 'task'])
+        controller.tobii_cont.setParam('task', task)
 
     for i in range(numtrials):
         core.wait(2.0)
@@ -58,7 +60,7 @@ def lightdarktest(controller, mode, outfile):
 
         # record timestamp on tracker for start of stimulus
         if not controller.testing:
-            controller.tobii_cont.recordEvent('Start Stimulus')
+            controller.tobii_cont.recordEvent('ontime')
 
         # wait for stimulus
         core.wait(stim_dur[0][i])
@@ -68,7 +70,7 @@ def lightdarktest(controller, mode, outfile):
 
         # record timestamp on tracker for end of stimulus
         if not controller.testing:
-            controller.tobii_cont.recordEvent('End Stimulus')
+            controller.tobii_cont.recordEvent('offtime')
 
         # wait for recovery
         core.wait(recover_dur[0][i])

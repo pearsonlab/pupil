@@ -42,7 +42,7 @@ def calibrate(controller, outfile): # creates and returns a calibrated tobii con
         idx = [0, 2, 6, 8]  # corners
     elif numpts == 5:
         idx = [0, 2, 4, 6, 8]  # corners + center
-    elif numps == 6:
+    elif numpts == 6:
         idx = [0, 1, 2, 6, 7, 8]  # top and bottom rows
     else:
         idx = np.random.randint(0, 10, numpts)

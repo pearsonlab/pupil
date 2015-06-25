@@ -31,6 +31,9 @@ def pst(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
+        controller.tobii_cont.setEventsAndParams(['task','duration'])
+        controller.tobii_cont.setParam('task', 'pst')
+        controller.tobii_cont.setParam('duration', duration)
 
     core.wait(duration)
 
