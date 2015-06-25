@@ -23,9 +23,12 @@ def oddSettings(controller):
 
     settingsDlg = gui.Dlg(title="Oddball")
     settingsDlg.addText('Set Parameters')
-    settingsDlg.addField('Number of Oddballs', controller.settings['Oddball: Count'])
-    settingsDlg.addField('Minimum Between', controller.settings['Oddball: Minimum Between'])
-    settingsDlg.addField('Maximum Between', controller.settings['Oddball: Maximum Between'])
+    settingsDlg.addField(
+        'Number of Oddballs', controller.settings['Oddball: Count'])
+    settingsDlg.addField(
+        'Minimum Between', controller.settings['Oddball: Minimum Between'])
+    settingsDlg.addField(
+        'Maximum Between', controller.settings['Oddball: Maximum Between'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         response = settingsDlg.data
@@ -65,12 +68,14 @@ def oddball(controller, outfile):
         testWin, 'When you hear a sound, press the space bar.\n\nPress any key when ready.')
 
     display.countdown(controller)
+    display.cross(controller.testWin)
 
     # START EYE TRACKING
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
-        controller.tobii_cont.setEventsAndParams(['task','soundtime','presstime','iti_mean','iti_range','trialvec'])
+        controller.tobii_cont.setEventsAndParams(
+            ['task', 'soundtime', 'presstime', 'iti_mean', 'iti_range', 'trialvec'])
         controller.tobii_cont.setParam('task', 'oddball')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
@@ -82,7 +87,7 @@ def oddball(controller, outfile):
         # RECORD TIMESTAMP FOR SOUND PLAY
         if not controller.testing:
             controller.tobii_cont.recordEvent('soundtime')
-        if isHigh:   
+        if isHigh:
             highsnd.play()  # play high sound if oddball
         else:
             lowsnd.play()  # otherwise play low sound

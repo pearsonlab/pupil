@@ -31,20 +31,20 @@ class TaskController:
                 self.settings = json.load(settings)
         self.data_path = os.path.join(self.path, 'data')
         self.testWin, self.experWin = display.getWindows(self)
-        self.actions = [ # actions that can be executed
+        self.actions = [  # actions that can be executed
             '0) Draw Eyes',
             '1) Calibrate',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
-        self.full_actions = [ # actions that can be executed after calibration
+        self.full_actions = [  # actions that can be executed after calibration
             '0) Draw Eyes',
             '1) Re-Calibrate',
-            '2) Light Test',
-            '3) Dark Test',
-            '4) Oddball',
+            '2) Dark Test',
+            '3) Light Test',
+            '4) PST',
             '5) RevLearn',
-            '6) PST',
+            '6) Oddball',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -53,14 +53,16 @@ class TaskController:
         self.subject = '0'
         # CONNECT TO EYE TRACKER
         if not self.testing:
-            self.tobii_cont = TobiiControllerP.TobiiController(self.testWin, self.experWin)
+            self.tobii_cont = TobiiControllerP.TobiiController(
+                self.testWin, self.experWin)
             self.tobii_cont.waitForFindEyeTracker()
             self.tobii_cont.activate(self.tobii_cont.eyetrackers.keys()[0])
             self.calib_complete = False
         else:
             self.calib_complete = True
 
-    # Takes number as input and executes corresponding task.  Also manages data files.
+    # Takes number as input and executes corresponding task.  Also manages
+    # data files.
     def execute(self, action):
         data_filename = datetime.datetime.fromtimestamp(
             time.time()).strftime('%H_%M_%Son%m-%d-%Y.tsv')
@@ -72,7 +74,7 @@ class TaskController:
             if not self.testing:
                 self.tobii_cont.destroy()
             return False
-        elif action == '2' and self.calib_complete:
+        elif action == '3' and self.calib_complete:
             data_filepath = os.path.join(
                 data_filepath, 'lighttest')
             if not os.path.isdir(data_filepath):
@@ -80,7 +82,7 @@ class TaskController:
             with open(os.path.join(data_filepath, data_filename), 'w') as light_file:
                 lightdarktest.lightdarktest(self, 1, light_file)
             return True
-        elif action == '3' and self.calib_complete:
+        elif action == '2' and self.calib_complete:
             data_filepath = os.path.join(
                 data_filepath, 'darktest')
             if not os.path.isdir(data_filepath):
@@ -96,7 +98,7 @@ class TaskController:
             with open(os.path.join(data_filepath, calib_filename), 'w') as calib_file:
                 calibrate.calibrate(self, calib_file)
             return True
-        elif action == '4' and self.calib_complete:
+        elif action == '6' and self.calib_complete:
             data_filepath = os.path.join(
                 data_filepath, 'oddball')
             if not os.path.isdir(data_filepath):
@@ -112,7 +114,7 @@ class TaskController:
             with open(os.path.join(data_filepath, data_filename), 'w') as revlearn_file:
                 revlearn.revlearn(self, revlearn_file)
             return True
-        elif action == '6' and self.calib_complete:
+        elif action == '4' and self.calib_complete:
             data_filepath = os.path.join(
                 data_filepath, 'PST')
             if not os.path.isdir(data_filepath):
@@ -148,17 +150,15 @@ class TaskController:
         if not os.path.isdir(self.data_path):
             os.mkdir(self.data_path)
 
-
-
-        display.text(self.testWin,"Welcome, Participant!")
-        display.text(self.experWin,"Welcome, Experimenter!")
+        display.text(self.testWin, "Welcome, Participant!")
+        display.text(self.experWin, "Welcome, Experimenter!")
 
         # execute actions from menu
         while self.execute(self.select_action()):
-            display.text(self.testWin,"Welcome, Participant!")
-            display.text(self.experWin,"Welcome, Experimenter!")
+            display.text(self.testWin, "Welcome, Participant!")
+            display.text(self.experWin, "Welcome, Experimenter!")
 
-    def select_action(self): # pulls up main menu that selects action
+    def select_action(self):  # pulls up main menu that selects action
         # action_dict = {
         #     'Action: ': self.actions, 'Subject Number: ': self.subject}
         # action_window = gui.DlgFromDict(action_dict)

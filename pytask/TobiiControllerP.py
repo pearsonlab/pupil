@@ -9,6 +9,7 @@
 #
 import os
 import sys
+import types
 
 PSYCHOPYPATH = os.path.dirname(sys.executable)
 if PSYCHOPYPATH[-5:] != 'MacOS':  # If Windows (Linux not tested!)
@@ -364,18 +365,22 @@ class TobiiController:
 
         self.datafile = None
 
-    def recordEvent(self, event): # records timestamp for an event
+    def recordEvent(self, event):  # records timestamp for an event
         t = self.syncmanager.convert_from_local_to_remote(
             self.clock.get_time())
         self.eventData[event].append(t)
 
-    def addParam(self, param, value): # appends value to param list
+    def addParam(self, param, value):  # appends value to param list
         self.eventData[param].append(value)
 
-    def setParam(self, param, value): # sets value for param
-        self.eventData[param] = [value]
+    def setParam(self, param, value):  # sets value for param
+        if isinstance(value, types.ListType):
+            self.eventData[param] = value
+        else:
+            self.eventData[param] = [value]
 
-    def setEventsAndParams(self, events): # creates columns for events and params
+    # creates columns for events and params
+    def setEventsAndParams(self, events):
         self.events = events
         for event in events:
             self.eventData[event] = []
@@ -390,18 +395,18 @@ class TobiiController:
             return
 
         self.datafile.write('\t'.join(['Timestamp',
-                                      'LeftEyePosition3D',  # left eye
-                                      'LeftEyePosition3DRelative',
-                                      'LeftGazePoint3D',
-                                      'LeftGazePoint2D',
-                                      'LeftPupil',
-                                      'LeftValidity',
-                                      'RightEyePosition3D',  # right eye
-                                      'RightEyePosition3DRelative',
-                                      'RightGazePoint3D',
-                                      'RightGazePoint2D',
-                                      'RightPupil',
-                                      'RightValidity']))
+                                       'LeftEyePosition3D',  # left eye
+                                       'LeftEyePosition3DRelative',
+                                       'LeftGazePoint3D',
+                                       'LeftGazePoint2D',
+                                       'LeftPupil',
+                                       'LeftValidity',
+                                       'RightEyePosition3D',  # right eye
+                                       'RightEyePosition3DRelative',
+                                       'RightGazePoint3D',
+                                       'RightGazePoint2D',
+                                       'RightPupil',
+                                       'RightValidity']))
         self.datafile.write('\t')
         self.datafile.write('\t'.join(self.events))
 
@@ -410,29 +415,37 @@ class TobiiController:
         for g in self.gazeData:
             self.datafile.write('%.1f\t%s\t%s\t%s\t%s\t%.2f\t%d\t%s\t%s\t%s\t%s\t%.2f\t%d' % (
                                 g.Timestamp,
-                                g.LeftEyePosition3D if g.LeftValidity != 4 else -1.0,
-                                g.LeftEyePosition3DRelative if g.LeftValidity != 4 else -1.0,
-                                g.LeftGazePoint3D if g.LeftValidity != 4 else -1.0,
-                                g.LeftGazePoint2D if g.LeftValidity != 4 else -1.0,
+                                g.LeftEyePosition3D if g.LeftValidity != 4 else (
+                                    -1.0, -1.0, -1.0),
+                                g.LeftEyePosition3DRelative if g.LeftValidity != 4 else (
+                                    -1.0, -1.0, -1.0),
+                                g.LeftGazePoint3D if g.LeftValidity != 4 else (
+                                    -1.0, -1.0, -1.0),
+                                g.LeftGazePoint2D if g.LeftValidity != 4 else (
+                                    -1.0, -1.0),
                                 g.LeftPupil if g.LeftValidity != 4 else -1.0,
                                 g.LeftValidity,
-                                g.RightEyePosition3D if g.RightValidity != 4 else -1.0,
-                                g.RightEyePosition3DRelative if g.RightValidity != 4 else -1.0,
-                                g.RightGazePoint3D if g.RightValidity != 4 else -1.0,
-                                g.RightGazePoint2D if g.RightValidity != 4 else -1.0,
+                                g.RightEyePosition3D if g.RightValidity != 4 else (
+                                    -1.0, -1.0, -1.0),
+                                g.RightEyePosition3DRelative if g.RightValidity != 4 else (
+                                    -1.0, -1.0, -1.0),
+                                g.RightGazePoint3D if g.RightValidity != 4 else (
+                                    -1.0, -1.0, -1.0),
+                                g.RightGazePoint2D if g.RightValidity != 4 else (
+                                    -1.0, -1.0),
                                 g.RightPupil if g.RightValidity != 4 else -1.0,
                                 g.RightValidity))
-            
+
             for event in self.events:
                 thisData = self.eventData[event]
-                if i<len(thisData):
+                if i < len(thisData):
                     self.datafile.write('\t' + str(thisData[i]))
                 else:
                     self.datafile.write('\t')
 
             self.datafile.write('\n')
             i += 1
-            
+
         self.datafile.flush()
 
 ############################################################################
