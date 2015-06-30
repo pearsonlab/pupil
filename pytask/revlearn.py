@@ -22,9 +22,12 @@ def revSettings(controller):
 
     settingsDlg = gui.Dlg(title="Reversal Learning")
     settingsDlg.addText('Set Parameters')
-    settingsDlg.addField('Number of Switches', controller.settings['RevLearn: Number of Switches'])
-    settingsDlg.addField('Minimum Between', controller.settings['RevLearn: Minimum Between'])
-    settingsDlg.addField('Maximum Between', controller.settings['RevLearn: Maximum Between'])
+    settingsDlg.addField(
+        'Number of Switches', controller.settings['RevLearn: Number of Switches'])
+    settingsDlg.addField(
+        'Minimum Between', controller.settings['RevLearn: Minimum Between'])
+    settingsDlg.addField(
+        'Maximum Between', controller.settings['RevLearn: Maximum Between'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         response = settingsDlg.data
@@ -76,11 +79,12 @@ def revlearn(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
-        controller.tobii_cont.setEventsAndParams(['task','soundtime','presstime','cuetime','correct','choice', 'iti_mean','iti_range','trialvec'])
+        controller.tobii_cont.setEventsAndParams(
+            ['task', 'soundtime', 'presstime', 'cuetime', 'correct', 'choice', 'iti_mean', 'iti_range', 'trialvec'])
         controller.tobii_cont.setParam('task', 'revlearn')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
-        controller.tobii_cont.setParam('trialvec', trialvec)
+        controller.tobii_cont.setVector('trialvec', trialvec)
     core.wait(2)
 
     for isTrue in trialvec:

@@ -79,7 +79,7 @@ def oddball(controller, outfile):
         controller.tobii_cont.setParam('task', 'oddball')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
-        controller.tobii_cont.setParam('trialvec', trialvec)
+        controller.tobii_cont.setVector('trialvec', trialvec)
 
     core.wait(2.0)  # give small wait time before starting trial
 

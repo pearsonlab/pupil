@@ -374,10 +374,10 @@ class TobiiController:
         self.eventData[param].append(value)
 
     def setParam(self, param, value):  # sets value for param
-        if isinstance(value, types.ListType):
-            self.eventData[param] = value
-        else:
-            self.eventData[param] = [value]
+        self.eventData[param] = [value]
+
+    def setVector(self, param, vector):  # sets a vector in a column
+        self.eventData[param] = vector
 
     # creates columns for events and params
     def setEventsAndParams(self, events):
