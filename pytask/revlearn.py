@@ -76,7 +76,7 @@ def revlearn(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
-        controller.tobii_cont.setEventsAndParams(['task','soundtime','presstime','cuetime','correct','choice' 'iti_mean','iti_range','trialvec'])
+        controller.tobii_cont.setEventsAndParams(['task','soundtime','presstime','cuetime','correct','choice', 'iti_mean','iti_range','trialvec'])
         controller.tobii_cont.setParam('task', 'revlearn')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
