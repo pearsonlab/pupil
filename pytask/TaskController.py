@@ -88,6 +88,7 @@ class TaskController:
                 data_filepath, 'darktest')
             if not os.path.isdir(data_filepath):
                 os.makedirs(data_filepath)
+            data_filename = 'darktest' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as dark_file:
                 lightdarktest.lightdarktest(self, 0, dark_file)
             return True
@@ -104,6 +105,7 @@ class TaskController:
                 data_filepath, 'oddball')
             if not os.path.isdir(data_filepath):
                 os.makedirs(data_filepath)
+            data_filename = 'oddball' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as odd_file:
                 oddball.oddball(self, odd_file)
             return True
@@ -112,6 +114,7 @@ class TaskController:
                 data_filepath, 'revlearn')
             if not os.path.isdir(data_filepath):
                 os.makedirs(data_filepath)
+            data_filename = 'revlearn' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as revlearn_file:
                 revlearn.revlearn(self, revlearn_file)
             return True
@@ -120,6 +123,7 @@ class TaskController:
                 data_filepath, 'PST')
             if not os.path.isdir(data_filepath):
                 os.makedirs(data_filepath)
+            data_filename = 'PST' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as pst_file:
                 pst.pst(self, pst_file)
             return True
