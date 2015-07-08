@@ -79,6 +79,7 @@ class TaskController:
                 data_filepath, 'lighttest')
             if not os.path.isdir(data_filepath):
                 os.makedirs(data_filepath)
+            data_filename = 'lighttest' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as light_file:
                 lightdarktest.lightdarktest(self, 1, light_file)
             return True
