@@ -4,7 +4,7 @@ import sys
 import json
 import time
 import datetime
-TESTING = 0
+TESTING = 1
 if not TESTING:
     import TobiiControllerP
 import lightdarktest
@@ -14,6 +14,7 @@ import calibrate
 import display
 import draweyes
 import pst
+import imagetest
 
 
 class TaskController:
@@ -45,6 +46,7 @@ class TaskController:
             '4) PST',
             '5) RevLearn',
             '6) Oddball',
+            '7) Image Test',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -126,6 +128,15 @@ class TaskController:
             data_filename = 'PST' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as pst_file:
                 pst.pst(self, pst_file)
+            return True
+        elif action == '7' and self.calib_complete:
+            data_filepath = os.path.join(
+                data_filepath, 'ImageTest')
+            if not os.path.isdir(data_filepath):
+                os.makedirs(data_filepath)
+            data_filename = 'ImageTest' + data_filename
+            with open(os.path.join(data_filepath, data_filename), 'w') as imagetest_file:
+                imagetest.imagetest(self, imagetest_file)
             return True
         elif action == '0' and not self.testing:
             draweyes.show_eyes(self)
