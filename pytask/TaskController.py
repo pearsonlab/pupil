@@ -4,7 +4,7 @@ import sys
 import json
 import time
 import datetime
-TESTING = 1
+TESTING = 0
 if not TESTING:
     import TobiiControllerP
 import lightdarktest
