@@ -8,5 +8,8 @@
 "RevLearn: Number of Switches": 5,
 "RevLearn: Minimum Between": 3,
 "RevLearn: Maximum Between": 7,
-"Image Test: Display Duration": 2
+"Image Test: Display Duration": 2,
+"Image Test: Number of Fear Images": 3,
+"Image Test: Minimum Between": 2,
+"Image Test: Maximum Between": 4
 }
