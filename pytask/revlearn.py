@@ -47,9 +47,8 @@ def revlearn(controller, outfile):
     testWin = controller.testWin
 
     # load sounds
-    resource_path = '../task/'
-    wrongsnd = sound.Sound(resource_path + 'buzz1.wav')
-    rightsnd = sound.Sound(resource_path + 'dinga.wav')
+    wrongsnd = sound.Sound(os.path.join('sounds', 'neg.aif'))
+    rightsnd = sound.Sound(os.path.join('sounds', 'pos.aif'))
 
     # set up image stimulus
     pos_img = 'images/revlearn/pos.jpeg'

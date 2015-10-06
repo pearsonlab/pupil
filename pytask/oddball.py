@@ -47,9 +47,8 @@ def oddball(controller, outfile):
     # Create window to display test
     testWin = controller.testWin
     # load sounds
-    resource_path = '../task/'
-    lowsnd = sound.Sound(resource_path + '500.wav')
-    highsnd = sound.Sound(resource_path + '1000.wav')
+    lowsnd = sound.Sound(os.path.join('sounds', '500.aif'))
+    highsnd = sound.Sound(os.path.join('sounds', '1000.aif'))
     # parameters for task
     iti_mean = 3
     iti_range = 2
