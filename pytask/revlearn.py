@@ -51,6 +51,13 @@ def revlearn(controller, outfile):
     wrongsnd = sound.Sound(resource_path + 'buzz1.wav')
     rightsnd = sound.Sound(resource_path + 'dinga.wav')
 
+    # set up image stimulus
+    pos_img = 'images/revlearn/pos.jpeg'
+    neg_img = 'images/revlearn/neg.jpeg'
+    img_stim = visual.ImageStim(testWin, image=pos_img,
+                                units='norm', size=(1.0, 1.0))
+
+
     # parameters for task
     iti_mean = 3
     iti_range = 2
@@ -103,11 +110,17 @@ def revlearn(controller, outfile):
             if not controller.testing:
                 controller.tobii_cont.recordEvent('soundtime')
             rightsnd.play()
+            img_stim.setImage(pos_img)
+            img_stim.draw()
+            testWin.flip()
             correct = 1
         else:
             if not controller.testing:
                 controller.tobii_cont.recordEvent('soundtime')
             wrongsnd.play()
+            img_stim.setImage(neg_img)
+            img_stim.draw()
+            testWin.flip()
             correct = 0
         if not controller.testing:
             controller.tobii_cont.addParam('correct', correct)
