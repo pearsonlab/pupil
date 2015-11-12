@@ -19,8 +19,9 @@ def calibSettings(controller):
         return -1
 
 def calibrate(controller, outfile): # creates and returns a calibrated tobii controller
-    testWin = controller.testWin
     numpts = calibSettings(controller)
+    testWin = controller.launchWindow()
+    
     if numpts == -1:
         print "Calibration Cancelled"
         return
@@ -63,6 +64,7 @@ def calibrate(controller, outfile): # creates and returns a calibrated tobii con
     # marks calibration as complete and opens up other actions
     controller.calib_complete = True
     controller.actions = controller.full_actions
+    controller.testWin.close()
     return
 
     # # ----old code replaced by TobiiControllerP code-----

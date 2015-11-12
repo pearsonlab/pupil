@@ -44,11 +44,10 @@ import ImageDraw
 
 class TobiiController:
 
-    def __init__(self, testWin, experWin):
+    def __init__(self, testWin):
         self.eyetracker = None
         self.eyetrackers = {}
         self.testWin = testWin
-        self.experWin = experWin
         self.gazeData = []
         self.events = []
         self.eventData = {}
@@ -123,22 +122,22 @@ class TobiiController:
 
         self.points = calibrationPoints
         self.point_index = -1
-
-        img = Image.new('RGB', self.experWin.size)
+        
+        img = Image.new('RGB', self.testWin.size)
         draw = ImageDraw.Draw(img)
 
         self.calin = psychopy.visual.Circle(
             self.testWin, radius=2, fillColor=(0.0, 0.0, 0.0))
         self.calout = psychopy.visual.Circle(
             self.testWin, radius=64, lineColor=(0.0, 1.0, 0.0))
-        self.calresult = psychopy.visual.SimpleImageStim(self.experWin, img)
+        self.calresult = psychopy.visual.SimpleImageStim(self.testWin, img)
         self.calresultmsg = psychopy.visual.TextStim(
-            self.experWin, pos=(0, -self.experWin.size[1] / 4))
+            self.testWin, pos=(0, -self.testWin.size[1] / 4))
         self.promptone = psychopy.visual.TextStim(
-            self.experWin, pos=(0, -self.experWin.size[1] / 4))
+            self.testWin, pos=(0, -self.testWin.size[1] / 4))
         self.promptone.setText('Press space bar when ready to calibrate.')
         self.prompttwo = psychopy.visual.TextStim(
-            self.testWin, pos=(0, -self.testWin.size[1] / 4))
+            self.testWin, pos=(0, (-self.testWin.size[1] / 4) + 100))
         self.prompttwo.setText(
             'Focus your eyes on the center of the circles that appear.')
 
@@ -158,7 +157,6 @@ class TobiiController:
             self.promptone.draw()
             self.prompttwo.draw()
             self.testWin.flip()
-            self.experWin.flip()
 
         clock = psychopy.core.Clock()
         for self.point_index in range(len(self.points)):
@@ -193,16 +191,12 @@ class TobiiController:
             time.sleep(0.01)
         self.eyetracker.StopCalibration(None)
 
-        self.testWin.flip()
-        self.experWin.flip()
-
         self.getcalibration_completed = False
         self.calib = self.eyetracker.GetCalibration(self.on_calib_response)
         while not self.getcalibration_completed:
             time.sleep(0.01)
 
-        draw.rectangle(
-            ((0, 0), tuple(self.experWin.size)), fill=(128, 128, 128))
+
         if not self.computeCalibration_succeeded:
             # computeCalibration failed.
             self.calresultmsg.setText(
@@ -226,16 +220,16 @@ class TobiiController:
                 for p, d in points.iteritems():
                     # MODIFIED: validity -> status
                     if d['left'].status == 1:
-                        draw.line(((p.x * self.experWin.size[0], p.y * self.experWin.size[1]),
-                                   (d['left'].map_point.x * self.experWin.size[0],
-                                    d['left'].map_point.y * self.experWin.size[1])), fill=(255, 0, 0))
+                        draw.line(((p.x * self.testWin.size[0], p.y * self.testWin.size[1]),
+                                   (d['left'].map_point.x * self.testWin.size[0],
+                                    d['left'].map_point.y * self.testWin.size[1])), fill=(255, 0, 0))
                     # MODIFIED: validity -> status
                     if d['right'].status == 1:
-                        draw.line(((p.x * self.experWin.size[0], p.y * self.experWin.size[1]),
-                                   (d['right'].map_point.x * self.experWin.size[0],
-                                    d['right'].map_point.y * self.experWin.size[1])), fill=(0, 255, 0))
-                    draw.ellipse(((p.x * self.experWin.size[0] - 10, p.y * self.experWin.size[1] - 10),
-                                  (p.x * self.experWin.size[0] + 10, p.y * self.experWin.size[1] + 10)),
+                        draw.line(((p.x * self.testWin.size[0], p.y * self.testWin.size[1]),
+                                   (d['right'].map_point.x * self.testWin.size[0],
+                                    d['right'].map_point.y * self.testWin.size[1])), fill=(0, 255, 0))
+                    draw.ellipse(((p.x * self.testWin.size[0] - 10, p.y * self.testWin.size[1] - 10),
+                                  (p.x * self.testWin.size[0] + 10, p.y * self.testWin.size[1] + 10)),
                                  outline=(0, 0, 0))
                 self.calresultmsg.setText(
                     'Accept calibration results (Accept:a/Retry:r/Abort:ESC)')
@@ -256,7 +250,7 @@ class TobiiController:
                     waitkey = False
             self.calresult.draw()
             self.calresultmsg.draw()
-            self.experWin.flip()
+            self.testWin.flip()
 
         return retval
 

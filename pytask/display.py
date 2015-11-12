@@ -7,16 +7,12 @@ from psychopy import visual, core, event
 
 def getWindows(controller):
     if controller.testing:
-        experWin = visual.Window(
-            size=(640, 400), monitor="testMonitor", units="pix", pos=(0, 50))
         testWin = visual.Window(
             size=(640, 400), monitor="testMonitor", units="pix", pos=(640, 50))
     else:  # not testing (i.e. working on tobii tracker)
         testWin = visual.Window(
-            size=(1280, 1024), monitor="tobiiMonitor", units="pix", screen=1, fullscr = True)
-        experWin = visual.Window(
-            size=(640, 400), monitor="testMonitor", units="pix", screen=0)
-    return testWin, experWin
+            size=(1920, 1080), monitor="testMonitor", units="pix", screen=0, fullscr=True)
+    return testWin
 
 
 def countdown(controller):

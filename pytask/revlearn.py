@@ -41,10 +41,9 @@ def revlearn(controller, outfile):
     trialvec = revSettings(controller)
     if trialvec[0] == -999:
         return
-    display.text(controller.experWin, 'Running Reversal Learning')
     # set up window
     # Create window to display test
-    testWin = controller.testWin
+    testWin = controller.launchWindow()
 
     # load sounds
     resource_path = '../task/'
@@ -123,6 +122,7 @@ def revlearn(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.stopTracking()
         controller.tobii_cont.closeDataFile()
+    testWin.close()
 
 
 def makeswitches(path, nswitch, minrun, maxrun, seed):

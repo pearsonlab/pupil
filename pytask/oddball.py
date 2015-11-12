@@ -42,10 +42,9 @@ def oddball(controller, outfile):
     trialvec = oddSettings(controller)
     if trialvec[0] == -999:
         return
-    display.text(controller.experWin, 'Running Oddball')
     # set up window
     # Create window to display test
-    testWin = controller.testWin
+    testWin = controller.launchWindow()
     # load sounds
     resource_path = '../task/'
     lowsnd = sound.Sound(resource_path + '500.wav')
@@ -109,6 +108,7 @@ def oddball(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.stopTracking()
         controller.tobii_cont.closeDataFile()
+    testWin.close()
 
 
 def makeoddballs(path, noddballs, minrun, maxrun, seed):

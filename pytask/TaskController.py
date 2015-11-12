@@ -14,7 +14,6 @@ import calibrate
 import display
 import draweyes
 import pst
-import imagetest
 
 
 class TaskController:
@@ -31,7 +30,6 @@ class TaskController:
             with open("default_settings.json") as settings:
                 self.settings = json.load(settings)
         self.data_path = os.path.join(self.path, 'data')
-        self.testWin, self.experWin = display.getWindows(self)
         self.actions = [  # actions that can be executed
             '0) Draw Eyes',
             '1) Calibrate',
@@ -46,7 +44,6 @@ class TaskController:
             '4) PST',
             '5) RevLearn',
             '6) Oddball',
-            '7) Image Test',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -56,13 +53,19 @@ class TaskController:
         # CONNECT TO EYE TRACKER
         if not self.testing:
             self.tobii_cont = TobiiControllerP.TobiiController(
-                self.testWin, self.experWin)
+                None)
             self.tobii_cont.waitForFindEyeTracker()
             self.tobii_cont.activate(self.tobii_cont.eyetrackers.keys()[0])
             self.calib_complete = False
         else:
             self.calib_complete = True
-
+    
+    def launchWindow(self):
+        self.testWin = display.getWindows(self)
+        self.tobii_cont.testWin = self.testWin
+        return self.testWin
+    
+    
     # Takes number as input and executes corresponding task.  Also manages
     # data files.
     def execute(self, action):
@@ -71,8 +74,6 @@ class TaskController:
         data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':
-            self.testWin.close()
-            self.experWin.close()
             if not self.testing:
                 self.tobii_cont.destroy()
             return False
@@ -129,15 +130,6 @@ class TaskController:
             with open(os.path.join(data_filepath, data_filename), 'w') as pst_file:
                 pst.pst(self, pst_file)
             return True
-        elif action == '7' and self.calib_complete:
-            data_filepath = os.path.join(
-                data_filepath, 'ImageTest')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
-            data_filename = 'ImageTest' + data_filename
-            with open(os.path.join(data_filepath, data_filename), 'w') as imagetest_file:
-                imagetest.imagetest(self, imagetest_file)
-            return True
         elif action == '0' and not self.testing:
             draweyes.show_eyes(self)
             return True
@@ -166,13 +158,9 @@ class TaskController:
         if not os.path.isdir(self.data_path):
             os.mkdir(self.data_path)
 
-        display.text(self.testWin, "Welcome, Participant!")
-        display.text(self.experWin, "Welcome, Experimenter!")
-
         # execute actions from menu
         while self.execute(self.select_action()):
-            display.text(self.testWin, "Welcome, Participant!")
-            display.text(self.experWin, "Welcome, Experimenter!")
+            pass
 
     def select_action(self):  # pulls up main menu that selects action
         # action_dict = {

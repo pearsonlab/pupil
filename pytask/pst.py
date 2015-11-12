@@ -21,8 +21,7 @@ def pst(controller, outfile):
         print 'PST Cancelled'
         return
 
-    display.text(controller.experWin, 'Running PST')
-    testWin = controller.testWin
+    testWin = controller.launchWindow()
 
     display.countdown(controller)
 
@@ -40,3 +39,4 @@ def pst(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.stopTracking()
         controller.tobii_cont.closeDataFile()
+    testWin.close()

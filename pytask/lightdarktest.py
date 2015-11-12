@@ -11,7 +11,7 @@ import display
 
 def lightdarktest(controller, mode, outfile):
     # Create window to display test
-    testWin = controller.testWin
+    testWin = controller.launchWindow()
     if mode == 0:  # dark test
         task = 'darktest'
         numtrials = 3  # number of light/dark cycles
@@ -21,7 +21,6 @@ def lightdarktest(controller, mode, outfile):
         # back to full brightness for recovery
         rec_mat = np.ones((numtrials, 3))
         stim_time = 1  # duration of stimulus in seconds
-        display.text(controller.experWin, 'Running Dark Test')
     elif mode == 1:  # light test
         task = 'lighttest'
         habit_mat = [-1, -1, -1]  # habituation is black
@@ -34,7 +33,6 @@ def lightdarktest(controller, mode, outfile):
         # recovery goes back to black
         rec_mat = np.negative(np.ones((numtrials, 3)))
         stim_time = 0.2  # length of stimulus time in seconds
-        display.text(controller.experWin, 'Running Light Test')
     habit_dur = 10  # time for habituation
     # time for recovery between stimuli
     recover_dur = 8 * np.ones((1, numtrials))
@@ -79,6 +77,7 @@ def lightdarktest(controller, mode, outfile):
     if not controller.testing:
         controller.tobii_cont.stopTracking()
         controller.tobii_cont.closeDataFile()
+    testWin.close()
 
 
 if __name__ == '__main__':
