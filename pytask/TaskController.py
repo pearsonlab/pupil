@@ -6,13 +6,12 @@ import time
 import datetime
 TESTING = 0
 if not TESTING:
-    import TobiiControllerP
+    import TobiiController
 import lightdarktest
 import oddball
 import revlearn
 import calibrate
 import display
-import draweyes
 import pst
 
 
@@ -31,13 +30,11 @@ class TaskController:
                 self.settings = json.load(settings)
         self.data_path = os.path.join(self.path, 'data')
         self.actions = [  # actions that can be executed
-            '0) Draw Eyes',
             '1) Calibrate',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
         self.full_actions = [  # actions that can be executed after calibration
-            '0) Draw Eyes',
             '1) Re-Calibrate',
             '2) Dark Test',
             '3) Light Test',
@@ -49,33 +46,34 @@ class TaskController:
             'q) Quit']
         if self.testing:
             self.actions = self.full_actions
-        self.subject = '0'
+        self.subject = 'subject_name'
         # CONNECT TO EYE TRACKER
         if not self.testing:
-            self.tobii_cont = TobiiControllerP.TobiiController(
-                None)
-            self.tobii_cont.waitForFindEyeTracker()
-            self.tobii_cont.activate(self.tobii_cont.eyetrackers.keys()[0])
+            self.tobii_cont = TobiiController.TobiiController()
             self.calib_complete = False
+            self.session_id = self.tobii_cont.participant_id
         else:
             self.calib_complete = True
-    
+            self.session_id = 'test'
+
     def launchWindow(self):
         self.testWin = display.getWindows(self)
-        self.tobii_cont.testWin = self.testWin
         return self.testWin
-    
-    
+
     # Takes number as input and executes corresponding task.  Also manages
     # data files.
     def execute(self, action):
-        data_filename = datetime.datetime.fromtimestamp(
-            time.time()).strftime('%H_%M_%Son%m-%d-%Y.tsv')
+        if action in ['2', '3', '4', '5', '6']:
+            if not self.testing:
+                self.tobii_cont.create_recording()
+                data_filename = datetime.datetime.fromtimestamp(
+                    time.time()).strftime('_sessID-' + self.session_id + '_recID-' + self.tobii_cont.recording_id + '.json')
+            else:
+                data_filename = datetime.datetime.fromtimestamp(
+                    time.time()).strftime('_sessID-' + self.session_id + '_recID-test.json')
         data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':
-            if not self.testing:
-                self.tobii_cont.destroy()
             return False
         elif action == '3' and self.calib_complete:
             data_filepath = os.path.join(
@@ -96,12 +94,7 @@ class TaskController:
                 lightdarktest.lightdarktest(self, 0, dark_file)
             return True
         elif action == '1' and not self.testing:
-            calib_filename = datetime.datetime.fromtimestamp(
-                time.time()).strftime('%H_%M_%Son%m-%d-%Y-Calibration.p')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
-            with open(os.path.join(data_filepath, calib_filename), 'w') as calib_file:
-                calibrate.calibrate(self, calib_file)
+            calibrate.calibrate(self)
             return True
         elif action == '6' and self.calib_complete:
             data_filepath = os.path.join(
@@ -129,9 +122,6 @@ class TaskController:
             data_filename = 'PST' + data_filename
             with open(os.path.join(data_filepath, data_filename), 'w') as pst_file:
                 pst.pst(self, pst_file)
-            return True
-        elif action == '0' and not self.testing:
-            draweyes.show_eyes(self)
             return True
         elif action == 's':
             # open settings box
@@ -163,25 +153,13 @@ class TaskController:
             pass
 
     def select_action(self):  # pulls up main menu that selects action
-        # action_dict = {
-        #     'Action: ': self.actions, 'Subject Number: ': self.subject}
-        # action_window = gui.DlgFromDict(action_dict)
-        # if action_window.OK:
-        #     self.subject = action_dict['Subject Number: ']
-        #     return action_dict['Action: ']
-        # else:
-        #     return 'Quit'
-
-        # DlgFromDict not working properly.  It clashes with the PsychoPy
-        # visual module
-
         if not self.calib_complete:
             actionDlg = gui.Dlg(title="Select Action")
             actionDlg.addText('Choose Action from:')
             for action in self.actions:
                 actionDlg.addText(action)
             actionDlg.addField('Action:', '1')
-            actionDlg.addField('Subject ID: ', self.subject)
+            actionDlg.addField('Subject Name: ', self.subject)
             actionDlg.show()  # show dialog and wait for OK or Cancel
             if actionDlg.OK:
                 response = actionDlg.data
@@ -195,7 +173,7 @@ class TaskController:
             for action in self.actions:
                 actionDlg.addText(action)
             actionDlg.addField('Action:', '1')
-            actionDlg.addText('Subject ID: ' + str(self.subject))
+            actionDlg.addText('Subject Name: ' + str(self.subject))
             actionDlg.show()  # show dialog and wait for OK or Cancel
             if actionDlg.OK:
                 response = actionDlg.data

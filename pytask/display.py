@@ -16,7 +16,8 @@ def getWindows(controller):
 
 
 def countdown(controller):
-    count_time = controller.settings['Countdown Time']  # countdown time in seconds
+    # countdown time in seconds
+    count_time = controller.settings['Countdown Time']
     win = controller.testWin
     countdown_text = visual.TextStim(win, text=str(count_time),
                                      font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
@@ -47,6 +48,8 @@ def text_keypress(win, text):
     display_text.draw()
     win.flip()
     event.waitKeys()
+    win.flip()
+
 
 def text(win, text):
     display_text = visual.TextStim(win, text=text,
@@ -55,6 +58,7 @@ def text(win, text):
                                    wrapWidth=2)
     display_text.draw()
     win.flip()
+
 
 def cross(win):
     cross = visual.TextStim(win, text='+',
