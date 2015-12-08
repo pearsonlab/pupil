@@ -153,15 +153,14 @@ class TobiiController:
     # starts thread to listen to sync port of Tobii Glasses and record pulses
     def start_sync(self):
         self.stop_event = threading.Event()
-        sync_thread = threading.Thread(
-            target=self.get_pulses, args=(self.stop_event,))
+        sync_thread = threading.Thread(target=self.get_pulses)
         sync_thread.start()
 
     def stop_sync(self):
         self.stop_event.set()
 
-    def get_pulses(self, stop):
-        while not stop.is_set():
+    def get_pulses(self):
+        while not self.stop_event.is_set():
             self.sync_pulses.append(core.getTime())
             core.wait(1.0)
 
