@@ -67,18 +67,22 @@ def oddball(controller, outfile):
         testWin, 'When you hear a sound, press the space bar.\n\nPress any key when ready.')
 
     display.countdown(controller)
-    display.cross(controller.testWin)
 
     # START EYE TRACKING
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
+        core.wait(0.5)  # make sure video starts before sync blip
         controller.tobii_cont.setEventsAndParams(
-            ['task', 'soundtime', 'presstime', 'iti_mean', 'iti_range', 'trialvec'])
+            ['task', 'soundtime', 'presstime', 'iti_mean', 'iti_range', 'trialvec', 'start_time'])
         controller.tobii_cont.setParam('task', 'oddball')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
         controller.tobii_cont.setVector('trialvec', trialvec)
+        controller.tobii_cont.setParam('start_time', core.getTime())
+
+    display.sync_blip(controller.testWin)
+    display.cross(controller.testWin)
 
     core.wait(2.0)  # give small wait time before starting trial
 
