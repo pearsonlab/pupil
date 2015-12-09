@@ -161,7 +161,7 @@ class TobiiController:
 
     def get_pulses(self):
         while not self.stop_event.is_set():
-            self.sync_pulses.append(core.getTime())
+            # self.sync_pulses.append(core.getTime())
             core.wait(1.0)
 
     # altered to take open file instead of filename. got rid of header which
