@@ -51,10 +51,8 @@ class TaskController:
         if not self.testing:
             self.tobii_cont = TobiiController.TobiiController()
             self.calib_complete = False
-            self.session_id = self.tobii_cont.participant_id
         else:
             self.calib_complete = True
-            self.session_id = 'test'
 
     def launchWindow(self):
         self.testWin = display.getWindows(self)
@@ -67,10 +65,10 @@ class TaskController:
             if not self.testing:
                 self.tobii_cont.create_recording()
                 data_filename = datetime.datetime.fromtimestamp(
-                    time.time()).strftime('_sessID-' + self.session_id + '_recID-' + self.tobii_cont.recording_id + '.json')
+                    time.time()).strftime('_projID-' + self.tobii_cont.project_id + '_recID-' + self.tobii_cont.recording_id + '.json')
             else:
                 data_filename = datetime.datetime.fromtimestamp(
-                    time.time()).strftime('_sessID-' + self.session_id + '_recID-test.json')
+                    time.time()).strftime('_projID-test_recID-test.json')
         data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':
