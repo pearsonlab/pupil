@@ -238,6 +238,7 @@ class TobiiController:
         plt.legend(['Oddball', 'Standard', 'Oddball SEM', 'Standard SEM'], bbox_to_anchor=(
             1.05, 1), loc=2, borderaxespad=0.)
         plt.savefig(filename, bbox_inches='tight')
+        plt.gcf().clear()
 
     def gauss_convolve(self, x, sigma):
         edge = int(math.ceil(5 * sigma))
