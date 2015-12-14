@@ -30,7 +30,7 @@ def pst(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
-        controller.tobii_cont.setEventsAndParams(['task','duration'])
+        controller.tobii_cont.setEventsAndParams(['task', 'duration'])
         controller.tobii_cont.setParam('task', 'pst')
         controller.tobii_cont.setParam('duration', duration)
 
@@ -38,5 +38,5 @@ def pst(controller, outfile):
 
     if not controller.testing:
         controller.tobii_cont.stopTracking()
-        controller.tobii_cont.closeDataFile()
+        controller.tobii_cont.flushData()
     testWin.close()

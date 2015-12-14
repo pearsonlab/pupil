@@ -76,7 +76,7 @@ def lightdarktest(controller, mode, outfile):
     # End eye tracking
     if not controller.testing:
         controller.tobii_cont.stopTracking()
-        controller.tobii_cont.closeDataFile()
+        controller.tobii_cont.flushData()
     testWin.close()
 
 

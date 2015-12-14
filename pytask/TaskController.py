@@ -64,61 +64,60 @@ class TaskController:
         if action in ['2', '3', '4', '5', '6']:
             if not self.testing:
                 self.tobii_cont.create_recording()
-                data_filename = datetime.datetime.fromtimestamp(
-                    time.time()).strftime('_projID-' + self.tobii_cont.project_id + '_recID-' + self.tobii_cont.recording_id + '.json')
+                data_filename = '_projID-' + self.tobii_cont.project_id + \
+                    '_recID-' + self.tobii_cont.recording_id + '.json'
             else:
-                data_filename = datetime.datetime.fromtimestamp(
-                    time.time()).strftime('_projID-test_recID-test.json')
-        data_filepath = os.path.join(
+                data_filename = '_projID-test_recID-test.json'
+        self.data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':
             return False
         elif action == '3' and self.calib_complete:
-            data_filepath = os.path.join(
-                data_filepath, 'lighttest')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'lighttest')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
             data_filename = 'lighttest' + data_filename
-            with open(os.path.join(data_filepath, data_filename), 'w') as light_file:
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as light_file:
                 lightdarktest.lightdarktest(self, 1, light_file)
             return True
         elif action == '2' and self.calib_complete:
-            data_filepath = os.path.join(
-                data_filepath, 'darktest')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'darktest')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
             data_filename = 'darktest' + data_filename
-            with open(os.path.join(data_filepath, data_filename), 'w') as dark_file:
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as dark_file:
                 lightdarktest.lightdarktest(self, 0, dark_file)
             return True
         elif action == '1' and not self.testing:
             calibrate.calibrate(self)
             return True
         elif action == '6' and self.calib_complete:
-            data_filepath = os.path.join(
-                data_filepath, 'oddball')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'oddball')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
             data_filename = 'oddball' + data_filename
-            with open(os.path.join(data_filepath, data_filename), 'w') as odd_file:
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as odd_file:
                 oddball.oddball(self, odd_file)
             return True
         elif action == '5' and self.calib_complete:
-            data_filepath = os.path.join(
-                data_filepath, 'revlearn')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'revlearn')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
             data_filename = 'revlearn' + data_filename
-            with open(os.path.join(data_filepath, data_filename), 'w') as revlearn_file:
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as revlearn_file:
                 revlearn.revlearn(self, revlearn_file)
             return True
         elif action == '4' and self.calib_complete:
-            data_filepath = os.path.join(
-                data_filepath, 'PST')
-            if not os.path.isdir(data_filepath):
-                os.makedirs(data_filepath)
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'PST')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
             data_filename = 'PST' + data_filename
-            with open(os.path.join(data_filepath, data_filename), 'w') as pst_file:
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as pst_file:
                 pst.pst(self, pst_file)
             return True
         elif action == 's':

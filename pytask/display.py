@@ -51,6 +51,14 @@ def text_keypress(win, text):
     win.flip()
 
 
+def image_keypress(win, image_loc):
+    image_disp = visual.ImageStim(win, image=image_loc)
+    image_disp.draw()
+    win.flip()
+    event.waitKeys()
+    win.flip()
+
+
 def text(win, text):
     display_text = visual.TextStim(win, text=text,
                                    font='Helvetica', alignHoriz='center', alignVert='center', units='norm',

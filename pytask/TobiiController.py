@@ -11,11 +11,20 @@ import urllib2
 import json
 import socket
 from psychopy import core
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import math
+from scipy.stats import norm
+
+sns.set_style('darkgrid')
+sns.set_context('talk', font_scale=1.4)
+colors = sns.color_palette("Set2")
 
 GLASSES_IP = "192.168.71.50"  # IPv4 address
 PORT = 49152
 base_url = 'http://' + GLASSES_IP
-timeout = 1
 
 # Keep-alive message content used to request live data and live video streams
 KA_DATA_MSG = "{\"type\": \"live.data.unicast\", \"key\": \"some_GUID\", \"op\": \"start\"}"
@@ -26,17 +35,17 @@ class TobiiController:
 
     def __init__(self):
         peer = (GLASSES_IP, PORT)
-        data_socket = self.mksock(peer)
+        self.data_socket = self.mksock(peer)
         td = threading.Thread(
-            target=self.send_keepalive_msg, args=[data_socket, KA_DATA_MSG, peer])
+            target=self.send_keepalive_msg, args=[self.data_socket, KA_DATA_MSG, peer])
         td.daemon = True
         td.start()
 
         # Create socket which will send a keep alive message for the live video
         # stream
-        video_socket = self.mksock(peer)
+        self.video_socket = self.mksock(peer)
         tv = threading.Thread(
-            target=self.send_keepalive_msg, args=[video_socket, KA_VIDEO_MSG, peer])
+            target=self.send_keepalive_msg, args=[self.video_socket, KA_VIDEO_MSG, peer])
         tv.daemon = True
         tv.start()
 
@@ -62,7 +71,7 @@ class TobiiController:
     def send_keepalive_msg(self, socket, msg, peer):
         while True:
             socket.sendto(msg, peer)
-            time.sleep(timeout)
+            time.sleep(1.0)
 
     def post_request(self, api_action, data=None):
         url = base_url + api_action
@@ -139,42 +148,182 @@ class TobiiController:
         self.eventData = {}
         self.events = []
         self.sync_pulses = []
+        self.pupil_data = []
         self.start_sync()
+        self.start_data_stream()
         self.start_recording()
 
     def stopTracking(self):
         self.stop_recording()
+        self.stop_data_stream()
         self.stop_sync()
-        self.flushData()
-        self.eventData = {}
-        self.events = []
-        self.sync_pulses = []
+
+    def start_data_stream(self):
+        '''
+        Streams data and records pupil response
+        '''
+        self.pupil_stop = threading.Event()
+        try:
+            threading.Thread(target=self.get_data).start()
+        except (KeyboardInterrupt, SystemExit):
+            self.stopLiveCheck()
+
+    def stop_data_stream(self):
+        self.pupil_stop.set()
+
+    def get_data(self):
+        while not self.pupil_stop.is_set():
+            raw_data, address = self.data_socket.recvfrom(1024)
+            try:
+                data = json.loads(raw_data)
+                if data['s'] == 0 and 'pd' in data and data['eye'] == 'left':
+                    self.pupil_data.append((core.getTime(), data['pd']))
+            except:
+                pass
 
     # starts thread to listen to sync port of Tobii Glasses and record pulses
     def start_sync(self):
-        self.stop_event = threading.Event()
-        sync_thread = threading.Thread(target=self.get_pulses)
-        sync_thread.start()
+        self.sync_stop = threading.Event()
+        try:
+            threading.Thread(target=self.get_pulses).start()
+        except (KeyboardInterrupt, SystemExit):
+            self.stop_sync()
 
     def stop_sync(self):
-        self.stop_event.set()
+        self.sync_stop.set()
 
     def get_pulses(self):
-        while not self.stop_event.is_set():
+        while not self.sync_stop.is_set():
             # self.sync_pulses.append(core.getTime())
             core.wait(1.0)
+
+    def print_oddball_fig(self, filename):
+        pupil_array = np.array(self.pupil_data)
+        soundtime = self.eventData['soundtime']
+        trialvec = self.eventData['trialvec']
+        pupil_time = pupil_array[:, 0]
+        pupil_diam = self.cleanseries(pd.Series(pupil_array[:, 1])).values
+        odd_trials = []
+        norm_trials = []
+
+        currEventIndex = 0
+        for i in range(len(pupil_time)):
+            t = pupil_time[i]
+            if t > soundtime[currEventIndex]:  # we have reached the next sound
+                chunk = self.get_chunk(i, pupil_diam)
+                # if able to get a good slice (no IndexError)
+                if chunk is not None:
+                    if trialvec[currEventIndex] == 1.0:  # sound is odd
+                        odd_trials.append(chunk)
+                    elif trialvec[currEventIndex] == 0.0:  # sound is normal
+                        norm_trials.append(chunk)
+                currEventIndex += 1
+                if currEventIndex >= len(soundtime):
+                    break
+        odd_trials = np.array(odd_trials)
+        norm_trials = np.array(norm_trials)
+
+        odd_trials = odd_trials - \
+            np.tile(odd_trials.mean(axis=1).reshape(
+                (odd_trials.shape[0], 1)), odd_trials.shape[1])
+        norm_trials = norm_trials - \
+            np.tile(norm_trials.mean(axis=1).reshape(
+                (norm_trials.shape[0], 1)), norm_trials.shape[1])
+
+        self.plot_with_sem(odd_trials, colors[1])
+        self.plot_with_sem(norm_trials, colors[0])
+        plt.title('Pupillary response to oddball')
+        plt.ylabel('Normalized Pupil Size (arbitrary units)')
+        plt.xlabel('Time (samples)')
+        plt.legend(['Oddball', 'Standard', 'Oddball SEM', 'Standard SEM'], bbox_to_anchor=(
+            1.05, 1), loc=2, borderaxespad=0.)
+        plt.savefig(filename, bbox_inches='tight')
+
+    def gauss_convolve(self, x, sigma):
+        edge = int(math.ceil(5 * sigma))
+        fltr = norm.pdf(range(-edge, edge), loc=0, scale=sigma)
+        fltr = fltr / sum(fltr)
+
+        buff = np.ones((1, edge))[0]
+
+        szx = x.size
+
+        xx = np.append((buff * x[0]), x)
+        xx = np.append(xx, (buff * x[-1]))
+
+        y = np.convolve(xx, fltr, mode='valid')
+        y = y[:szx]
+        return y
+
+    def plot_with_sem(self, x, color):
+        ntrials = x.shape[0]
+        smwid = 2
+        bin_t = np.array(range(x.shape[1]))
+
+        xm = x.mean(axis=0)
+        sd = x.std(axis=0)
+        effsamp = np.sum(np.logical_not(np.isnan(x)), 0)
+        sem = sd / np.sqrt(effsamp)
+        sem = list(sem)
+
+        xsm = self.gauss_convolve(xm, smwid)
+        xhi = self.gauss_convolve(xm + sem, smwid)
+        xlo = self.gauss_convolve(xm - sem, smwid)
+
+        plt.hold(True)
+        x_ptch = np.append(bin_t, bin_t[::-1])
+        y_ptch = np.append(xlo, xhi[::-1])
+
+        if ntrials > 1:
+            plt.fill(
+                x_ptch, y_ptch, color=color, alpha=0.25, edgecolor=None)
+
+        plt.plot(bin_t, xsm, color=color, linewidth=2.0)
+        plt.hold(False)
+
+    def get_chunk(self, i, data):
+        """
+        Returns a slice from data, starting slightly before index i
+        and ending after.
+        """
+        try:
+            return data[i - 15:i + 150]
+        except IndexError:
+            return None
+
+    def cleanseries(self, data):
+        bad = (data == -999)
+
+        dd = data.diff()
+        sig = np.median(np.absolute(dd) / 0.67449)
+        th = 5
+        disc = np.absolute(dd) > th * sig
+
+        to_remove = np.nonzero(bad | disc)[0]
+        up_one = range(len(to_remove))
+        for i in range(len(to_remove)):
+            up_one[i] = to_remove[i] + 1
+        down_one = range(len(to_remove))
+        for i in range(len(to_remove)):
+            down_one[i] = to_remove[i] - 1
+        isolated = np.intersect1d(up_one, down_one)
+
+        allbad = np.union1d(to_remove, isolated)
+
+        newdat = pd.Series(data)
+        newdat[allbad] = np.nan
+
+        goodinds = np.nonzero(np.invert(np.isnan(newdat)))[0]
+        if len(goodinds) == 0:
+            print "Not enough good data to clean. Aborting."
+            return data
+        else:
+            return pd.Series.interpolate(newdat, method='linear')
 
     # altered to take open file instead of filename. got rid of header which
     # makes the file incompatible with matlab
     def setDataFile(self, openfile):
         self.datafile = openfile
-
-    # altered to simply flush data, but not close file
-    def closeDataFile(self):
-        if self.datafile is not None:
-            self.flushData()
-
-        self.datafile = None
 
     def recordEvent(self, event):  # records timestamp for an event
         self.eventData[event].append(core.getTime())
@@ -207,3 +356,8 @@ class TobiiController:
         self.datafile.write(json.dumps(self.eventData))
 
         self.datafile.flush()
+
+        self.eventData = {}
+        self.events = []
+        self.sync_pulses = []
+        self.pupil_data = []

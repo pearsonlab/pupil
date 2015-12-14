@@ -111,7 +111,15 @@ def oddball(controller, outfile):
     # STOP EYE TRACKING AND SAVE DATA
     if not controller.testing:
         controller.tobii_cont.stopTracking()
-        controller.tobii_cont.closeDataFile()
+        display.text(testWin, 'Generating Figure...')
+        image_file = os.path.join(
+            controller.data_filepath, 'pupil_response.png')
+        try:
+            controller.tobii_cont.print_oddball_fig(image_file)
+            display.image_keypress(testWin, image_file)
+        except:
+            display.text(testWin, 'Figure generation failed.')
+        controller.tobii_cont.flushData()
     testWin.close()
 
 
