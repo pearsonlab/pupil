@@ -157,6 +157,12 @@ class TobiiController:
         self.stop_recording()
         self.stop_data_stream()
         self.stop_sync()
+        if self.datafile is None:
+            print 'Data file is not set.'
+        else:
+            self.eventData['sync_pulses'] = self.sync_pulses
+            self.datafile.write(json.dumps(self.eventData))
+            self.datafile.flush()
 
     def start_data_stream(self):
         '''
@@ -176,8 +182,11 @@ class TobiiController:
             raw_data, address = self.data_socket.recvfrom(1024)
             try:
                 data = json.loads(raw_data)
-                if data['s'] == 0 and 'pd' in data and data['eye'] == 'left':
-                    self.pupil_data.append((core.getTime(), data['pd']))
+                if 'pd' in data and data['eye'] == 'left':
+                    if data['s'] == 0:
+                        self.pupil_data.append((core.getTime(), data['pd']))
+                    else:
+                        self.pupil_data.append((core.getTime(), np.nan))
             except:
                 pass
 
@@ -223,21 +232,34 @@ class TobiiController:
         odd_trials = np.array(odd_trials)
         norm_trials = np.array(norm_trials)
 
-        odd_trials = odd_trials - \
-            np.tile(odd_trials.mean(axis=1).reshape(
-                (odd_trials.shape[0], 1)), odd_trials.shape[1])
-        norm_trials = norm_trials - \
-            np.tile(norm_trials.mean(axis=1).reshape(
-                (norm_trials.shape[0], 1)), norm_trials.shape[1])
+        if len(odd_trials.shape) > 1:
+            odd_trials = odd_trials - \
+                np.tile(odd_trials.mean(axis=1).reshape(
+                    (odd_trials.shape[0], 1)), odd_trials.shape[1])
+            self.plot_with_sem(odd_trials, colors[1])
+        elif len(odd_trials.shape) == 1:
+            odd_trials = odd_trials - \
+                np.tile(odd_trials.mean(), odd_trials.shape[0])
+            plt.plot(
+                np.array(range(odd_trials.shape[0])), self.gauss_convolve(odd_trials, 2))
+        if len(norm_trials.shape) > 1:
+            norm_trials = norm_trials - \
+                np.tile(norm_trials.mean(axis=1).reshape(
+                    (norm_trials.shape[0], 1)), norm_trials.shape[1])
+            self.plot_with_sem(norm_trials, colors[0])
+        elif len(norm_trials.shape) == 1:
+            norm_trials = norm_trials - \
+                np.tile(norm_trials.mean(), norm_trials.shape[0])
+            plt.plot(
+                np.array(range(norm_trials.shape[0])), self.gauss_convolve(norm_trials, 2))
 
-        self.plot_with_sem(odd_trials, colors[1])
-        self.plot_with_sem(norm_trials, colors[0])
         plt.title('Pupillary response to oddball')
         plt.ylabel('Normalized Pupil Size (arbitrary units)')
         plt.xlabel('Time (samples)')
-        plt.legend(['Oddball', 'Standard', 'Oddball SEM', 'Standard SEM'], bbox_to_anchor=(
+        plt.legend(['Oddball', 'Standard'], bbox_to_anchor=(
             1.05, 1), loc=2, borderaxespad=0.)
         plt.savefig(filename, bbox_inches='tight')
+        core.wait(1.0)  # let file finish writing
         plt.gcf().clear()
 
     def gauss_convolve(self, x, sigma):
@@ -288,15 +310,18 @@ class TobiiController:
         and ending after.
         """
         try:
-            return data[i - 15:i + 150]
+            if i + 150 > len(data):
+                return np.hstack((data[i - 15:], np.zeros(i + 150 - len(data))))
+            else:
+                return data[i - 15:i + 150]
         except IndexError:
             return None
 
     def cleanseries(self, data):
-        bad = (data == -999)
+        bad = (data == np.nan)
 
         dd = data.diff()
-        sig = np.median(np.absolute(dd) / 0.67449)
+        sig = np.nanmedian(np.absolute(dd) / 0.67449)
         th = 5
         disc = np.absolute(dd) > th * sig
 
@@ -344,20 +369,7 @@ class TobiiController:
         for event in events:
             self.eventData[event] = []
 
-    # altered to create data file that is easily imported into matlab
     def flushData(self):
-        if self.datafile is None:
-            print 'Data file is not set.'
-            return
-
-        if len(self.eventData) == 0:
-            return
-
-        self.eventData['sync_pulses'] = self.sync_pulses
-        self.datafile.write(json.dumps(self.eventData))
-
-        self.datafile.flush()
-
         self.eventData = {}
         self.events = []
         self.sync_pulses = []
