@@ -113,7 +113,7 @@ def oddball(controller, outfile):
         controller.tobii_cont.stopTracking()
         display.text(testWin, 'Generating Figure...')
         image_file = os.path.join(
-            controller.data_filepath, 'pupil_response.png')
+            controller.data_filepath, controller.trial_name + '_pupil_response.png')
         try:
             controller.tobii_cont.print_oddball_fig(image_file)
             display.image_keypress(testWin, image_file)

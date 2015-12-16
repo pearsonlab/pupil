@@ -4,7 +4,7 @@ import sys
 import json
 import time
 import datetime
-TESTING = 0
+TESTING = 1
 if not TESTING:
     import TobiiController
 import lightdarktest
@@ -62,12 +62,21 @@ class TaskController:
     # data files.
     def execute(self, action):
         if action in ['2', '3', '4', '5', '6']:
+            trialDlg = gui.Dlg(title="Trial Name")
+            trialDlg.addField(
+                'Enter Trial Name', 'run1')
+            trialDlg.show()
+            if trialDlg.OK:
+                self.trial_name = trialDlg.data[0]
+                data_filename = '_' + self.trial_name
+            else:
+                return True
             if not self.testing:
                 self.tobii_cont.create_recording()
-                data_filename = '_projID-' + self.tobii_cont.project_id + \
+                data_filename += '_projID-' + self.tobii_cont.project_id + \
                     '_recID-' + self.tobii_cont.recording_id + '.json'
             else:
-                data_filename = '_projID-test_recID-test.json'
+                data_filename += '_projID-test_recID-test.json'
         self.data_filepath = os.path.join(
             self.data_path, str(self.subject))
         if action == 'q':
