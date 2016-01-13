@@ -209,7 +209,7 @@ class TobiiController:
     def print_fig(self, filename, time_name, relvar_mask):
         """
         Generates a figure for pupillary response to two classes
-        of stimuli
+        of stimuli (usually 'target' and 'other')
         filename (str): path/location to place generated plot
         time_name (str): name of vector that contains timestamps for events
                          (NOTE: this vector must be set by setVector before
@@ -222,46 +222,46 @@ class TobiiController:
         trial_mask = self.eventData[relvar_mask]
         pupil_time = pupil_array[:, 0]
         pupil_diam = self.cleanseries(pd.Series(pupil_array[:, 1])).values
-        odd_trials = []
-        norm_trials = []
+        targ_trials = []
+        other_trials = []
 
         currEventIndex = 0
         for i in range(len(pupil_time)):
             t = pupil_time[i]
-            if t > stim_time[currEventIndex]:  # we have reached the next sound
+            if t > stim_time[currEventIndex]:  # we have reached the next event
                 chunk = self.get_chunk(i, pupil_diam)
                 # if able to get a good slice (no IndexError)
                 if chunk is not None:
-                    if trial_mask[currEventIndex] == 1.0:  # sound is odd
-                        odd_trials.append(chunk)
-                    elif trial_mask[currEventIndex] == 0.0:  # sound is normal
-                        norm_trials.append(chunk)
+                    if trial_mask[currEventIndex] == 1.0:  # event is target
+                        targ_trials.append(chunk)
+                    elif trial_mask[currEventIndex] == 0.0:  # event is other
+                        other_trials.append(chunk)
                 currEventIndex += 1
                 if currEventIndex >= len(stim_time):
                     break
-        odd_trials = np.array(odd_trials)
-        norm_trials = np.array(norm_trials)
+        targ_trials = np.array(targ_trials)
+        other_trials = np.array(other_trials)
 
-        if len(odd_trials.shape) > 1:
-            odd_trials = odd_trials - \
-                np.tile(odd_trials.mean(axis=1).reshape(
-                    (odd_trials.shape[0], 1)), odd_trials.shape[1])
-            self.plot_with_sem(odd_trials, colors[1])
-        elif len(odd_trials.shape) == 1:
-            odd_trials = odd_trials - \
-                np.tile(odd_trials.mean(), odd_trials.shape[0])
+        if len(targ_trials.shape) > 1:
+            targ_trials = targ_trials - \
+                np.tile(targ_trials.mean(axis=1).reshape(
+                    (targ_trials.shape[0], 1)), targ_trials.shape[1])
+            self.plot_with_sem(targ_trials, colors[1])
+        elif len(targ_trials.shape) == 1:
+            targ_trials = targ_trials - \
+                np.tile(targ_trials.mean(), targ_trials.shape[0])
             plt.plot(
-                np.array(range(odd_trials.shape[0])), self.gauss_convolve(odd_trials, 2))
-        if len(norm_trials.shape) > 1:
-            norm_trials = norm_trials - \
-                np.tile(norm_trials.mean(axis=1).reshape(
-                    (norm_trials.shape[0], 1)), norm_trials.shape[1])
-            self.plot_with_sem(norm_trials, colors[0])
-        elif len(norm_trials.shape) == 1:
-            norm_trials = norm_trials - \
-                np.tile(norm_trials.mean(), norm_trials.shape[0])
+                np.array(range(targ_trials.shape[0])), self.gauss_convolve(targ_trials, 2))
+        if len(other_trials.shape) > 1:
+            other_trials = other_trials - \
+                np.tile(other_trials.mean(axis=1).reshape(
+                    (other_trials.shape[0], 1)), other_trials.shape[1])
+            self.plot_with_sem(other_trials, colors[0])
+        elif len(other_trials.shape) == 1:
+            other_trials = other_trials - \
+                np.tile(other_trials.mean(), other_trials.shape[0])
             plt.plot(
-                np.array(range(norm_trials.shape[0])), self.gauss_convolve(norm_trials, 2))
+                np.array(range(other_trials.shape[0])), self.gauss_convolve(other_trials, 2))
 
         plt.title('Pupillary response for ' + self.eventData['task'])
         plt.ylabel('Normalized Pupil Size (arbitrary units)')
