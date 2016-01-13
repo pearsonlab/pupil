@@ -115,7 +115,8 @@ def oddball(controller, outfile):
         image_file = os.path.join(
             controller.data_filepath, controller.trial_name + '_pupil_response.png')
         try:
-            controller.tobii_cont.print_oddball_fig(image_file)
+            controller.tobii_cont.print_fig(
+                image_file, 'soundtime', 'trialvec')
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')

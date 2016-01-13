@@ -66,6 +66,12 @@ def faces(controller, outfile):
     face_order = faceSettings(controller)
     if face_order[0] == -999:
         return
+    is_fear = []
+    for face in face_order:
+        if 'fear' in face:
+            is_fear.append(1)
+        else:
+            is_fear.append(0)
 
     testWin = controller.launchWindow()
     iti_mean = 3
@@ -79,11 +85,12 @@ def faces(controller, outfile):
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
         controller.tobii_cont.setEventsAndParams(
-            ['task', 'stim_start', 'stim_end', 'iti_mean', 'iti_range', 'stims_used', 'start_time'])
+            ['task', 'stim_start', 'stim_end', 'iti_mean', 'iti_range', 'stims_used', 'is_fear' 'start_time'])
         controller.tobii_cont.setParam('task', 'faces')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
         controller.tobii_cont.setVector('stims_used', face_order)
+        controller.tobii_cont.setVector('is_fear', is_fear)
         controller.tobii_cont.setParam('start_time', core.getTime())
 
     display.cross(controller.testWin)
@@ -114,6 +121,16 @@ def faces(controller, outfile):
 
     if not controller.testing:
         controller.tobii_cont.stopTracking()
+        display.text(testWin, 'Generating Figure...')
+        image_file = os.path.join(
+            controller.data_filepath, controller.trial_name + '_pupil_response.png')
+        try:
+            controller.tobii_cont.print_fig(
+                image_file, 'stim_start', 'is_fear')
+            display.image_keypress(testWin, image_file)
+        except:
+            display.text(testWin, 'Figure generation failed.')
+
         controller.tobii_cont.flushData()
 
     testWin.close()

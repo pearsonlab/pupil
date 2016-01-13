@@ -206,10 +206,20 @@ class TobiiController:
             # self.sync_pulses.append(core.getTime())
             core.wait(1.0)
 
-    def print_oddball_fig(self, filename):
+    def print_fig(self, filename, time_name, relvar_mask):
+        """
+        Generates a figure for pupillary response to two classes
+        of stimuli
+        filename (str): path/location to place generated plot
+        time_name (str): name of vector that contains timestamps for events
+                         (NOTE: this vector must be set by setVector before
+                         plot can be generated)
+        relvar_mask(str): name of vector that indicates which class each
+                          event is in (1 = target, 0 = other)
+        """
         pupil_array = np.array(self.pupil_data)
-        soundtime = self.eventData['soundtime']
-        trialvec = self.eventData['trialvec']
+        stim_time = self.eventData[time_name]
+        trial_mask = self.eventData[relvar_mask]
         pupil_time = pupil_array[:, 0]
         pupil_diam = self.cleanseries(pd.Series(pupil_array[:, 1])).values
         odd_trials = []
@@ -218,16 +228,16 @@ class TobiiController:
         currEventIndex = 0
         for i in range(len(pupil_time)):
             t = pupil_time[i]
-            if t > soundtime[currEventIndex]:  # we have reached the next sound
+            if t > stim_time[currEventIndex]:  # we have reached the next sound
                 chunk = self.get_chunk(i, pupil_diam)
                 # if able to get a good slice (no IndexError)
                 if chunk is not None:
-                    if trialvec[currEventIndex] == 1.0:  # sound is odd
+                    if trial_mask[currEventIndex] == 1.0:  # sound is odd
                         odd_trials.append(chunk)
-                    elif trialvec[currEventIndex] == 0.0:  # sound is normal
+                    elif trial_mask[currEventIndex] == 0.0:  # sound is normal
                         norm_trials.append(chunk)
                 currEventIndex += 1
-                if currEventIndex >= len(soundtime):
+                if currEventIndex >= len(stim_time):
                     break
         odd_trials = np.array(odd_trials)
         norm_trials = np.array(norm_trials)
@@ -253,10 +263,10 @@ class TobiiController:
             plt.plot(
                 np.array(range(norm_trials.shape[0])), self.gauss_convolve(norm_trials, 2))
 
-        plt.title('Pupillary response to oddball')
+        plt.title('Pupillary response for ' + self.eventData['task'])
         plt.ylabel('Normalized Pupil Size (arbitrary units)')
         plt.xlabel('Time (samples)')
-        plt.legend(['Oddball', 'Standard'], bbox_to_anchor=(
+        plt.legend('Target', 'Other'], bbox_to_anchor=(
             1.05, 1), loc=2, borderaxespad=0.)
         plt.savefig(filename, bbox_inches='tight')
         core.wait(1.0)  # let file finish writing
