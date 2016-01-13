@@ -5,3 +5,4 @@ old_code/
 *.csv
 *.html
 pytask/images
+pytask/faces

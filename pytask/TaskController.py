@@ -10,6 +10,7 @@ if not TESTING:
 import lightdarktest
 import oddball
 import revlearn
+import faces
 import calibrate
 import display
 import pst
@@ -41,6 +42,7 @@ class TaskController:
             '4) PST',
             '5) RevLearn',
             '6) Oddball',
+            '7) Faces',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -61,7 +63,7 @@ class TaskController:
     # Takes number as input and executes corresponding task.  Also manages
     # data files.
     def execute(self, action):
-        if action in ['2', '3', '4', '5', '6']:
+        if action in ['2', '3', '4', '5', '6', '7']:
             trialDlg = gui.Dlg(title="Trial Name")
             trialDlg.addField(
                 'Enter Trial Name', 'run1')
@@ -110,6 +112,15 @@ class TaskController:
             data_filename = 'oddball' + data_filename
             with open(os.path.join(self.data_filepath, data_filename), 'w') as odd_file:
                 oddball.oddball(self, odd_file)
+            return True
+        elif action == '7' and self.calib_complete:
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'faces')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
+            data_filename = 'faces' + data_filename
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as face_file:
+                faces.faces(self, face_file)
             return True
         elif action == '5' and self.calib_complete:
             self.data_filepath = os.path.join(

@@ -6,5 +6,9 @@
 "PST: Duration": 120,
 "RevLearn: Number of Switches": 5,
 "RevLearn: Minimum Between": 3,
-"RevLearn: Maximum Between": 7
+"RevLearn: Maximum Between": 7,
+"Faces: Angry": 3,
+"Faces: Fearful": 3,
+"Faces: Male Identity": 3,
+"Faces: Female Identity": 3
 }
