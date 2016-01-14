@@ -242,26 +242,16 @@ class TobiiController:
         targ_trials = np.array(targ_trials)
         other_trials = np.array(other_trials)
 
-        if len(targ_trials.shape) > 1:
-            targ_trials = targ_trials - \
-                np.tile(targ_trials.mean(axis=1).reshape(
-                    (targ_trials.shape[0], 1)), targ_trials.shape[1])
-            self.plot_with_sem(targ_trials, colors[1])
-        elif len(targ_trials.shape) == 1:
-            targ_trials = targ_trials - \
-                np.tile(targ_trials.mean(), targ_trials.shape[0])
-            plt.plot(
-                np.array(range(targ_trials.shape[0])), self.gauss_convolve(targ_trials, 2))
-        if len(other_trials.shape) > 1:
-            other_trials = other_trials - \
-                np.tile(other_trials.mean(axis=1).reshape(
-                    (other_trials.shape[0], 1)), other_trials.shape[1])
-            self.plot_with_sem(other_trials, colors[0])
-        elif len(other_trials.shape) == 1:
-            other_trials = other_trials - \
-                np.tile(other_trials.mean(), other_trials.shape[0])
-            plt.plot(
-                np.array(range(other_trials.shape[0])), self.gauss_convolve(other_trials, 2))
+        #### CHANGE NORMALIZATION TECHNIQUE
+        targ_trials = targ_trials - \
+            np.tile(targ_trials.mean(axis=1).reshape(
+                (targ_trials.shape[0], 1)), targ_trials.shape[1])
+        self.plot_with_sem(targ_trials, colors[1])
+
+        other_trials = other_trials - \
+            np.tile(other_trials.mean(axis=1).reshape(
+                (other_trials.shape[0], 1)), other_trials.shape[1])
+        self.plot_with_sem(other_trials, colors[0])
 
         plt.title('Pupillary response for ' + self.eventData['task'])
         plt.ylabel('Normalized Pupil Size (arbitrary units)')
@@ -327,10 +317,25 @@ class TobiiController:
         except IndexError:
             return None
 
+    def window_diff(data, width):
+        """
+        Takes a series and calculates a diff between each value and the mean of
+        values surrounding it (dictated by width) If this window extends past the
+        data's indices, it will ignore those values.
+        """
+        diff = data.copy()
+        for i in range(len(data)):
+            if i < width:
+                win_m = (data[:i].mean() + data[i+1:i+1+width].mean())/2
+            else:
+                win_m = (data[i-width:i].mean() + data[i+1:i+1+width].mean())/2
+            diff[i] -= win_m
+        return diff
+
     def cleanseries(self, data):
         bad = (data == np.nan)
 
-        dd = data.diff()
+        dd = window_diff(data, 10)
         sig = np.nanmedian(np.absolute(dd) / 0.67449)
         th = 5
         disc = np.absolute(dd) > th * sig
@@ -346,7 +351,7 @@ class TobiiController:
 
         allbad = np.union1d(to_remove, isolated)
 
-        newdat = pd.Series(data)
+        newdat = data.copy()
         newdat[allbad] = np.nan
 
         goodinds = np.nonzero(np.invert(np.isnan(newdat)))[0]
