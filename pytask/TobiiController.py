@@ -317,7 +317,7 @@ class TobiiController:
         except IndexError:
             return None
 
-    def window_diff(data, width):
+    def window_diff(self, data, width):
         """
         Takes a series and calculates a diff between each value and the mean of
         values surrounding it (dictated by width) If this window extends past the
@@ -335,7 +335,7 @@ class TobiiController:
     def cleanseries(self, data):
         bad = (data == np.nan)
 
-        dd = window_diff(data, 10)
+        dd = self.window_diff(data, 10)
         sig = np.nanmedian(np.absolute(dd) / 0.67449)
         th = 5
         disc = np.absolute(dd) > th * sig
