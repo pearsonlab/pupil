@@ -242,14 +242,14 @@ class TobiiController:
         targ_trials = np.array(targ_trials)
         other_trials = np.array(other_trials)
 
-        #### CHANGE NORMALIZATION TECHNIQUE
+        # Normalize each trial by pre-stimulus 15 sample baseline
         targ_trials = targ_trials - \
-            np.tile(targ_trials.mean(axis=1).reshape(
+            np.tile(targ_trials[:, :15].mean(axis=1).reshape(
                 (targ_trials.shape[0], 1)), targ_trials.shape[1])
         self.plot_with_sem(targ_trials, colors[1])
 
         other_trials = other_trials - \
-            np.tile(other_trials.mean(axis=1).reshape(
+            np.tile(other_trials[:, :15].mean(axis=1).reshape(
                 (other_trials.shape[0], 1)), other_trials.shape[1])
         self.plot_with_sem(other_trials, colors[0])
 
