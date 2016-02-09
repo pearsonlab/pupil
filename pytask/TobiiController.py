@@ -170,7 +170,9 @@ class TobiiController:
         '''
         self.pupil_stop = threading.Event()
         try:
-            threading.Thread(target=self.get_data).start()
+            th = threading.Thread(target=self.get_data)
+            th.daemon = True
+            th.start()
         except (KeyboardInterrupt, SystemExit):
             self.stopLiveCheck()
 
@@ -194,7 +196,9 @@ class TobiiController:
     def start_sync(self):
         self.sync_stop = threading.Event()
         try:
-            threading.Thread(target=self.get_pulses).start()
+            th = threading.Thread(target=self.get_pulses)
+            th.daemon = True
+            th.start()
         except (KeyboardInterrupt, SystemExit):
             self.stop_sync()
 
