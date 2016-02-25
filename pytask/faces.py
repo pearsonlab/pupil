@@ -96,10 +96,14 @@ def faces(controller, outfile):
     display.cross(controller.testWin)
     core.wait(2.0)
 
+    scale = 2.5
+    size = (int(220*scale), int(288*scale))
+
     for face in face_order:
         mov = visual.MovieStim3(testWin,
                                 filename=face,
-                                units='pix', noAudio=True)
+                                units='pix', noAudio=True,
+                                size=size)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('stim_start')
