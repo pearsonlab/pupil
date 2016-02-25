@@ -85,7 +85,7 @@ def faces(controller, outfile):
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
         controller.tobii_cont.setEventsAndParams(
-            ['task', 'stim_start', 'stim_end', 'iti_mean', 'iti_range', 'stims_used', 'is_fear' 'start_time'])
+            ['task', 'stim_start', 'stim_end', 'iti_mean', 'iti_range', 'stims_used', 'is_fear', 'start_time'])
         controller.tobii_cont.setParam('task', 'faces')
         controller.tobii_cont.setParam('iti_mean', iti_mean)
         controller.tobii_cont.setParam('iti_range', iti_range)
