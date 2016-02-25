@@ -75,11 +75,3 @@ def cross(win):
                             wrapWidth=2)
     cross.draw()
     win.flip()
-
-
-def sync_blip(win):
-    visual.Circle(win, units='norm', pos=(-0.9, 0.9), radius=0.1,
-                  fillColor=(0, 255, 0), fillColorSpace='rgb255').draw()
-    win.flip()
-    core.wait(0.1)
-    win.flip()
