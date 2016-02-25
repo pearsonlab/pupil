@@ -10,6 +10,8 @@ import threading
 import urllib2
 import json
 import socket
+import glob
+import serial
 from psychopy import core
 import numpy as np
 import pandas as pd
@@ -206,9 +208,13 @@ class TobiiController:
         self.sync_stop.set()
 
     def get_pulses(self):
+        port = glob.glob('/dev/cu.usbserial*')[0]  # assume first USB Serial
+        ser = serial.Serial(port, 38400)
         while not self.sync_stop.is_set():
-            # self.sync_pulses.append(core.getTime())
-            core.wait(1.0)
+            s = ser.read()  # blocks until data arrives
+            if len(s) > 0:
+                self.sync_pulses.append(core.getTime())
+        ser.close()
 
     def print_fig(self, filename, time_name, relvar_mask):
         """
