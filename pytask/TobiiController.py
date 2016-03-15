@@ -58,6 +58,7 @@ class TobiiController:
             print "Could not connect to Tobii Glasses"
             sys.exit()
 
+        self.sample_rate = 50
         self.events = []
         self.eventData = {}
         self.datafile = None
@@ -216,7 +217,7 @@ class TobiiController:
                 self.sync_pulses.append(core.getTime())
         ser.close()
 
-    def print_fig(self, filename, time_name, relvar_mask):
+    def print_fig(self, filename, time_name, relvar_mask, tpre=1.0, tpost=2.5):
         """
         Generates a figure for pupillary response to two classes
         of stimuli (usually 'target' and 'other')
@@ -224,8 +225,10 @@ class TobiiController:
         time_name (str): name of vector that contains timestamps for events
                          (NOTE: this vector must be set by setVector before
                          plot can be generated)
-        relvar_mask(str): name of vector that indicates which class each
+        relvar_mask (str): name of vector that indicates which class each
                           event is in (1 = target, 0 = other)
+        tpre (float): time before each stim starts to slice
+        tpost (float): time after each stim starts to slice
         """
         pupil_array = np.array(self.pupil_data)
         stim_time = self.eventData[time_name]
@@ -239,7 +242,7 @@ class TobiiController:
         for i in range(len(pupil_time)):
             t = pupil_time[i]
             if t > stim_time[currEventIndex]:  # we have reached the next event
-                chunk = self.get_chunk(i, pupil_diam)
+                chunk = self.get_chunk(i, pupil_diam, tpre, tpost)
                 # if able to get a good slice (no IndexError)
                 if chunk is not None:
                     if trial_mask[currEventIndex] == 1.0:  # event is target
@@ -252,15 +255,17 @@ class TobiiController:
         targ_trials = np.array(targ_trials)
         other_trials = np.array(other_trials)
 
-        # Normalize each trial by pre-stimulus 15 sample baseline
-        targ_trials = targ_trials - \
-            np.tile(targ_trials[:, :15].mean(axis=1).reshape(
-                (targ_trials.shape[0], 1)), targ_trials.shape[1])
-        self.plot_with_sem(targ_trials, colors[1])
+        # Normalize each trial with tpre region if it exists
+        if tpre != 0:
+            cutoff = self.sample_rate * tpre
+            targ_trials = targ_trials - \
+                np.tile(targ_trials[:, :cutoff].mean(axis=1).reshape(
+                    (targ_trials.shape[0], 1)), targ_trials.shape[1])
+            other_trials = other_trials - \
+                np.tile(other_trials[:, :cutoff].mean(axis=1).reshape(
+                    (other_trials.shape[0], 1)), other_trials.shape[1])
 
-        other_trials = other_trials - \
-            np.tile(other_trials[:, :15].mean(axis=1).reshape(
-                (other_trials.shape[0], 1)), other_trials.shape[1])
+        self.plot_with_sem(targ_trials, colors[1])
         self.plot_with_sem(other_trials, colors[0])
 
         plt.title('Pupillary response for ' + self.eventData['task'])
@@ -314,16 +319,18 @@ class TobiiController:
         plt.plot(bin_t, xsm, color=color, linewidth=2.0)
         plt.hold(False)
 
-    def get_chunk(self, i, data):
+    def get_chunk(self, i, data, tpre, tpost):
         """
-        Returns a slice from data, starting slightly before index i
-        and ending after.
+        Returns a slice from data, starting before index i by tpre seconds
+        and ending after by tpost seconds.
         """
+        sr = self.sample_rate
         try:
-            if i + 150 > len(data):
-                return np.hstack((data[i - 15:], np.zeros(i + 150 - len(data))))
+            if i + int(sr * tpost) > len(data):
+                return np.hstack((data[i - int(sr * tpre):],
+                                  np.zeros(i + int(sr * tpost) - len(data))))
             else:
-                return data[i - 15:i + 150]
+                return data[i - int(sr * tpre):i + int(sr * tpost)]
         except IndexError:
             return None
 
