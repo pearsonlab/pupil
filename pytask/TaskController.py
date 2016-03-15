@@ -1,12 +1,6 @@
 from psychopy import gui
 import os
-import sys
 import json
-import time
-import datetime
-TESTING = 0
-if not TESTING:
-    import TobiiController
 import lightdarktest
 import oddball
 import revlearn
@@ -14,6 +8,10 @@ import faces
 import calibrate
 import display
 import pst
+import movie_clips
+TESTING = 0
+if not TESTING:
+    import TobiiController
 
 
 class TaskController:
@@ -43,6 +41,7 @@ class TaskController:
             '5) RevLearn',
             '6) Oddball',
             '7) Faces',
+            '8) Movie Clips',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -63,7 +62,7 @@ class TaskController:
     # Takes number as input and executes corresponding task.  Also manages
     # data files.
     def execute(self, action):
-        if action in ['2', '3', '4', '5', '6', '7']:
+        if action in ['2', '3', '4', '5', '6', '7', '8']:
             trialDlg = gui.Dlg(title="Trial Name")
             trialDlg.addField(
                 'Enter Trial Name', 'run1')
@@ -121,6 +120,15 @@ class TaskController:
             data_filename = 'faces' + data_filename
             with open(os.path.join(self.data_filepath, data_filename), 'w') as face_file:
                 faces.faces(self, face_file)
+            return True
+        elif action == '8' and self.calib_complete:
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'movie_clips')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
+            data_filename = 'movie_clips' + data_filename
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as clip_file:
+                movie_clips.play(self, clip_file)
             return True
         elif action == '5' and self.calib_complete:
             self.data_filepath = os.path.join(
