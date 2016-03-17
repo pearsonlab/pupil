@@ -5,8 +5,8 @@ import random
 
 
 def play(controller, outfile):
-    clip_order = ['videos/horror1.mp4', 'videos/control1.mp4']
-    clip_time = 90.0
+    clip_order = ['videos/control1.mp4', 'videos/horror2.mp4']
+    clip_time = 135.0
     random.shuffle(clip_order)
     is_horror = []
     for clip in clip_order:
@@ -33,7 +33,7 @@ def play(controller, outfile):
 
     core.wait(2.0)
 
-    size = (1280, 720)
+    size = (1920, 1080)
 
     for clip in clip_order:
         if 'horror' in clip:
@@ -42,25 +42,32 @@ def play(controller, outfile):
         else:
             display.text_keypress(testWin, "Non-horror scene.\n\n" +
                                            "Press any key to continue.")
-        mov = visual.MovieStim3(testWin,
-                                filename=clip,
-                                units='pix', noAudio=False,
-                                size=size)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('stim_start')
 
         timer = core.Clock()
+        mov = visual.MovieStim2(testWin,
+                                filename=clip,
+                                units='pix',
+                                size=size)
+        if 'control3' in clip:
+            mov.setVolume(20)
+        shouldflip = mov.play()
         while mov.status != visual.FINISHED and timer.getTime() < clip_time:
-            mov.draw()
-            testWin.flip()
+            if shouldflip:
+                testWin.flip()
+            else:
+                core.wait(0.001)
+            shouldflip = mov.draw()
             if event.getKeys(keyList=['escape', 'q']):
-                mov.pause()
+                mov.stop()
                 if not controller.testing:
                     controller.tobii_cont.stopTracking()
                 testWin.close()
                 core.quit()
-        mov.pause()
+        mov.stop()
+        testWin.flip()
 
         # wait for full clip time to run in case actual clip is shorter.
         core.wait(clip_time - timer.getTime())
