@@ -5,8 +5,8 @@ import random
 
 
 def play(controller, outfile):
-    clip_order = ['videos/control1.mp4', 'videos/horror2.mp4']
-    clip_time = 135.0
+    clip_order = ['videos/control3.mp4', 'videos/horror3.mp4']
+    clip_time = 180.0
     random.shuffle(clip_order)
     is_horror = []
     for clip in clip_order:
@@ -52,7 +52,7 @@ def play(controller, outfile):
                                 units='pix',
                                 size=size)
         if 'control3' in clip:
-            mov.setVolume(20)
+            mov.setVolume(40)
         shouldflip = mov.play()
         while mov.status != visual.FINISHED and timer.getTime() < clip_time:
             if shouldflip:
@@ -67,6 +67,7 @@ def play(controller, outfile):
                 testWin.close()
                 core.quit()
         mov.stop()
+        testWin.flip()
         testWin.flip()
 
         # wait for full clip time to run in case actual clip is shorter.
