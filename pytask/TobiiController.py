@@ -163,7 +163,10 @@ class TobiiController:
         if self.datafile is None:
             print 'Data file is not set.'
         else:
-            self.eventData['sync_pulses'] = self.sync_pulses
+            if len(self.sync_pulses) > 0:
+                self.eventData['sync_pulses'] = self.sync_pulses
+            else:  # write streamed gaze data if sync pulses not present
+                self.eventData['pupil_data'] = self.pupil_data
             self.datafile.write(json.dumps(self.eventData))
             self.datafile.flush()
 
