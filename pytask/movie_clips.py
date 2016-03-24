@@ -83,7 +83,7 @@ def play(controller, outfile):
             controller.data_filepath, controller.trial_name + '_pupil_response.png')
         try:
             controller.tobii_cont.print_fig(
-                image_file, 'stim_start', 'is_horror', tpre=0.0, tpost=60.0)
+                image_file, 'stim_start', 'is_horror', tpre=0.0, tpost=clip_time)
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')
