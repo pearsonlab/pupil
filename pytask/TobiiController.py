@@ -212,13 +212,49 @@ class TobiiController:
         self.sync_stop.set()
 
     def get_pulses(self):
-        port = glob.glob('/dev/cu.usbserial*')[0]  # assume first USB Serial
+        try:
+            port = glob.glob('/dev/cu.usbserial*')[0]  # assume first USB Serial
+        except IndexError:
+            print "Sync pulse input not found."
+            return
         ser = serial.Serial(port, 38400)
         while not self.sync_stop.is_set():
             s = ser.read()  # blocks until data arrives
             if len(s) > 0:
                 self.sync_pulses.append(core.getTime())
         ser.close()
+
+    def print_whole_fig(self, filename, time_name, relvar_mask):
+        """
+        Plots and entire pupil time series with responses to two classes
+        of stimuli (usually 'target' and 'other') marked with different
+        colored lines.
+        filename (str): path/location to place generated plot
+        time_name (str): name of vector that contains timestamps for events
+                         (NOTE: this vector must be set by setVector before
+                         plot can be generated)
+        relvar_mask (str): name of vector that indicates which class each
+                          event is in (1 = target, 0 = other)
+        """
+        pupil_array = np.array(self.pupil_data)
+        clean_size = self.cleanseries(pd.Series(pupil_array[:, 1])).values
+        plt.plot(pupil_array[:, 0], clean_size)
+        stim_time = self.eventData[time_name]
+        trial_mask = self.eventData[relvar_mask]
+        targets = np.extract(trial_mask, stim_time)
+        other = np.extract(np.logical_not(trial_mask), stim_time)
+        plt.vlines(targets, clean_size.min(), clean_size.max(),
+                   colors='red')
+        plt.vlines(other, clean_size.min(), clean_size.max(),
+                   colors='green')
+
+        plt.title('Whole Trial Pupil Size for ' + self.eventData['task'])
+        plt.ylabel('Pupil Size (mm)')
+        plt.xlabel('Time (sec)')
+        plt.savefig(filename, bbox_inches='tight')
+        core.wait(1.0)  # let file finish writing
+        plt.gcf().clear()
+
 
     def print_fig(self, filename, time_name, relvar_mask, tpre=1.0, tpost=2.5):
         """
