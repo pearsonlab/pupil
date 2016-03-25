@@ -9,6 +9,7 @@ import calibrate
 import display
 import pst
 import movie_clips
+import fear_sounds
 TESTING = 0
 if not TESTING:
     import TobiiController
@@ -42,6 +43,7 @@ class TaskController:
             '6) Oddball',
             '7) Faces',
             '8) Movie Clips',
+            '9) Fear Sounds',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -62,7 +64,7 @@ class TaskController:
     # Takes number as input and executes corresponding task.  Also manages
     # data files.
     def execute(self, action):
-        if action in ['2', '3', '4', '5', '6', '7', '8']:
+        if action in ['2', '3', '4', '5', '6', '7', '8', '9']:
             trialDlg = gui.Dlg(title="Trial Name")
             trialDlg.addField(
                 'Enter Trial Name', 'run1')
@@ -129,6 +131,15 @@ class TaskController:
             data_filename = 'movie_clips' + data_filename
             with open(os.path.join(self.data_filepath, data_filename), 'w') as clip_file:
                 movie_clips.play(self, clip_file)
+            return True
+        elif action == '9' and self.calib_complete:
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'fear_sounds')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
+            data_filename = 'fear_sounds' + data_filename
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as sound_file:
+                fear_sounds.play(self, sound_file)
             return True
         elif action == '5' and self.calib_complete:
             self.data_filepath = os.path.join(
