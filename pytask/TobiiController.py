@@ -367,7 +367,7 @@ class TobiiController:
         try:
             if i + int(sr * tpost) > len(data):
                 return np.hstack((data[i - int(sr * tpre):],
-                                  np.zeros(i + int(sr * tpost) - len(data))))
+                                  np.ones(i + int(sr * tpost) - len(data)) * data[i - int(sr * tpre):].mean()))
             else:
                 return data[i - int(sr * tpre):i + int(sr * tpost)]
         except IndexError:
