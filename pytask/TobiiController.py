@@ -243,9 +243,9 @@ class TobiiController:
         trial_mask = self.eventData[relvar_mask]
         targets = np.extract(trial_mask, stim_time)
         other = np.extract(np.logical_not(trial_mask), stim_time)
-        plt.vlines(targets, clean_size.min(), clean_size.max(),
+        plt.vlines(targets, np.nanmin(clean_size), np.nanmax(clean_size),
                    colors='red')
-        plt.vlines(other, clean_size.min(), clean_size.max(),
+        plt.vlines(other, np.nanmin(clean_size), np.nanmax(clean_size),
                    colors='green')
 
         plt.title('Whole Trial Pupil Size for ' + self.eventData['task'])
