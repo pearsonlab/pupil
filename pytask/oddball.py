@@ -110,8 +110,7 @@ def oddball(controller, outfile):
     if not controller.testing:
         controller.tobii_cont.stopTracking()
         display.text(testWin, 'Generating Figure...')
-        image_file = os.path.join(
-            controller.data_filepath, controller.trial_name + '_pupil_response.png')
+        image_file = outfile.name.split('.json')[0] + '_pupil_response.png'
         try:
             controller.tobii_cont.print_fig(
                 image_file, 'soundtime', 'trialvec')
