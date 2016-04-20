@@ -10,5 +10,7 @@
 "Faces: Angry": 3,
 "Faces: Fearful": 3,
 "Faces: Male Identity": 3,
-"Faces: Female Identity": 3
+"Faces: Female Identity": 3,
+"Code: Response Time": 3.0,
+"Code: Code Length": 6
 }

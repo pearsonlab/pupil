@@ -226,7 +226,7 @@ class TobiiController:
 
     def print_whole_fig(self, filename, time_name, relvar_mask):
         """
-        Plots and entire pupil time series with responses to two classes
+        Plots an entire pupil time series with responses to two classes
         of stimuli (usually 'target' and 'other') marked with different
         colored lines.
         filename (str): path/location to place generated plot
@@ -251,6 +251,31 @@ class TobiiController:
         plt.title('Whole Trial Pupil Size for ' + self.eventData['task'])
         plt.ylabel('Pupil Size (mm)')
         plt.xlabel('Time (sec)')
+        plt.savefig(filename, bbox_inches='tight')
+        core.wait(1.0)  # let file finish writing
+        plt.gcf().clear()
+
+    def print_marked_fig(self, filename, event_names):
+        """
+        Plots an entire pupil time series with events marked by vertical lines.
+        filename (str): path/location to place generated plot
+        event_names (list of str): List of event names to be marked on the plot
+        """
+        pupil_array = np.array(self.pupil_data)
+        clean_size = self.cleanseries(pd.Series(pupil_array[:, 1])).values
+        plt.plot(pupil_array[:, 0], clean_size)
+        colors = sns.color_palette('hls', n_colors=len(event_names))
+        i = 0
+        for name in event_names:
+            plt.vlines(self.eventData[name], np.nanmin(clean_size),
+                       np.nanmax(clean_size), colors=colors[i],
+                       label=name)
+            i += 1
+
+        plt.title('Whole Trial Pupil Size for ' + self.eventData['task'])
+        plt.ylabel('Pupil Size (mm)')
+        plt.xlabel('Time (sec)')
+        plt.legend()
         plt.savefig(filename, bbox_inches='tight')
         core.wait(1.0)  # let file finish writing
         plt.gcf().clear()
