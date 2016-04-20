@@ -1,5 +1,7 @@
 import os
 import display
+from psychopy import prefs
+prefs.general['audioLib'] = ['pyo']
 from psychopy import core, sound
 import random
 from glob import glob
@@ -31,7 +33,7 @@ def play(controller, outfile):
         controller.tobii_cont.setVector('is_scary', is_scary)
         controller.tobii_cont.setParam('start_time', core.getTime())
 
-    core.wait(2.0)
+    core.wait(4.0)
 
     for sound_file in sound_order:
         snd = sound.SoundPyo(value=sound_file)
@@ -60,7 +62,7 @@ def play(controller, outfile):
         image_file = outfile.name.split('.json')[0] + '_pupil_response.png'
         try:
             controller.tobii_cont.print_fig(
-                image_file, 'stim_start', 'is_scary', tpre=1.0, tpost=7.5)
+                image_file, 'stim_start', 'is_scary', tpre=2.0, tpost=7.5)
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')
