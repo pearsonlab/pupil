@@ -341,6 +341,54 @@ class TobiiController:
         core.wait(1.0)  # let file finish writing
         plt.gcf().clear()
 
+    def print_response(self, filename, time_name, tpre=1.0, tpost=2.5):
+        """
+        Generates a figure for pupillary response to one class
+        of stimuli.
+        filename (str): path/location to place generated plot
+        time_name (str): name of vector that contains timestamps for events
+                         (NOTE: this vector must be set by setVector before
+                         plot can be generated)
+        tpre (float): time before each stim starts to slice
+        tpost (float): time after each stim starts to slice
+        """
+        pupil_array = np.array(self.pupil_data)
+        stim_time = self.eventData[time_name]
+        pupil_time = pupil_array[:, 0]
+        pupil_diam = self.cleanseries(pd.Series(pupil_array[:, 1])).values
+        targ_trials = []
+
+        currEventIndex = 0
+        for i in range(len(pupil_time)):
+            t = pupil_time[i]
+            if t > stim_time[currEventIndex]:  # we have reached the next event
+                chunk = self.get_chunk(i, pupil_diam, tpre, tpost)
+                # if able to get a good slice (no IndexError)
+                if chunk is not None:
+                    targ_trials.append(chunk)
+                currEventIndex += 1
+                if currEventIndex >= len(stim_time):
+                    break
+        targ_trials = np.array(targ_trials)
+
+        # Normalize each trial with tpre region if it exists
+        if tpre != 0:
+            cutoff = self.sample_rate * tpre
+            targ_trials = targ_trials - \
+                np.tile(targ_trials[:, :cutoff].mean(axis=1).reshape(
+                    (targ_trials.shape[0], 1)), targ_trials.shape[1])
+
+        self.plot_with_sem(targ_trials, colors[0])
+
+        plt.title('Pupillary response for ' + self.eventData['task'])
+        plt.ylabel('Normalized Pupil Size (arbitrary units)')
+        plt.xlabel('Time (samples)')
+        plt.vlines([cutoff], np.nanmin(targ_trials), np.nanmax(targ_trials),
+                   label='Stim Time')
+        plt.savefig(filename, bbox_inches='tight')
+        core.wait(1.0)  # let file finish writing
+        plt.gcf().clear()
+
     def gauss_convolve(self, x, sigma):
         edge = int(math.ceil(5 * sigma))
         fltr = norm.pdf(range(-edge, edge), loc=0, scale=sigma)
