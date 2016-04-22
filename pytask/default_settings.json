@@ -13,5 +13,7 @@
 "Faces: Female Identity": 3,
 "Code: Response Time": 3.0,
 "Code: Code Length": 6,
-"Code: Number of Trials": 5
+"Code: Number of Trials": 5,
+"Alarm: Code Length": 6,
+"Alarm: Number of Trials": 5
 }

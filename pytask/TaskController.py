@@ -11,6 +11,7 @@ import pst
 import movie_clips
 import fear_sounds
 import code
+import alarm
 TESTING = 0
 if not TESTING:
     import TobiiController
@@ -46,6 +47,7 @@ class TaskController:
             '8) Movie Clips',
             '9) Fear Sounds',
             '10) Code',
+            '11) Alarm',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -66,7 +68,7 @@ class TaskController:
     # Takes number as input and executes corresponding task.  Also manages
     # data files.
     def execute(self, action):
-        if action in ['2', '3', '4', '5', '6', '7', '8', '9', '10']:
+        if action in ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11']:
             trialDlg = gui.Dlg(title="Trial Name")
             trialDlg.addField(
                 'Enter Trial Name', 'run1')
@@ -151,6 +153,15 @@ class TaskController:
             data_filename = 'code' + data_filename
             with open(os.path.join(self.data_filepath, data_filename), 'w') as code_file:
                 code.code_game(self, code_file)
+            return True
+        elif action == '11' and self.calib_complete:
+            self.data_filepath = os.path.join(
+                self.data_filepath, 'alarm')
+            if not os.path.isdir(self.data_filepath):
+                os.makedirs(self.data_filepath)
+            data_filename = 'alarm' + data_filename
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as alarm_file:
+                alarm.alarm_game(self, alarm_file)
             return True
         elif action == '5' and self.calib_complete:
             self.data_filepath = os.path.join(
