@@ -10,7 +10,9 @@ def alarm_settings(controller):
     settingsDlg = gui.Dlg(title="Alarm")
     settingsDlg.addText('Set Parameters')
     settingsDlg.addField(
-        'Code Length', controller.settings['Alarm: Code Length'])
+        'Mode', choices=['Code', 'Press'])
+    settingsDlg.addField(
+        "Code Length (only for 'Code' mode)", controller.settings['Alarm: Code Length'])
     settingsDlg.addField(
         'Number of Trials', controller.settings['Alarm: Number of Trials'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
@@ -23,16 +25,26 @@ def alarm_settings(controller):
 def alarm_game(controller, outfile):
     settings = alarm_settings(controller)
     if settings is not None:
-        code_length, num_trials = settings
+        mode, code_length, num_trials = settings
+        press = (mode == 'Press')
+        if press:
+            code_length = 'n/a'
     else:
         return
 
     testWin = controller.launchWindow()
-    display.text_keypress(testWin, "In this task, you will hear a chime.\n" +
-                                   "Soon afterwards, you will be presented\n" +
-                                   "with a code that you must reenter as\n" +
-                                   "quickly as possible in order to turn\n" +
-                                   "off the alarm that begins to play.")
+    if press:
+        display.text_keypress(testWin, "In this task, you will hear a chime.\n" +
+                                       "Soon afterwards, an alarm will begin\n" +
+                                       "to play, and you must press any key as\n" +
+                                       "quickly as possible in order to turn\n" +
+                                       "it off.")
+    else:
+        display.text_keypress(testWin, "In this task, you will hear a chime.\n" +
+                                       "Soon afterwards, you will be presented\n" +
+                                       "with a code that you must reenter as\n" +
+                                       "quickly as possible in order to turn\n" +
+                                       "off the alarm that begins to play.")
     display.text_keypress(testWin, "Press any key to begin.")
 
     chime = sound.Sound('sounds/alarm/chime.wav', volume=0.25)
@@ -57,22 +69,27 @@ def alarm_game(controller, outfile):
         wait_var = np.random.rand() * 5
         core.wait(10 + wait_var)
 
-        code = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyz')
-                       for i in range(code_length))
+        if not press:
+            code = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyz')
+                           for i in range(code_length))
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('chimetime')
         chime.play()
-        core.wait(1.0)
+        core.wait(np.random.rand() * 3 + 1)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('alarmtime')
         alarm.play()
-        i = 0
-        for char in code:
-            display.text(testWin, i * ' ' + code[i:])
-            event.waitKeys(keyList=char)
-            i += 1
+
+        if press:
+            event.waitKeys()
+        else:
+            i = 0
+            for char in code:
+                display.text(testWin, i * ' ' + code[i:])
+                event.waitKeys(keyList=char)
+                i += 1
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('finishtime')
@@ -95,7 +112,7 @@ def alarm_game(controller, outfile):
 
         try:
             controller.tobii_cont.print_response(
-                image_file, 'alarmtime', tpre=1.0, tpost=6.0)
+                image_file, 'chimetime', tpre=1.0, tpost=8.0)
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')
