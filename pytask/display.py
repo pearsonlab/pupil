@@ -68,6 +68,13 @@ def text(win, text):
     win.flip()
 
 
+def circle(win, color):
+    circle = visual.Circle(win, fillColor=color, fillColorSpace='rgb255',
+                           radius=0.1, units='height')
+    circle.draw()
+    win.flip()
+
+
 def cross(win):
     cross = visual.TextStim(win, text='+',
                             font='Helvetica', alignHoriz='center', alignVert='center', units='norm',

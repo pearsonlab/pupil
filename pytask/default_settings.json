@@ -15,5 +15,6 @@
 "Code: Code Length": 6,
 "Code: Number of Trials": 5,
 "Alarm: Code Length": 6,
-"Alarm: Number of Trials": 5
+"Alarm: Number of Normal Trials": 5,
+"Alarm: Number of Aversive Trials": 5
 }
