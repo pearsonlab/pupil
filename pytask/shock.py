@@ -63,14 +63,14 @@ def shock_game(controller, outfile):
     display.text_keypress(testWin, "Red circles will be followed by a shock\n" +
                                    "Press any key for a demo.")
     display.circle(testWin, shock_color)
-    core.wait(1.0)
+    core.wait(4.0)
     trigger.play()
     core.wait(trigger.getDuration())
     core.wait(1.0)
     display.text_keypress(testWin, "Green circles will have no shock.\n" +
                                    "Press any key to see a demo.")
     display.circle(testWin, neutral_color)
-    core.wait(2.0)
+    core.wait(5.0)
     display.text_keypress(testWin, "Press any key to begin the task.")
 
     display.countdown(controller)
@@ -105,7 +105,7 @@ def shock_game(controller, outfile):
         if not controller.testing:
             controller.tobii_cont.recordEvent('cuetime')
         display.circle(testWin, color)
-        core.wait(np.random.rand() * 3 + 1)
+        core.wait(np.random.rand() * 3 + 4)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('shocktime')
