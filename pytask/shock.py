@@ -2,19 +2,19 @@ import numpy as np
 import random
 from psychopy import prefs
 prefs.general['audioLib'] = ['pyo']
-from psychopy import gui, sound, core, event
+from psychopy import gui, sound, core
 import display
 
 
-def alarm_settings(controller):
-    settingsDlg = gui.Dlg(title="Alarm")
+def shock_settings(controller):
+    settingsDlg = gui.Dlg(title="Shock")
     settingsDlg.addText('Set Parameters')
     settingsDlg.addField(
         'Number of Normal Trials',
-        controller.settings['Alarm: Number of Normal Trials'])
+        controller.settings['Shock: Number of Normal Trials'])
     settingsDlg.addField(
-        'Number of Aversive Trials',
-        controller.settings['Alarm: Number of Aversive Trials'])
+        'Number of Shock Trials',
+        controller.settings['Shock: Number of Shock Trials'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         return settingsDlg.data
@@ -22,32 +22,33 @@ def alarm_settings(controller):
         return None
 
 
-def alarm_game(controller, outfile):
-    settings = alarm_settings(controller)
+def shock_game(controller, outfile):
+    settings = shock_settings(controller)
     if settings is not None:
-        num_normal, num_aversive = settings
+        num_normal, num_shock = settings
     else:
         return
 
     testWin = controller.launchWindow()
 
-    aversive_color = (227, 2, 24)
+    shock_color = (227, 2, 24)
     neutral_color = (95, 183, 46)
 
-    phone_ring = sound.Sound('sounds/alarm/phone_ring.wav', volume=0.10)
-    alarm = sound.Sound('sounds/alarm/fire_alarm.wav')
+    trigger_val = 10 * np.ones(2200)
+    trigger = sound.SoundPyo(value=trigger_val, secs=0.05, octave=8,
+                             volume=1.0, sampleRate=44100)
 
     normal = ([0] * num_normal)
-    aversive = ([1] * num_aversive)
-    diff = num_normal - num_aversive
+    shock = ([1] * num_shock)
+    diff = num_normal - num_shock
     if diff < 0:
         normal += (abs(diff) * [-1])
         random.shuffle(normal)
     elif diff > 0:
-        aversive += (diff * [-1])
-        random.shuffle(aversive)
+        shock += (diff * [-1])
+        random.shuffle(shock)
 
-    pairs = zip(normal, aversive)
+    pairs = zip(normal, shock)
     trialvec = []
     for pair in pairs:
         shuf_pair = list(pair)
@@ -57,26 +58,19 @@ def alarm_game(controller, outfile):
         trialvec.remove(-1)
     trialvec = np.array(trialvec)
 
-    display.text_keypress(testWin, "In this task, you will see a colored\n" +
-                                   "circle, followed by a sound.\n" +
-                                   "When you hear a sound, press\n" +
-                                   "any key to shut it off.")
-    display.text_keypress(testWin, "Red circles are followed by a loud, harsh\n" +
-                                   "sound.\n" +
-                                   "Press any key to see a demo.")
-    display.circle(testWin, aversive_color)
+    display.text_keypress(testWin, "In this task, you will see two different\n" +
+                                   "colored circles.\n")
+    display.text_keypress(testWin, "Red circles will be followed by a shock\n" +
+                                   "Press any key for a demo.")
+    display.circle(testWin, shock_color)
     core.wait(1.0)
-    alarm.play()
+    trigger.play()
+    core.wait(trigger.getDuration())
     core.wait(1.0)
-    alarm.stop()
-    display.text_keypress(testWin, "Green circles are followed by a neutral\n" +
-                                   "sound.\n" +
+    display.text_keypress(testWin, "Green circles will have no shock.\n" +
                                    "Press any key to see a demo.")
     display.circle(testWin, neutral_color)
-    core.wait(1.0)
-    phone_ring.play()
     core.wait(2.0)
-    phone_ring.stop()
     display.text_keypress(testWin, "Press any key to begin the task.")
 
     display.countdown(controller)
@@ -86,21 +80,21 @@ def alarm_game(controller, outfile):
         controller.tobii_cont.setDataFile(outfile)
         controller.tobii_cont.startTracking()
         controller.tobii_cont.setEventsAndParams(
-            ['task', 'cuetime', 'soundtime', 'finishtime', 'trialvec'
-             'start_time', 'num_normal', 'num_aversive'])
+            ['task', 'cuetime', 'shocktime', 'posttime', 'trialvec'
+             'start_time', 'num_normal', 'num_shock'])
         controller.tobii_cont.setParam('task', 'alarm')
         controller.tobii_cont.setVector('trialvec', trialvec)
         controller.tobii_cont.setParam('num_normal', num_normal)
-        controller.tobii_cont.setParam('num_aversive', num_aversive)
+        controller.tobii_cont.setParam('num_shock', num_shock)
         controller.tobii_cont.setParam('start_time', core.getTime())
 
     for trial_type in trialvec:
         if trial_type == 0:
             color = neutral_color
-            trial_sound = phone_ring
+            trial_sound = None
         elif trial_type == 1:
-            color = aversive_color
-            trial_sound = alarm
+            color = shock_color
+            trial_sound = trigger
         else:
             raise Exception("Unknown value in trialvec")
 
@@ -114,16 +108,15 @@ def alarm_game(controller, outfile):
         core.wait(np.random.rand() * 3 + 1)
 
         if not controller.testing:
-            controller.tobii_cont.recordEvent('soundtime')
-        trial_sound.play()
+            controller.tobii_cont.recordEvent('shocktime')
+        if trial_sound is not None:
+            trial_sound.play()
+            core.wait(trial_sound.getDuration())
 
-        event.waitKeys()
+        core.wait(2.0)
 
         if not controller.testing:
-            controller.tobii_cont.recordEvent('finishtime')
-        trial_sound.stop()
-
-        core.wait(1.0)
+            controller.tobii_cont.recordEvent('posttime')
 
     if not controller.testing:
         controller.tobii_cont.stopTracking()
@@ -131,7 +124,7 @@ def alarm_game(controller, outfile):
         image_file = outfile.name.split('.json')[0] + '_whole_run.png'
         try:
             controller.tobii_cont.print_marked_fig(
-                image_file, ['cuetime', 'finishtime'])
+                image_file, ['cuetime', 'shocktime'])
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')
@@ -145,11 +138,11 @@ def alarm_game(controller, outfile):
         except:
             display.text(testWin, 'Figure generation failed.')
 
-        image_file = outfile.name.split('.json')[0] + '_finishtime_comp.png'
+        image_file = outfile.name.split('.json')[0] + '_posttime_comp.png'
 
         try:
             controller.tobii_cont.print_fig(
-                image_file, 'finishtime', 'trialvec', tpre=5.0, tpost=5.0)
+                image_file, 'posttime', 'trialvec', tpre=5.0, tpost=5.0)
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')

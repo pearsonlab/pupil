@@ -11,7 +11,7 @@ import pst
 import movie_clips
 import fear_sounds
 import code
-import alarm
+import shock
 TESTING = 0
 if not TESTING:
     import TobiiController
@@ -47,7 +47,7 @@ class TaskController:
             '8) Movie Clips',
             '9) Fear Sounds',
             '10) Code',
-            '11) Alarm',
+            '11) Shock',
             's) Settings',
             'r) Reset to Default Settings',
             'q) Quit']
@@ -156,12 +156,12 @@ class TaskController:
             return True
         elif action == '11' and self.calib_complete:
             self.data_filepath = os.path.join(
-                self.data_filepath, 'alarm')
+                self.data_filepath, 'shock')
             if not os.path.isdir(self.data_filepath):
                 os.makedirs(self.data_filepath)
-            data_filename = 'alarm' + data_filename
-            with open(os.path.join(self.data_filepath, data_filename), 'w') as alarm_file:
-                alarm.alarm_game(self, alarm_file)
+            data_filename = 'shock' + data_filename
+            with open(os.path.join(self.data_filepath, data_filename), 'w') as shock_file:
+                shock.shock_game(self, shock_file)
             return True
         elif action == '5' and self.calib_complete:
             self.data_filepath = os.path.join(
