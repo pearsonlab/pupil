@@ -54,7 +54,7 @@ def shock_game(controller, outfile):
         shuf_pair = list(pair)
         random.shuffle(shuf_pair)
         trialvec += shuf_pair
-    if -1 in trialvec:
+    while -1 in trialvec:
         trialvec.remove(-1)
     trialvec = np.array(trialvec)
 
