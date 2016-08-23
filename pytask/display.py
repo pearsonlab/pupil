@@ -5,23 +5,25 @@ Functions to display certain recurring instances throughout the different tests
 from psychopy import visual, core, event
 
 
-def getWindows(controller):
+def getWindows(controller, color):
     if controller.testing:
         testWin = visual.Window(
-            size=(640, 400), monitor="testMonitor", units="pix", pos=(640, 50))
+            size=(640, 400), monitor="testMonitor", units="pix", pos=(640, 50),
+            colorSpace='rgb255', color=color)
     else:  # not testing (i.e. working on tobii tracker)
         testWin = visual.Window(
-            size=(1920, 1080), monitor="testMonitor", units="pix", screen=0, fullscr=True)
+            size=(1920, 1080), monitor="testMonitor", units="pix", screen=0,
+            fullscr=True, colorSpace='rgb255', color=color)
     return testWin
 
 
-def countdown(controller):
+def countdown(controller, color=(255, 255, 255)):
     # countdown time in seconds
     count_time = controller.settings['Countdown Time']
     win = controller.testWin
     countdown_text = visual.TextStim(win, text=str(count_time),
                                      font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
-                                     pos=(0, 0), height=0.2, color=[178, 34, 34], colorSpace='rgb255',
+                                     pos=(0, 0), height=0.2, color=color, colorSpace='rgb255',
                                      wrapWidth=2)
     for i in range(count_time):
         countdown_text.text = str(count_time)
@@ -40,10 +42,10 @@ def fill_screen(win, window_color):
     win.flip()
 
 
-def text_keypress(win, text):
+def text_keypress(win, text, color=(255, 255, 255)):
     display_text = visual.TextStim(win, text=text,
                                    font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
-                                   pos=(0, 0), height=0.1, color=[255, 255, 255], colorSpace='rgb255',
+                                   pos=(0, 0), height=0.1, color=color, colorSpace='rgb255',
                                    wrapWidth=2)
     display_text.draw()
     win.flip()
@@ -59,10 +61,10 @@ def image_keypress(win, image_loc):
     win.flip()
 
 
-def text(win, text):
+def text(win, text, color=(255, 255, 255)):
     display_text = visual.TextStim(win, text=text,
                                    font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
-                                   pos=(0, 0), height=0.2, color=[0, 255, 0], colorSpace='rgb255',
+                                   pos=(0, 0), height=0.2, color=color, colorSpace='rgb255',
                                    wrapWidth=2)
     display_text.draw()
     win.flip()
@@ -70,15 +72,16 @@ def text(win, text):
 
 def circle(win, color):
     circle = visual.Circle(win, fillColor=color, fillColorSpace='rgb255',
+                           lineColor=color, lineColorSpace='rgb255',
                            radius=0.1, units='height')
     circle.draw()
     win.flip()
 
 
-def cross(win):
+def cross(win, color=(255, 255, 255)):
     cross = visual.TextStim(win, text='+',
                             font='Helvetica', alignHoriz='center', alignVert='center', units='norm',
-                            pos=(0, 0), height=0.3, color=[255, 255, 255], colorSpace='rgb255',
+                            pos=(0, 0), height=0.3, color=color, colorSpace='rgb255',
                             wrapWidth=2)
     cross.draw()
     win.flip()

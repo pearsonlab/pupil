@@ -29,10 +29,12 @@ def shock_game(controller, outfile):
     else:
         return
 
-    testWin = controller.launchWindow()
-
+    window_color = (115, 114, 114)
+    text_color = (203, 189, 26)
     shock_color = (227, 2, 24)
     neutral_color = (95, 183, 46)
+
+    testWin = controller.launchWindow(window_color)
 
     trigger_val = 10 * np.ones(2200)
     trigger = sound.SoundPyo(value=trigger_val, secs=0.05, octave=8,
@@ -59,21 +61,27 @@ def shock_game(controller, outfile):
     trialvec = np.array(trialvec)
 
     display.text_keypress(testWin, "In this task, you will see two different\n" +
-                                   "colored circles.\n")
+                                   "colored circles.\n", color=text_color)
     display.text_keypress(testWin, "Red circles will be followed by a shock\n" +
-                                   "Press any key for a demo.")
+                                   "Press any key for a demo.",
+                          color=text_color)
     display.circle(testWin, shock_color)
     core.wait(4.0)
     trigger.play()
     core.wait(trigger.getDuration())
     core.wait(1.0)
     display.text_keypress(testWin, "Green circles will have no shock.\n" +
-                                   "Press any key to see a demo.")
+                                   "Press any key to see a demo.",
+                          color=text_color)
     display.circle(testWin, neutral_color)
     core.wait(5.0)
-    display.text_keypress(testWin, "Press any key to begin the task.")
+    display.text_keypress(testWin, "During the task, please make sure not \n" +
+                                   "to look away from the screen.\n",
+                          color=text_color)
+    display.text_keypress(testWin, "Press any key to begin the task.",
+                          color=text_color)
 
-    display.countdown(controller)
+    display.countdown(controller, color=text_color)
 
     # START EYE TRACKING
     if not controller.testing:
@@ -98,7 +106,7 @@ def shock_game(controller, outfile):
         else:
             raise Exception("Unknown value in trialvec")
 
-        display.cross(testWin)
+        display.cross(testWin, color=text_color)
         wait_var = np.random.rand() * 5
         core.wait(10 + wait_var)
 

@@ -61,8 +61,8 @@ class TaskController:
         else:
             self.calib_complete = True
 
-    def launchWindow(self):
-        self.testWin = display.getWindows(self)
+    def launchWindow(self, color=(115, 114, 114)):
+        self.testWin = display.getWindows(self, color)
         return self.testWin
 
     # Takes number as input and executes corresponding task.  Also manages
