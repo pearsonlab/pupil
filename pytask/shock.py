@@ -107,8 +107,8 @@ def shock_game(controller, outfile):
             raise Exception("Unknown value in trialvec")
 
         display.cross(testWin, color=text_color)
-        wait_var = np.random.rand() * 5
-        core.wait(10 + wait_var)
+        wait_var = np.random.rand() * 2
+        core.wait(5 + wait_var)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('cuetime')
