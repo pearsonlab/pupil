@@ -15,6 +15,8 @@ def shock_settings(controller):
     settingsDlg.addField(
         'Number of Shock Trials',
         controller.settings['Shock: Number of Shock Trials'])
+    settingsDlg.addField(
+        'Shock Type', choices=['Sound', 'E-Stim'])
     settingsDlg.show()  # show dialog and wait for OK or Cancel
     if settingsDlg.OK:
         return settingsDlg.data
@@ -25,7 +27,9 @@ def shock_settings(controller):
 def shock_game(controller, outfile):
     settings = shock_settings(controller)
     if settings is not None:
-        num_normal, num_shock = settings
+        num_normal, num_shock, shock_type = settings
+        if shock_type == 'Sound':
+            soundstim = True
     else:
         return
 
@@ -36,9 +40,14 @@ def shock_game(controller, outfile):
 
     testWin = controller.launchWindow(window_color)
 
-    trigger_val = 10 * np.ones(2200)
-    trigger = sound.SoundPyo(value=trigger_val, secs=0.05, octave=8,
-                             volume=1.0, sampleRate=44100)
+    if soundstim:
+        neg_sound = sound.Sound('sounds/alarm/phone_ring.wav', volume=0.10)
+        stim_sound = sound.Sound('sounds/alarm/fire_alarm.wav')
+    else:
+        neg_sound = None
+        trigger_val = 10 * np.ones(2200)
+        stim_sound = sound.SoundPyo(value=trigger_val, secs=0.05, octave=8,
+                                    volume=1.0, sampleRate=44100)
 
     normal = ([0] * num_normal)
     shock = ([1] * num_shock)
@@ -67,14 +76,20 @@ def shock_game(controller, outfile):
                           color=text_color)
     display.circle(testWin, shock_color)
     core.wait(4.0)
-    trigger.play()
-    core.wait(trigger.getDuration())
+    stim_sound.play()
     core.wait(1.0)
+    stim_sound.stop()
     display.text_keypress(testWin, "Green circles will have no shock.\n" +
                                    "Press any key to see a demo.",
                           color=text_color)
     display.circle(testWin, neutral_color)
-    core.wait(5.0)
+    if neg_sound is not None:
+        core.wait(4.0)
+        neg_sound.play()
+        core.wait(1.0)
+        neg_sound.stop()
+    else:
+        core.wait(5.0)
     display.text_keypress(testWin, "During the task, please make sure not \n" +
                                    "to look away from the screen.\n",
                           color=text_color)
@@ -99,16 +114,16 @@ def shock_game(controller, outfile):
     for trial_type in trialvec:
         if trial_type == 0:
             color = neutral_color
-            trial_sound = None
+            trial_sound = neg_sound
         elif trial_type == 1:
             color = shock_color
-            trial_sound = trigger
+            trial_sound = stim_sound
         else:
             raise Exception("Unknown value in trialvec")
 
         display.cross(testWin, color=text_color)
         wait_var = np.random.rand() * 2
-        core.wait(5 + wait_var)
+        core.wait(4 + wait_var)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('cuetime')
@@ -119,9 +134,12 @@ def shock_game(controller, outfile):
             controller.tobii_cont.recordEvent('shocktime')
         if trial_sound is not None:
             trial_sound.play()
-            core.wait(trial_sound.getDuration())
+            core.wait(1.0)
+            trial_sound.stop()
+        else:
+            core.wait(1.0)
 
-        core.wait(2.0)
+        core.wait(1.0)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('posttime')
