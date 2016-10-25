@@ -11,7 +11,7 @@ import pst
 import movie_clips
 import fear_sounds
 import code
-import shock
+import shock2 as shock
 TESTING = 0
 if not TESTING:
     import TobiiController
