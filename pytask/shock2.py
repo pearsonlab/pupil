@@ -42,8 +42,6 @@ def shock_game(controller, outfile):
         stim_sound = sound.SoundPyo(value=trigger_val, secs=0.05, octave=8,
                                     volume=1.0, sampleRate=44100)
 
-    trialvec = np.ones(num_shock)
-
     display.text_keypress(testWin, "In this task, you will experience a\n" +
                                    "series of shocks with increasing\n" +
                                    "intensity.\n\n" +
@@ -69,11 +67,10 @@ def shock_game(controller, outfile):
             ['task', 'shocktime', 'trialvec'
              'start_time', 'num_shock'])
         controller.tobii_cont.setParam('task', 'shock')
-        controller.tobii_cont.setVector('trialvec', trialvec)
         controller.tobii_cont.setParam('num_shock', num_shock)
         controller.tobii_cont.setParam('start_time', core.getTime())
 
-    for trial_type in trialvec:
+    for i in range(num_shock):
         display.cross(testWin, color=text_color)
 
         core.wait(5)
@@ -100,8 +97,8 @@ def shock_game(controller, outfile):
         image_file = outfile.name.split('.json')[0] + '_shocktime_comp.png'
 
         try:
-            controller.tobii_cont.print_fig(
-                image_file, 'shocktime', 'trialvec', tpre=1.0, tpost=8.0)
+            controller.tobii_cont.print_response(
+                image_file, 'shocktime', tpre=5.0, tpost=1.0)
             display.image_keypress(testWin, image_file)
         except:
             display.text(testWin, 'Figure generation failed.')
