@@ -25,8 +25,7 @@ def shock_game(controller, outfile):
     settings = shock_settings(controller)
     if settings is not None:
         num_shock, shock_type = settings
-        if shock_type == 'Sound':
-            soundstim = True
+        soundstim = (shock_type == 'Sound')
     else:
         return
 
@@ -69,19 +68,17 @@ def shock_game(controller, outfile):
         controller.tobii_cont.setParam('task', 'shock')
         controller.tobii_cont.setParam('num_shock', num_shock)
         controller.tobii_cont.setParam('start_time', core.getTime())
-
+    core.wait(5.0)
     for i in range(num_shock):
         display.cross(testWin, color=text_color)
 
-        core.wait(5)
+        core.wait(5.0)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('shocktime')
         stim_sound.play()
         core.wait(stim_sound.getDuration())
         stim_sound.stop()
-
-        core.wait(1.0)
 
     if not controller.testing:
         controller.tobii_cont.stopTracking()

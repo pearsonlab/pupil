@@ -28,8 +28,7 @@ def shock_game(controller, outfile):
     settings = shock_settings(controller)
     if settings is not None:
         num_normal, num_shock, shock_type = settings
-        if shock_type == 'Sound':
-            soundstim = True
+        soundstim = (shock_type == 'Sound')
     else:
         return
 
@@ -41,7 +40,7 @@ def shock_game(controller, outfile):
     testWin = controller.launchWindow(window_color)
 
     if soundstim:
-        neg_sound = sound.Sound('sounds/alarm/phone_ring.wav', volume=0.10)
+        neg_sound = sound.Sound('sounds/alarm/fire_alarm.wav', volume=0.05)
         stim_sound = sound.Sound('sounds/alarm/fire_alarm.wav')
     else:
         neg_sound = None
@@ -84,9 +83,9 @@ def shock_game(controller, outfile):
                           color=text_color)
     display.circle(testWin, neutral_color)
     if neg_sound is not None:
-        core.wait(4.0)
+        core.wait(3.0)
         neg_sound.play()
-        core.wait(1.0)
+        core.wait(2.0)
         neg_sound.stop()
     else:
         core.wait(5.0)
@@ -115,9 +114,11 @@ def shock_game(controller, outfile):
         if trial_type == 0:
             color = neutral_color
             trial_sound = neg_sound
+            sound_wait = 2.0
         elif trial_type == 1:
             color = shock_color
             trial_sound = stim_sound
+            sound_wait = 2.0
         else:
             raise Exception("Unknown value in trialvec")
 
@@ -128,13 +129,13 @@ def shock_game(controller, outfile):
         if not controller.testing:
             controller.tobii_cont.recordEvent('cuetime')
         display.circle(testWin, color)
-        core.wait(np.random.rand() * 3 + 4)
+        core.wait(4.0)
 
         if not controller.testing:
             controller.tobii_cont.recordEvent('shocktime')
         if trial_sound is not None:
             trial_sound.play()
-            core.wait(1.0)
+            core.wait(sound_wait)
             trial_sound.stop()
         else:
             core.wait(1.0)
