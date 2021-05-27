@@ -41,7 +41,6 @@ def plot_with_sem(x, smwid, flag, bin_t, color):
         xhi = xm + sem
         xlo = xm - sem
 
-    plt.hold(True)
     if flag == 0:
         plt.plot(bin_t, xsm, color=color, linewidth=2.0)
     elif flag == 1:
@@ -58,7 +57,6 @@ def plot_with_sem(x, smwid, flag, bin_t, color):
             bin_t, xhi, '--', color=[i * 0.5 for i in color], linewidth=1.0)
         plt.plot(
             bin_t, xlo, '--', color=[i * 0.5 for i in color], linewidth=1.0)
-    plt.hold(False)
 
 
 def cleanseries(data):
@@ -68,7 +66,7 @@ def cleanseries(data):
 
     bad = (data == -1)
 
-    dd = data.diff()
+    dd = data.diff().dropna()
     sig = np.median(np.absolute(dd) / 0.67449)
     th = 5
     disc = np.absolute(dd) > th * sig
@@ -145,7 +143,7 @@ def basenorm(chunklist, idx, t_int, flag):
         return None
 
     norm_chunks = list()
-
+    unnorm_chunks = list()
     # normalizes each chunk
     for df in chunklist:
         t_axis = df.index
@@ -153,16 +151,18 @@ def basenorm(chunklist, idx, t_int, flag):
         base = df[sel]
         baseline = base.mean()
         norm_data = pd.DataFrame()
-
+        unnorm_data = pd.DataFrame()
         if flag == 0:
             for column in baseline.index:
                 norm_data[column] = df[column] - baseline[column]
+                unnorm_data[column] = df[column]
         elif flag == 1:
             for column in baseline.index:
                 norm_data[column] = df[column] / baseline[column]
+                unnorm_data[column] = df[column]
         norm_chunks.append(norm_data)
-
-    return norm_chunks
+        unnorm_chunks.append(unnorm_data)
+    return norm_chunks, unnorm_chunks
 
 
 def find_closest(a, target):
@@ -179,7 +179,6 @@ def splitseries(ser, ts, t_pre, t_post, t0=0.0):
     xx = ser.values.squeeze()  # convert to 1d numpy array
     tt = ser.index
     nevt = ts.dropna().size
-
     if t_pre < 0:
         negstart = find_closest(tt, -t_pre)
         nend = find_closest(tt, t_post)
@@ -222,22 +221,7 @@ def evtsplit(df, events, t_pre, t_post, t0=0.0):
     for col in df.columns.values:
         chunklist.append(splitseries(df[col], events, t_pre, t_post, t0))
     idx = df.columns
-
     return chunklist, idx
 
 if __name__ == "__main__":
-    # GUI_app = wx.App()
-
-    # path_dlg = wx.FileDialog(None, "Open TSV file", "", "",
-    #                          "TSV files (*.tsv)|*.tsv", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
-
-    # while path_dlg.ShowModal() == wx.ID_CANCEL:  # quit if cancelled
-    #     sys.exit()
-
-    # datafile_path = path_dlg.GetPath()
-
-    datafile_path = '/Users/shariqiqbal/data/test/PST/09_07_58on06-30-2015.tsv'
-
-    df = pd.DataFrame.from_csv(datafile_path, sep='\t')
-
-    df = prepdata(df)
+    pass
